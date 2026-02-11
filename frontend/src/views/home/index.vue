@@ -194,7 +194,7 @@ const getLevelText = (level) => {
     gap: 24px;
 
     .feature-card {
-      background: white;
+      background: var(--el-bg-color, white);
       padding: 32px;
       border-radius: 12px;
       text-align: center;
@@ -227,7 +227,7 @@ const getLevelText = (level) => {
     gap: 24px;
 
     .course-card {
-      background: white;
+      background: var(--el-bg-color, white);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -308,7 +308,7 @@ const getLevelText = (level) => {
       gap: 24px;
 
       .stat-card {
-        background: white;
+        background: var(--el-bg-color, white);
         padding: 32px;
         border-radius: 12px;
         text-align: center;

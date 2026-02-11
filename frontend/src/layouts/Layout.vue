@@ -136,11 +136,11 @@ const handleUserCommand = (command) => {
   flex-direction: column;
   
   &.dark-mode {
-    background-color: #1a1a1a;
+    background-color: #141414;
     color: #e0e0e0;
     
     .header {
-      background-color: #2d2d2d;
+      background-color: #1e1e1e;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       
       .logo h1, .logo-text {
@@ -152,12 +152,12 @@ const handleUserCommand = (command) => {
         
         &:hover {
           color: #409eff;
-          background-color: #3a3a3a;
+          background-color: #2a2a2a;
         }
         
         &.router-link-active {
           color: #409eff;
-          background-color: #3a3a3a;
+          background-color: #2a2a2a;
         }
       }
       
@@ -167,22 +167,23 @@ const handleUserCommand = (command) => {
         }
         
         &:hover {
-          background-color: #3a3a3a;
+          background-color: #2a2a2a;
         }
       }
     }
     
     .main-content {
-      background-color: #1a1a1a;
+      background-color: #141414;
     }
     
     .footer {
-      background-color: #1a1a1a;
+      background-color: #141414;
       border-top: 1px solid #3a3a3a;
+      color: #909399;
     }
     
     .safe-area-top, .safe-area-bottom {
-      background-color: #1a1a1a;
+      background-color: #141414;
     }
   }
 }

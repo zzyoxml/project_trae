@@ -214,7 +214,7 @@ const handleImageError = (e) => {
     gap: 20px;
 
     .course-card {
-      background: white;
+      background: var(--el-bg-color, white);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);

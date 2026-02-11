@@ -253,7 +253,7 @@ const handleImageError = (e) => {
       display: flex;
       gap: 20px;
       margin-bottom: 20px;
-      background: white;
+      background: var(--el-bg-color, white);
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
@@ -368,7 +368,7 @@ const handleImageError = (e) => {
               padding: 12px;
               border-radius: 8px;
               margin-bottom: 8px;
-              background: #f5f7fa;
+              background: var(--el-bg-color-page, #f5f7fa);
               cursor: pointer;
               transition: all 0.3s;
 

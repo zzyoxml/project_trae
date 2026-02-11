@@ -74,3 +74,255 @@ html, body {
 .text-danger {
   color: $danger-color;
 }
+
+// ========================================
+// Dark Mode - Global Overrides
+// ========================================
+html.dark {
+  color-scheme: dark;
+
+  // Element Plus CSS variables for dark mode
+  --el-bg-color: #1e1e1e;
+  --el-bg-color-page: #2a2a2a;
+  --el-bg-color-overlay: #2a2a2a;
+  --el-text-color-primary: #e0e0e0;
+  --el-text-color-regular: #c0c0c0;
+  --el-text-color-secondary: #909399;
+  --el-text-color-placeholder: #6a6a6a;
+  --el-border-color: #4a4a4a;
+  --el-border-color-light: #3a3a3a;
+  --el-border-color-lighter: #333333;
+  --el-border-color-extra-light: #2e2e2e;
+  --el-fill-color: #2a2a2a;
+  --el-fill-color-light: #262626;
+  --el-fill-color-lighter: #222222;
+  --el-fill-color-extra-light: #1e1e1e;
+  --el-fill-color-blank: #1e1e1e;
+  --el-mask-color: rgba(0, 0, 0, 0.6);
+  --el-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.4);
+  --el-box-shadow-light: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+
+  body,
+  #app {
+    background-color: #141414;
+    color: #e0e0e0;
+  }
+
+  // Element Plus component overrides
+  .el-card {
+    --el-card-bg-color: #1e1e1e;
+    --el-card-border-color: #3a3a3a;
+    background-color: #1e1e1e;
+    border-color: #3a3a3a;
+    color: #e0e0e0;
+  }
+
+  .el-select {
+    --el-select-border-color-hover: #5a5a5a;
+    --el-select-input-focus-border-color: #409eff;
+
+    .el-input__wrapper {
+      background-color: #2a2a2a;
+      box-shadow: 0 0 0 1px #4a4a4a inset;
+    }
+
+    .el-input__inner {
+      color: #e0e0e0;
+    }
+  }
+
+  .el-select-dropdown {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+
+    .el-select-dropdown__item {
+      color: #c0c0c0;
+
+      &.hover,
+      &:hover {
+        background-color: #3a3a3a;
+      }
+
+      &.selected {
+        color: #409eff;
+      }
+    }
+  }
+
+  .el-input {
+    .el-input__wrapper {
+      background-color: #2a2a2a;
+      box-shadow: 0 0 0 1px #4a4a4a inset;
+    }
+
+    .el-input__inner {
+      color: #e0e0e0;
+    }
+  }
+
+  .el-textarea {
+    .el-textarea__inner {
+      background-color: #2a2a2a;
+      border-color: #4a4a4a;
+      color: #e0e0e0;
+    }
+  }
+
+  .el-button--default {
+    --el-button-bg-color: #2a2a2a;
+    --el-button-border-color: #4a4a4a;
+    --el-button-text-color: #c0c0c0;
+    --el-button-hover-bg-color: #3a3a3a;
+    --el-button-hover-border-color: #5a5a5a;
+    --el-button-hover-text-color: #e0e0e0;
+  }
+
+  .el-pagination {
+    --el-pagination-bg-color: #2a2a2a;
+    --el-pagination-text-color: #c0c0c0;
+    --el-pagination-button-bg-color: #2a2a2a;
+    --el-pagination-hover-color: #409eff;
+
+    .el-pager li {
+      background-color: #2a2a2a;
+      color: #c0c0c0;
+
+      &.is-active {
+        color: #409eff;
+      }
+
+      &:hover {
+        color: #409eff;
+      }
+    }
+
+    button {
+      background-color: #2a2a2a;
+      color: #c0c0c0;
+    }
+  }
+
+  .el-tag {
+    --el-tag-bg-color: #2a2a2a;
+    --el-tag-border-color: #4a4a4a;
+  }
+
+  .el-collapse {
+    --el-collapse-header-bg-color: #1e1e1e;
+    --el-collapse-content-bg-color: #1e1e1e;
+    --el-collapse-border-color: #3a3a3a;
+
+    .el-collapse-item__header {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      border-bottom-color: #3a3a3a;
+    }
+
+    .el-collapse-item__wrap {
+      background-color: #1e1e1e;
+      border-bottom-color: #3a3a3a;
+    }
+
+    .el-collapse-item__content {
+      color: #c0c0c0;
+    }
+  }
+
+  .el-page-header {
+    .el-page-header__left {
+      .el-page-header__back {
+        .el-icon {
+          color: #c0c0c0;
+        }
+      }
+
+      .el-page-header__title {
+        color: #c0c0c0;
+      }
+    }
+
+    .el-page-header__content {
+      color: #e0e0e0;
+    }
+  }
+
+  .el-dropdown-menu {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+
+    .el-dropdown-menu__item {
+      color: #c0c0c0;
+
+      &:hover {
+        background-color: #3a3a3a;
+        color: #e0e0e0;
+      }
+    }
+  }
+
+  .el-tooltip__trigger {
+    .el-button.is-circle {
+      background-color: #2a2a2a;
+      border-color: #4a4a4a;
+      color: #c0c0c0;
+    }
+  }
+
+  .el-empty {
+    .el-empty__description p {
+      color: #909399;
+    }
+  }
+
+  .el-loading-mask {
+    background-color: rgba(20, 20, 20, 0.7);
+  }
+
+  .el-message-box {
+    background-color: #2a2a2a;
+    border-color: #3a3a3a;
+
+    .el-message-box__title {
+      color: #e0e0e0;
+    }
+
+    .el-message-box__message {
+      color: #c0c0c0;
+    }
+  }
+
+  // Card and container backgrounds
+  .card {
+    background: #1e1e1e;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.4);
+    color: #e0e0e0;
+  }
+
+  // Text colors
+  h1, h2, h3, h4, h5, h6 {
+    color: #e0e0e0;
+  }
+
+  p {
+    color: #c0c0c0;
+  }
+
+  // Scrollbar
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 4px;
+
+    &:hover {
+      background: #5a5a5a;
+    }
+  }
+}

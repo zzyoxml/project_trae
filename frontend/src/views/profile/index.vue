@@ -506,7 +506,7 @@ const getLanguageName = (code) => {
           }
 
           &:hover {
-            background: #f5f7fa;
+            background: var(--el-bg-color-page, #f5f7fa);
           }
 
           .recent-icon {

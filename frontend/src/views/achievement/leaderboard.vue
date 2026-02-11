@@ -122,7 +122,7 @@ const getMockLeaderboard = () => [
     padding: 32px 0;
 
     .rank-card {
-      background: white;
+      background: var(--el-bg-color, white);
       padding: 24px;
       border-radius: 12px;
       text-align: center;

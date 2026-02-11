@@ -283,7 +283,7 @@ const getMockBadges = () => [
         text-align: center;
         padding: 16px;
         border-radius: 8px;
-        background: #f5f7fa;
+        background: var(--el-bg-color-page, #f5f7fa);
         transition: all 0.3s;
 
         &:hover {

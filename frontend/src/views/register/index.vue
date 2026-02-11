@@ -162,7 +162,7 @@ const handleRegister = async () => {
 }
 
 .register-container {
-  background: white;
+  background: var(--el-bg-color, white);
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);

@@ -215,7 +215,7 @@ const scoreMessage = computed(() => {
         gap: 16px;
 
         .word-card {
-          background: #f5f7fa;
+          background: var(--el-bg-color-page, #f5f7fa);
           padding: 16px;
           border-radius: 8px;
           cursor: pointer;
@@ -258,7 +258,7 @@ const scoreMessage = computed(() => {
 
       .grammar-content {
         .grammar-card {
-          background: #f5f7fa;
+          background: var(--el-bg-color-page, #f5f7fa);
           padding: 20px;
           border-radius: 8px;
           margin-bottom: 16px;
@@ -274,7 +274,7 @@ const scoreMessage = computed(() => {
           }
 
           .grammar-example {
-            background: white;
+            background: var(--el-bg-color, white);
             padding: 12px;
             border-radius: 4px;
           }
@@ -294,7 +294,7 @@ const scoreMessage = computed(() => {
           font-size: 18px;
           line-height: 1.6;
           padding: 16px;
-          background: #f5f7fa;
+          background: var(--el-bg-color-page, #f5f7fa);
           border-radius: 8px;
         }
 
@@ -316,7 +316,7 @@ const scoreMessage = computed(() => {
         .score-display {
           text-align: center;
           padding: 24px;
-          background: #f5f7fa;
+          background: var(--el-bg-color-page, #f5f7fa);
           border-radius: 8px;
 
           h3 {

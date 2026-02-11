@@ -323,7 +323,7 @@ const getLevelType = (level) => {
             gap: 12px;
             padding: 20px;
             border-radius: 12px;
-            background: #f5f7fa;
+            background: var(--el-bg-color-page, #f5f7fa);
             min-width: 150px;
 
             &.rank-1 {
@@ -388,7 +388,7 @@ const getLevelType = (level) => {
             }
 
             &:hover {
-              background: #f5f7fa;
+              background: var(--el-bg-color-page, #f5f7fa);
             }
 
             &.is-me {

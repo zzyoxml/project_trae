@@ -385,7 +385,7 @@ const handleImageError = (e) => {
           align-items: center;
           gap: 12px;
           padding: 16px;
-          background: #f5f7fa;
+          background: var(--el-bg-color-page, #f5f7fa);
           border-radius: 8px;
 
           .stat-icon {
@@ -422,7 +422,7 @@ const handleImageError = (e) => {
         align-items: center;
         gap: 12px;
         padding: 16px;
-        background: #f5f7fa;
+        background: var(--el-bg-color-page, #f5f7fa);
         border-radius: 8px;
         cursor: pointer;
         transition: all 0.3s;
@@ -530,7 +530,7 @@ const handleImageError = (e) => {
       .recommend-item {
         border-radius: 8px;
         overflow: hidden;
-        background: #f5f7fa;
+        background: var(--el-bg-color-page, #f5f7fa);
         cursor: pointer;
         transition: all 0.3s;
 
@@ -615,7 +615,7 @@ const handleImageError = (e) => {
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          background: #f5f7fa;
+          background: var(--el-bg-color-page, #f5f7fa);
           display: flex;
           align-items: center;
           justify-content: center;
