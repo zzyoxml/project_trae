@@ -294,9 +294,9 @@ public class RecommendationServiceImpl implements IRecommendationService {
         targetSkills.put("speaking", 70);
         learningPath.setTargetSkills(com.alibaba.fastjson2.JSON.toJSONString(targetSkills));
 
-        learningPath.setSuccessRate(0.75); // 预估成功率
+        learningPath.setSuccessRate(new java.math.BigDecimal("0.75")); // 预估成功率
         learningPath.setEnrollmentCount(100); // 初始报名人数
-        learningPath.setRating(5.0);
+        learningPath.setRating(new java.math.BigDecimal("5.0"));
 
         return learningPath;
     }
@@ -315,7 +315,7 @@ public class RecommendationServiceImpl implements IRecommendationService {
                 }}
         );
 
-        String today = DateUtils.getTodayDate();
+        Date today = DateUtils.getNowDate();
 
         for (EduLearningProgress progress : progressList) {
             if (progress.getMasteryLevel() != null && progress.getMasteryLevel() < 80) {
@@ -323,7 +323,7 @@ public class RecommendationServiceImpl implements IRecommendationService {
                 int attemptCount = progress.getAttemptCount();
                 int interval = intervals[Math.min(attemptCount, intervals.length - 1)];
 
-                String nextReview = DateUtils.addDays(today, interval);
+                Date nextReview = DateUtils.addDays(today, interval);
 
                 Map<String, Object> reviewTask = new HashMap<>();
                 reviewTask.put("lessonId", progress.getLessonId());

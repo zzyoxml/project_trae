@@ -45,36 +45,36 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/courses': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       },
       '/vocabulary': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       },
       '/grammar': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       },
       '/achievements': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       },
       '/badges': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       },
       '/posts': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       },
       '/users': {
-        target: 'http://0.0.0.0:3001',
+        target: 'http://localhost:3002',
         changeOrigin: true
       }
     }

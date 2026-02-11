@@ -5,7 +5,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.edu.domain.EduUserProfile;
 import com.ruoyi.edu.mapper.EduUserProfileMapper;
 import com.ruoyi.edu.service.IEduUserService;
-import com.ruoyi.system.domain.SysUser;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.system.service.ISysUserService;
 import org.slf4j.Logger;
@@ -111,7 +111,8 @@ public class EduUserServiceImpl implements IEduUserService {
         }
 
         // 验证邮箱是否已存在
-        if (StringUtils.isNotNull(sysUserMapper.selectUserByEmail(email))) {
+        SysUser existEmailUser = sysUserMapper.checkEmailUnique(email);
+        if (StringUtils.isNotNull(existEmailUser)) {
             throw new ServiceException("邮箱已被注册");
         }
 
@@ -121,12 +122,13 @@ public class EduUserServiceImpl implements IEduUserService {
         user.setNickName(username);
         user.setEmail(email);
         user.setPhonenumber("");
+        user.setPassword(com.ruoyi.common.utils.SecurityUtils.encryptPassword(password));
         // 设置默认角色
         user.setRoles(null);
 
         // 注册用户（使用框架的用户服务）
-        int result = userService.registerUser(user, password);
-        if (result <= 0) {
+        boolean result = userService.registerUser(user);
+        if (!result) {
             throw new ServiceException("用户注册失败");
         }
 
@@ -172,7 +174,7 @@ public class EduUserServiceImpl implements IEduUserService {
         }
 
         // 验证密码
-        if (!userService.matches(password, user.getPassword())) {
+        if (!com.ruoyi.common.utils.SecurityUtils.matchesPassword(password, user.getPassword())) {
             throw new ServiceException("密码错误");
         }
 

@@ -14,8 +14,6 @@ public class EduUserLike extends BaseEntity {
     private Long userId;
     private String likeType;
     private Long targetId;
-    private String createTime;
-
     public Long getId() {
         return id;
     }
@@ -46,13 +44,5 @@ public class EduUserLike extends BaseEntity {
 
     public void setTargetId(Long targetId) {
         this.targetId = targetId;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
     }
 }

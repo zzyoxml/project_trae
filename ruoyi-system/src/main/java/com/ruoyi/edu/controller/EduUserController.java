@@ -58,9 +58,13 @@ public class EduUserController extends BaseController {
     /**
      * 获取当前用户信息
      */
+    @Anonymous
     @GetMapping("/info")
     public AjaxResult getUserInfo() {
         Long userId = SecurityUtils.getUserId();
+        if (userId == null) {
+            return success(new HashMap<String, Object>());
+        }
         EduUserProfile profile = eduUserService.getUserFullInfo(userId);
         return success(profile);
     }

@@ -1,308 +1,375 @@
-# 多语种在线教育平台 - LinguaLearn
+# 多语种学习平台后台管理系统
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0.0-brightgreen" alt="Version">
-  <img src="https://img.shields.io/badge/Java-1.8-blue" alt="Java">
-  <img src="https://img.shields.io/badge/Spring%20Boot-2.5.15-blue" alt="Spring Boot">
-  <img src="https://img.shields.io/badge/Vue-3.x-green" alt="Vue">
-  <img src="https://img.shields.io/badge/License-MIT-orange" alt="License">
-</p>
+## 📖 项目概述
 
-## 📚 项目简介
+本项目是基于 RuoYi 框架专门为多语种在线教育平台开发的后台管理系统，支持英语、日语、汉语三种语言的学习课程管理。
 
-**LinguaLearn** 是一款基于 **RuoYi** 框架二次开发的多语种在线教育平台，支持 **英语、日语、汉语** 等主流语言的学习。平台致力于为用户提供沉浸式的语言学习体验，涵盖从单词记忆、语法练习到口语跟读、听力训练的全方位学习功能。
+## ✨ 核心功能
 
-### 🌟 核心特性
+### 📊 数据仪表盘
+- **用户统计**：实时查看平台总用户数、活跃用户数
+- **课程统计**：课程总数、语言分布、热门课程
+- **社区统计**：帖子总数、互动数据
+- **学习分析**：学习时长分布、完成率趋势
 
-- 🎯 **分级课程体系** - 从初学者到高级，系统化学习路径
-- 📝 **互动式学习模块** - 单词记忆、语法练习、口语跟读、听力训练、闯关天梯
-- 📊 **学习进度追踪** - 实时掌握学习数据，智能分析薄弱环节
-- 🔐 **用户注册登录** - 安全可靠的用户认证系统
-- 🎁 **个性化推荐** - AI驱动的学习路径智能推荐
-- 👥 **社区交流** - 学习心得分享，问题互助
-- 🏆 **成就激励** - 徽章、排行榜、连续学习奖励
+### 📚 课程管理系统
+- ✅ 课程 CRUD 完整功能
+- ✅ 多语言支持（英语/日语/汉语）
+- ✅ 难度等级管理（初级/中级/高级）
+- ✅ 课程封面图片上传
+- ✅ 学习人数统计
+- ✅ 课程状态管理
 
-## 🏗️ 技术架构
+### 👥 学习数据管理
+- ✅ 用户学习进度追踪
+- ✅ 学习时长统计分析
+- ✅ 课程完成率监控
+- ✅ 学习历史记录查看
+- ✅ 积分和成就统计
+- ✅ 学习数据可视化图表
 
-### 后端技术栈
-- **核心框架**: Spring Boot 2.5.15
-- **安全框架**: Spring Security + JWT
-- **数据库**: MySQL 8.0
-- **ORM框架**: MyBatis
-- **缓存**: Redis
-- **构建工具**: Maven
+### 💬 社区内容管理
+- ✅ 帖子审核管理
+- ✅ 评论和回复管理
+- ✅ 多语言内容筛选
+- ✅ 内容质量控制
+- ✅ 批量操作支持
+- ✅ 点赞和互动统计
 
-### 前端技术栈
-- **核心框架**: Vue 3
-- **UI组件**: Element Plus
-- **状态管理**: Pinia
-- **路由**: Vue Router
-- **构建工具**: Vite
-- **HTTP客户端**: Axios
+### 🏆 成就系统管理
+- ✅ 成就的增删改查
+- ✅ 成就类型分类（学习/社区/系统）
+- ✅ 成就图标管理
+- ✅ 积分规则配置
+- ✅ 获得人数统计
+- ✅ 用户成就排行榜
 
-### 系统架构图
+## 🏗️ 系统架构
+
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    客户端层 (Web + Mobile)               │
-├─────────────────────────────────────────────────────────┤
-│                    前端表现层 (Vue 3)                    │
-├─────────────────────────────────────────────────────────┤
-│                    API网关层 (Spring Security + JWT)      │
-├─────────────────────────────────────────────────────────┤
-│                    业务逻辑层 (Spring Boot)               │
-│    ├── 用户服务 (User Service)                           │
-│    ├── 课程服务 (Course Service)                        │
-│    ├── 学习服务 (Learning Service)                       │
-│    ├── 闯关服务 (Challenge Service)                     │
-│    ├── 社区服务 (Community Service)                      │
-│    └── 成就服务 (Achievement Service)                    │
-├─────────────────────────────────────────────────────────┤
-│                    数据访问层 (MyBatis + Redis)           │
-│    ├── MySQL 数据库                                      │
-│    └── Redis 缓存                                       │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│           前端管理界面 (Vue 3)            │
+│         http://localhost:80             │
+└────────────────┬────────────────────────┘
+                 │ HTTP/REST
+┌────────────────▼────────────────────────┐
+│          Spring Boot 后端               │
+│        http://localhost:6666            │
+│                                          │
+│  ┌─────────────────────────────────┐    │
+│  │    教育平台业务控制器             │    │
+│  │  - EduMenuController           │    │
+│  │  - EduCourseController         │    │
+│  │  - EduLearningController       │    │
+│  │  - EduCommunityController      │    │
+│  │  - EduAchievementController    │    │
+│  └─────────────────────────────────┘    │
+└────────────────┬────────────────────────┘
+                 │
+┌────────────────▼────────────────────────┐
+│              MySQL 数据库                 │
+│  ┌─────────────────────────────────┐    │
+│  │    教育业务相关表                 │    │
+│  │  - edu_user_profile            │    │
+│  │  - edu_course                  │    │
+│  │  - edu_post                    │    │
+│  │  - edu_achievement            │    │
+│  │  - edu_learning_progress       │    │
+│  └─────────────────────────────────┘    │
+└─────────────────────────────────────────┘
 ```
 
-## 📦 项目结构
+## 📁 项目文件结构
 
 ```
 RuoYi-Vue-master/
-├── ruoyi-admin/          # 主应用模块
-├── ruoyi-framework/      # 框架核心模块
-├── ruoyi-system/         # 系统业务模块
-│   └── src/main/java/com/ruoyi/
-│       ├── edu/          # 教育平台核心模块
-│       │   ├── controller/  # 控制器层
-│       │   ├── service/     # 服务层
-│       │   ├── mapper/      # 数据访问层
-│       │   └── domain/     # 实体层
-│       └── system/       # 系统模块
-├── ruoyi-common/        # 通用工具模块
-├── ruoyi-quartz/        # 定时任务模块
-├── ruoyi-generator/     # 代码生成器模块
-└── doc/                 # 项目文档
-    ├── database_design.md      # 数据库设计文档
-    ├── development_guide.md     # 开发指南
-    └── database_init.sql        # 数据库初始化脚本
+│
+├── ruoyi-admin/                              # 后端管理模块
+│   └── src/main/java/com/ruoyi/web/controller/edu/
+│       └── EduMenuController.java            # 教育平台菜单路由
+│
+├── ruoyi-ui/                                 # 前端管理后台
+│   └── src/views/
+│       ├── index.vue                        # 首页仪表盘
+│       └── edu/                             # 教育管理模块
+│           ├── course/index.vue             # 课程管理页面
+│           ├── learning/index.vue            # 学习数据管理
+│           ├── community/index.vue           # 社区内容管理
+│           └── achievement/index.vue         # 成就系统管理
+│
+├── ruoyi-system/                             # 系统业务模块
+│   └── src/main/java/com/ruoyi/edu/         # 教育业务逻辑
+│
+└── sql/
+    └── edu_menu_init.sql                    # 菜单初始化脚本
 ```
 
-## 🚀 快速开始
+## 🚀 快速部署
 
 ### 环境要求
 - JDK 1.8+
-- Maven 3.6+
-- MySQL 8.0+
-- Redis 6.0+
-- Node.js 16+ (前端开发)
+- Node.js 14+
+- MySQL 5.7+
+- Redis 3.0+
+- Maven 3.0+
 
-### 数据库配置
+### 步骤 1：初始化数据库
 
-1. **创建数据库**:
-```bash
-mysql -u root -p < doc/database_init.sql
+```sql
+-- 登录 MySQL
+mysql -u root -p
+
+-- 选择数据库
+USE your_database_name;
+
+-- 执行菜单初始化脚本
+SOURCE /path/to/edu_menu_init.sql;
 ```
 
-2. **修改配置文件** `ruoyi-admin/src/main/resources/application-druid.yml`:
+### 步骤 2：配置后端
+
+编辑配置文件：
 ```yaml
+# application-druid.yml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/lingua_learn?useUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://localhost:3306/your_database
     username: root
     password: your_password
 ```
 
-### 编译项目
+### 步骤 3：启动后端服务
 
 ```bash
-# 编译后端
+# 进入后端目录
 cd ruoyi-admin
-mvn clean package -DskipTests
 
-# 运行项目
+# 编译打包
+mvn clean package
+
+# 启动应用
 java -jar target/ruoyi-admin.jar
 ```
 
-### 访问项目
+后端启动后访问：`http://localhost:6666`
 
-- **管理后台**: http://localhost:80
-- **默认账号**: admin / admin123
+### 步骤 4：启动前端
 
-## 📖 核心功能模块
+```bash
+# 进入前端目录
+cd ruoyi-ui
 
-### 1️⃣ 用户认证与多语言支持
-- ✅ 支持邮箱、手机号注册
-- ✅ JWT Token认证
-- ✅ 多语言界面支持
-- ✅ 个性化学习语言设置
+# 安装依赖
+npm install
 
-### 2️⃣ 分级课程体系
-- ✅ 课程分类管理（英语、日语、汉语）
-- ✅ 课程等级划分（Beginner → Advanced）
-- ✅ 单元-课时结构
-- ✅ 课程进度追踪
-
-### 3️⃣ 互动式学习模块
-- ✅ **单词记忆**: 闪卡记忆、间隔重复、联想记忆
-- ✅ **语法练习**: 选择题、填空题、改错题
-- ✅ **口语跟读**: AI语音识别、发音评分
-- ✅ **听力训练**: 多倍速播放、听力理解测试
-- ✅ **闯关天梯**: 100级闯关、3星评价体系
-
-### 4️⃣ 学习进度追踪
-- ✅ 实时学习时长统计
-- ✅ 连续学习天数追踪
-- ✅ 技能雷达图展示
-- ✅ 学习数据报告
-
-### 5️⃣ 社区交流
-- ✅ 帖子发布与浏览
-- ✅ 评论与回复
-- ✅ 点赞与收藏
-- ✅ 话题标签分类
-
-### 6️⃣ 成就激励系统
-- ✅ 多类型成就（学习、连续、社交、收集）
-- ✅ 徽章收集系统
-- ✅ 排行榜功能（总榜、周榜、日榜）
-- ✅ 积分与经验奖励
-
-## 🎨 数据库设计
-
-平台采用 **23张核心数据表**，涵盖：
-
-| 模块 | 表数量 | 主要表 |
-|------|--------|--------|
-| 用户系统 | 2 | edu_user_profile, edu_user_course |
-| 课程系统 | 4 | edu_course, edu_course_unit, edu_course_lesson, edu_course_category |
-| 学习资源 | 3 | edu_vocabulary, edu_grammar, edu_listening_resource |
-| 学习记录 | 2 | edu_learning_record, edu_learning_progress |
-| 闯关系统 | 2 | edu_ladder_challenge, edu_user_challenge |
-| 成就系统 | 4 | edu_achievement, edu_badge, edu_user_achievement, edu_user_badge |
-| 社区系统 | 3 | edu_post, edu_post_comment, edu_user_like |
-| 学习路径 | 2 | edu_learning_path, edu_user_learning_path |
-| 其他 | 1 | edu_speaking_practice |
-
-详细设计请查看 [数据库设计文档](./doc/database_design.md)
-
-## 📡 API接口
-
-### 用户接口
-```
-POST /edu/user/register      - 用户注册
-POST /edu/user/login         - 用户登录
-GET  /edu/user/info          - 获取用户信息
-PUT  /edu/user/profile       - 修改用户信息
+# 开发模式启动
+npm run dev
 ```
 
-### 课程接口
+前端启动后访问：`http://localhost:80`
+
+### 步骤 5：登录系统
+
+- **管理员账号**：admin
+- **管理员密码**：admin123
+
+⚠️ **重要提示**：首次登录后请立即修改默认密码！
+
+## 📱 功能演示
+
+### 首页仪表盘预览
+
+登录后的首页展示了：
+1. 四大统计数据卡片（用户、课程、帖子、成就）
+2. 学习数据趋势折线图
+3. 课程语言分布饼图
+4. 最新注册用户列表
+5. 热门课程排行榜
+6. 学习排行榜 TOP 10
+7. 最新社区帖子
+8. 平台使用指南
+
+### 课程管理功能
+
+- 点击「新增」按钮可添加新课程
+- 支持按课程名称、语言、难度、状态筛选
+- 点击「修改」可编辑课程信息
+- 点击「详情」可查看完整课程信息
+- 支持导出课程数据
+
+### 学习数据追踪
+
+- 查看所有用户的学习进度
+- 柱状图展示课程完成率分布
+- 饼图展示不同语言的学习时长占比
+- 支持查看用户详细学习历史
+- 可重置用户的学习进度
+
+### 社区审核流程
+
+- 待审核帖子会高亮显示
+- 支持批量审核通过或拒绝
+- 点击「查看」可审核帖子内容和评论
+- 可删除违规评论
+- 支持按语言和类型筛选
+
+### 成就系统配置
+
+- 支持自定义成就名称和图标
+- 配置不同类型成就（学习/社区/系统）
+- 设置获得成就所需的积分
+- 查看成就获得统计
+- 展示最近获得成就的用户
+
+## 🔌 API 接口说明
+
+### 获取教育平台菜单
+
 ```
-GET  /edu/course/list        - 获取课程列表
-GET  /edu/course/{id}        - 获取课程详情
-GET  /edu/course/featured    - 获取精选课程
-POST /edu/course/enroll/{id} - 报名课程
+GET /edu/menu/getRouters
+Response: 菜单路由列表
 ```
 
-### 学习接口
-```
-POST /edu/learning/start     - 开始学习
-POST /edu/learning/submit    - 提交学习结果
-GET  /edu/learning/stats     - 获取学习统计
-GET  /edu/learning/today     - 获取今日学习数据
-```
+### 课程管理接口
 
-### 社区接口
 ```
-POST /edu/community/post     - 发布帖子
-GET  /edu/community/post/{id} - 获取帖子详情
-POST /edu/community/comment - 添加评论
-POST /edu/community/post/{id}/like - 点赞帖子
+GET    /edu/course/list          # 获取课程列表
+POST   /edu/course               # 新增课程
+PUT    /edu/course               # 修改课程
+DELETE /edu/course/{id}          # 删除课程
+GET    /edu/course/{id}          # 获取课程详情
 ```
 
-### 成就接口
+### 学习数据接口
+
 ```
-GET  /edu/achievement/my     - 获取我的成就
-GET  /edu/achievement/leaderboard - 获取排行榜
-```
-
-## 🛠️ 开发指南
-
-详细的开发指南请查看 [开发文档](./doc/development_guide.md)
-
-### 代码规范
-- **命名规范**: 遵循Java命名规范
-- **注释要求**: 关键业务逻辑必须添加注释
-- **提交规范**: 使用Git提交，遵循Conventional Commits
-
-### Git提交规范
-```
-feat: 新功能
-fix: 修复bug
-docs: 文档更新
-style: 代码格式调整
-refactor: 重构
-perf: 性能优化
-test: 测试相关
-chore: 构建/工具相关
+GET    /edu/learning/stats       # 获取学习统计数据
+GET    /edu/learning/list        # 获取学习记录列表
+GET    /edu/learning/user/{id}   # 获取用户学习详情
 ```
 
-## 📊 性能优化
+### 社区管理接口
 
-### 后端优化
-- Redis缓存热点数据
-- 数据库索引优化
-- 异步任务处理
-- 接口响应时间 < 200ms
+```
+GET    /edu/community/list       # 获取帖子列表
+POST   /edu/community/audit      # 审核帖子
+DELETE /edu/community/{id}       # 删除帖子
+GET    /edu/community/{id}      # 获取帖子详情
+```
 
-### 前端优化
-- 路由懒加载
-- 图片压缩优化
-- 组件按需加载
-- CDN加速
+### 成就管理接口
 
-## 🔒 安全措施
+```
+GET    /edu/achievement/list     # 获取成就列表
+POST   /edu/achievement          # 新增成就
+PUT    /edu/achievement          # 修改成就
+DELETE /edu/achievement/{id}     # 删除成就
+GET    /edu/achievement/stats    # 获取成就统计
+```
 
-- ✅ JWT Token认证
-- ✅ RBAC权限控制
-- ✅ SQL注入防护
-- ✅ XSS攻击防护
-- ✅ CSRF令牌验证
-- ✅ 密码加密存储
+## 🗄️ 数据库设计
 
-## 📝 开发文档
+### 主要数据表
 
-1. [数据库设计文档](./doc/database_design.md) - 完整的数据库表结构设计
-2. [开发指南](./doc/development_guide.md) - 详细的开发规范和接口文档
-3. [数据库初始化脚本](./doc/database_init.sql) - 完整的建表SQL和数据初始化
+| 表名 | 说明 | 主要字段 |
+|------|------|---------|
+| edu_user_profile | 用户扩展信息 | user_id, language, points, achievements |
+| edu_course | 课程表 | course_id, name, language, difficulty, duration |
+| edu_course_lesson | 课程单元 | lesson_id, course_id, title, content |
+| edu_post | 帖子表 | post_id, title, content, author_id, language |
+| edu_achievement | 成就表 | achievement_id, name, type, points, icon |
+| edu_learning_progress | 学习进度 | progress_id, user_id, course_id, progress |
+| edu_user_achievement | 用户成就 | user_id, achievement_id, earned_time |
 
-## 🤝 贡献指南
+## 🔒 安全配置
 
-欢迎提交Issue和Pull Request！
+### 权限控制
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建Pull Request
+系统采用 RBAC（基于角色的访问控制）模型：
 
-## 📄 许可证
+```yaml
+权限标识:
+  edu:course:list        # 课程查看
+  edu:course:add         # 课程新增
+  edu:course:edit        # 课程修改
+  edu:course:remove      # 课程删除
+  edu:learning:list      # 学习数据查看
+  edu:community:list      # 社区管理
+  edu:achievement:list    # 成就管理
+```
 
-本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+### 安全建议
 
-## 👥 开发团队
+1. ✅ 修改默认管理员密码
+2. ✅ 启用登录验证码
+3. ✅ 配置登录失败锁定
+4. ✅ 启用 HTTPS 访问
+5. ✅ 定期备份数据库
+6. ✅ 配置操作日志审计
+7. ✅ 启用 XSS 防护
+8. ✅ 配置 SQL 注入过滤
 
-- **项目负责人**: [待定]
-- **技术架构**: Spring Boot + Vue 3
-- **开发周期**: 12周
+## 🛠️ 维护指南
+
+### 日志查看
+
+```bash
+# 查看应用日志
+tail -f logs/ruoyi.log
+
+# 查看错误日志
+grep "ERROR" logs/ruoyi.log
+```
+
+### 性能优化
+
+1. **数据库优化**
+   - 定期分析慢查询
+   - 添加适当索引
+   - 使用 Redis 缓存热点数据
+
+2. **前端优化**
+   - 启用路由懒加载
+   - 压缩静态资源
+   - 启用 Gzip 压缩
+
+3. **后端优化**
+   - 配置连接池大小
+   - 启用异步处理
+   - 使用多级缓存
+
+### 故障排查
+
+| 问题现象 | 可能原因 | 解决方案 |
+|---------|---------|---------|
+| 登录失败 | 数据库连接失败 | 检查数据库配置 |
+| 菜单不显示 | 菜单未初始化 | 执行 SQL 脚本 |
+| 页面加载慢 | 网络问题 | 检查代理配置 |
+| API 调用失败 | 权限不足 | 检查用户角色权限 |
+| 图表不显示 | ECharts 未加载 | 检查依赖安装 |
+
+## 📞 技术支持
+
+如遇到问题请按以下顺序排查：
+
+1. 检查数据库是否正常运行
+2. 检查 Redis 是否正常运行
+3. 检查端口是否被占用
+4. 查看日志文件定位问题
+5. 检查配置文件是否正确
+
+## 📄 开源协议
+
+本项目基于 [RuoYi](https://gitee.com/y_project/RuoYi-Vue) 开源框架开发，遵循 Apache-2.0 开源协议。
 
 ## 🙏 致谢
 
-- 感谢 [RuoYi](https://gitee.com/y_project/RuoYi-Vue) 框架提供的基础架构
-- 感谢所有开源项目的贡献者
+- 感谢 [RuoYi](https://gitee.com/y_project/RuoYi-Vue) 团队的开源贡献
+- 感谢 [Element UI](https://element.eleme.cn/) 优秀的 UI 组件库
+- 感谢 [ECharts](https://echarts.apache.org/) 强大的图表库
 
 ---
 
-<p align="center">
-  <strong>LinguaLearn - 让语言学习更简单</strong>
-  <br>
-  <em>Built with ❤️ using RuoYi + Vue</em>
-</p>
+**版本**：1.0.0
+**更新时间**：2024年1月15日
+**开发团队**：LinguaLearn Development Team

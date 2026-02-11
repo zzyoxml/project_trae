@@ -483,7 +483,7 @@ public class SpeechRecognitionServiceImpl implements ISpeechRecognitionService {
                 }
             }
 
-            wordScores.put(refWord, Math.round(score));
+            wordScores.put(refWord, (double) Math.round(score));
         }
 
         return wordScores;

@@ -1,24 +1,33 @@
 @echo off
+chcp 65001 >nul
 cd /d "%~dp0"
 
-echo [1/4] Starting Redis...
-start "Redis" cmd /k "cd /d E:\redis-64.3.0.503 && redis-server.exe redis.windows.conf"
+echo ========================================
+echo   Starting All Services
+echo ========================================
+echo.
 
-echo [2/4] Waiting for Redis...
-timeout /t 3 /nobreak >nul
+echo [1/4] Starting Mock API (Port 3002)...
+start "MockAPI" cmd /k "cd /d "%~dp0frontend" && npx json-server db.json --port 3002"
 
-echo [3/4] Starting Backend...
-start "Backend" cmd /k "java -jar ruoyi-admin\target\ruoyi-admin.jar"
+echo [2/4] Starting Frontend - LinguaLearn (Port 3000)...
+start "LinguaLearn" cmd /k "cd /d "%~dp0frontend" && npm run dev"
 
-echo [4/4] Starting Frontend...
-cd ruoyi-ui
-set NODE_OPTIONS=--openssl-legacy-provider
-start "Frontend" cmd /k "npm run dev"
-cd ..
+echo [3/4] Starting Backend (Port 6666)...
+start "Backend" cmd /k "cd /d "%~dp0" && java -jar ruoyi-admin\target\ruoyi-admin.jar"
+
+echo [4/4] Starting RuoYi Admin Frontend (Port 66)...
+start "RuoYiAdmin" cmd /k "cd /d "%~dp0ruoyi-ui" && set NODE_OPTIONS=--openssl-legacy-provider && npm run dev"
 
 echo.
-echo ===============================
-echo   Frontend: http://localhost:3000
-echo   Backend:  http://localhost:3001
-echo ===============================
-pause
+echo ========================================
+echo   All Services Started
+echo ========================================
+echo   Mock API:      http://localhost:3002
+echo   LinguaLearn:   http://localhost:3000
+echo   Backend:       http://localhost:6666
+echo   RuoYi Admin:   http://localhost:66
+echo ========================================
+echo.
+echo Press any key to close this window...
+pause >nul

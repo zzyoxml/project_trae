@@ -199,7 +199,6 @@ public class EduCommunityServiceImpl implements IEduCommunityService {
         like.setUserId(userId);
         like.setLikeType("post");
         like.setTargetId(postId);
-        like.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
         likeMapper.insertEduUserLike(like);
 
@@ -340,7 +339,6 @@ public class EduCommunityServiceImpl implements IEduCommunityService {
         like.setUserId(userId);
         like.setLikeType("comment");
         like.setTargetId(commentId);
-        like.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
         likeMapper.insertEduUserLike(like);
 
