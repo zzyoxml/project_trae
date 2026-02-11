@@ -179,27 +179,39 @@ const handleImageError = (e) => {
 
 <style lang="scss" scoped>
 .course-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  overflow-x: hidden;
+
   h1 {
-    font-size: 32px;
-    margin-bottom: 24px;
+    font-size: 28px;
+    margin-bottom: 20px;
   }
 
   .filters {
     display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     align-items: center;
 
     .el-select {
-      min-width: 150px;
+      min-width: 120px;
+      max-width: 100%;
+      flex: 0 0 auto;
+    }
+
+    .el-button {
+      flex-shrink: 0;
     }
   }
 
   .course-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
 
     .course-card {
       background: white;
@@ -210,7 +222,7 @@ const handleImageError = (e) => {
       transition: all 0.3s;
 
       &:hover {
-        transform: translateY(-8px);
+        transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
       }
 
@@ -232,9 +244,9 @@ const handleImageError = (e) => {
 
         .course-level {
           position: absolute;
-          top: 12px;
-          right: 12px;
-          padding: 4px 12px;
+          top: 8px;
+          right: 8px;
+          padding: 2px 10px;
           border-radius: 12px;
           font-size: 12px;
           color: white;
@@ -246,9 +258,9 @@ const handleImageError = (e) => {
 
         .course-language {
           position: absolute;
-          top: 12px;
-          left: 12px;
-          padding: 4px 8px;
+          top: 8px;
+          left: 8px;
+          padding: 2px 8px;
           border-radius: 4px;
           font-size: 12px;
           color: white;
@@ -257,11 +269,11 @@ const handleImageError = (e) => {
       }
 
       .course-info {
-        padding: 16px;
+        padding: 14px;
 
         h3 {
-          font-size: 18px;
-          margin-bottom: 8px;
+          font-size: 16px;
+          margin-bottom: 6px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -269,9 +281,9 @@ const handleImageError = (e) => {
 
         .course-desc {
           color: #909399;
-          font-size: 14px;
-          margin-bottom: 12px;
-          height: 40px;
+          font-size: 13px;
+          margin-bottom: 10px;
+          height: 36px;
           overflow: hidden;
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -280,9 +292,10 @@ const handleImageError = (e) => {
 
         .course-meta {
           display: flex;
-          gap: 16px;
+          gap: 12px;
           color: #909399;
-          font-size: 14px;
+          font-size: 13px;
+          flex-wrap: wrap;
 
           span {
             display: flex;
@@ -302,7 +315,142 @@ const handleImageError = (e) => {
   .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 32px;
+    margin-top: 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+
+    :deep(.el-pagination) {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .course-page {
+    padding: 12px;
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .filters {
+      gap: 8px;
+
+      .el-select {
+        min-width: 0;
+        width: calc(50% - 4px);
+        flex: 0 0 calc(50% - 4px);
+      }
+
+      .el-button {
+        width: 100%;
+        flex: 0 0 100%;
+      }
+    }
+
+    .course-list {
+      grid-template-columns: 1fr;
+      gap: 12px;
+
+      .course-card {
+        display: flex;
+        flex-direction: row;
+
+        .course-cover {
+          width: 120px;
+          height: auto;
+          min-height: 100px;
+          flex-shrink: 0;
+
+          .course-level {
+            padding: 1px 6px;
+            font-size: 10px;
+          }
+
+          .course-language {
+            padding: 1px 5px;
+            font-size: 10px;
+          }
+        }
+
+        .course-info {
+          flex: 1;
+          min-width: 0;
+          padding: 10px;
+
+          h3 {
+            font-size: 14px;
+          }
+
+          .course-desc {
+            font-size: 12px;
+            height: 30px;
+            -webkit-line-clamp: 2;
+          }
+
+          .course-meta {
+            gap: 8px;
+            font-size: 11px;
+          }
+        }
+      }
+    }
+
+    .pagination {
+      :deep(.el-pagination) {
+        .el-pagination__sizes,
+        .el-pagination__jump {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .course-page {
+    padding: 8px;
+
+    h1 {
+      font-size: 20px;
+    }
+
+    .filters {
+      .el-select {
+        width: 100%;
+        flex: 0 0 100%;
+      }
+    }
+
+    .course-list {
+      .course-card {
+        .course-cover {
+          width: 100px;
+          min-height: 80px;
+        }
+
+        .course-info {
+          padding: 8px;
+
+          h3 {
+            font-size: 13px;
+          }
+
+          .course-desc {
+            display: none;
+          }
+
+          .course-meta {
+            gap: 6px;
+            font-size: 10px;
+          }
+        }
+      }
+    }
   }
 }
 </style>
