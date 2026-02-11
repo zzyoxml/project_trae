@@ -62,7 +62,11 @@ export const useUserStore = defineStore('user', {
     async login(loginForm) {
       try {
         const response = await login(loginForm)
-        const { token, user } = response.data
+        const { code, token, user, msg } = response.data
+        
+        if (code !== 200) {
+          throw new Error(msg || '登录失败')
+        }
         
         this.token = token
         setToken(token)

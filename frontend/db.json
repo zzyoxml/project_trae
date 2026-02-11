@@ -61,6 +61,19 @@
       "completedCourses": 0,
       "achievements": 0,
       "createdAt": "2026-05-11T10:12:41.108Z"
+    },
+    {
+      "id": "FGxHyFEzLzI",
+      "username": "111222",
+      "password": "111222",
+      "nickname": "111222",
+      "email": "111222@qq.com",
+      "level": 1,
+      "totalMinutes": 0,
+      "streakDays": 0,
+      "completedCourses": 0,
+      "achievements": 0,
+      "createdAt": "2026-02-11T14:35:08.239Z"
     }
   ],
   "courses": [
