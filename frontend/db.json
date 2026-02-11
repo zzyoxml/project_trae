@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "admin",
       "nickName": "管理员",
       "email": "admin@example.com",
@@ -13,7 +13,7 @@
       "achievements": 25
     },
     {
-      "id": 2,
+      "id": "2",
       "username": "learner1",
       "nickName": "语言爱好者",
       "email": "learner@example.com",
@@ -25,7 +25,7 @@
       "achievements": 10
     },
     {
-      "id": 3,
+      "id": "3",
       "username": "123",
       "nickName": "测试用户",
       "email": "test@example.com",
@@ -35,6 +35,32 @@
       "streakDays": 5,
       "completedCourses": 2,
       "achievements": 8
+    },
+    {
+      "id": "_pVNdNejXUo",
+      "username": "XMG",
+      "password": "123456",
+      "nickname": "XMG",
+      "email": "3057508735@qq.com",
+      "level": 1,
+      "totalMinutes": 0,
+      "streakDays": 0,
+      "completedCourses": 0,
+      "achievements": 0,
+      "createdAt": "2026-05-11T10:12:01.208Z"
+    },
+    {
+      "id": "Lsyapq2MWUg",
+      "username": "不不不",
+      "password": "300000000@qq.com",
+      "nickname": "不不不",
+      "email": "300000000@qq.com",
+      "level": 1,
+      "totalMinutes": 0,
+      "streakDays": 0,
+      "completedCourses": 0,
+      "achievements": 0,
+      "createdAt": "2026-05-11T10:12:41.108Z"
     }
   ],
   "courses": [
@@ -55,20 +81,46 @@
           "unitId": 1,
           "unitName": "第一单元：问候语",
           "lessons": [
-            {"lessonId": 101, "lessonName": "Hello和Good morning", "duration": 30, "completed": false},
-            {"lessonId": 102, "lessonName": "Good afternoon和Good evening", "duration": 30, "completed": false},
-            {"lessonId": 103, "lessonName": "How are you?", "duration": 35, "completed": false}
+            {
+              "lessonId": 101,
+              "lessonName": "Hello和Good morning",
+              "duration": 30,
+              "completed": false
+            },
+            {
+              "lessonId": 102,
+              "lessonName": "Good afternoon和Good evening",
+              "duration": 30,
+              "completed": false
+            },
+            {
+              "lessonId": 103,
+              "lessonName": "How are you?",
+              "duration": 35,
+              "completed": false
+            }
           ]
         },
         {
           "unitId": 2,
           "unitName": "第二单元：自我介绍",
           "lessons": [
-            {"lessonId": 104, "lessonName": "My name is...", "duration": 35, "completed": false},
-            {"lessonId": 105, "lessonName": "Nice to meet you", "duration": 30, "completed": false}
+            {
+              "lessonId": 104,
+              "lessonName": "My name is...",
+              "duration": 35,
+              "completed": false
+            },
+            {
+              "lessonId": 105,
+              "lessonName": "Nice to meet you",
+              "duration": 30,
+              "completed": false
+            }
           ]
         }
-      ]
+      ],
+      "id": "Ww6Asj65z-E"
     },
     {
       "courseId": 2,
@@ -87,12 +139,28 @@
           "unitId": 3,
           "unitName": "第一章：あ行到た行",
           "lessons": [
-            {"lessonId": 201, "lessonName": "あいうえお - 元音", "duration": 30, "completed": false},
-            {"lessonId": 202, "lessonName": "かきくけこ - K行", "duration": 35, "completed": false},
-            {"lessonId": 203, "lessonName": "さしすせそ - S行", "duration": 35, "completed": false}
+            {
+              "lessonId": 201,
+              "lessonName": "あいうえお - 元音",
+              "duration": 30,
+              "completed": false
+            },
+            {
+              "lessonId": 202,
+              "lessonName": "かきくけこ - K行",
+              "duration": 35,
+              "completed": false
+            },
+            {
+              "lessonId": 203,
+              "lessonName": "さしすせそ - S行",
+              "duration": 35,
+              "completed": false
+            }
           ]
         }
-      ]
+      ],
+      "id": "THahnl09EbE"
     },
     {
       "courseId": 3,
@@ -111,12 +179,28 @@
           "unitId": 4,
           "unitName": "第一章：单韵母",
           "lessons": [
-            {"lessonId": 301, "lessonName": "a o e - 基本元音", "duration": 30, "completed": false},
-            {"lessonId": 302, "lessonName": "i u ü - 复杂元音", "duration": 35, "completed": false},
-            {"lessonId": 303, "lessonName": "声调练习", "duration": 40, "completed": false}
+            {
+              "lessonId": 301,
+              "lessonName": "a o e - 基本元音",
+              "duration": 30,
+              "completed": false
+            },
+            {
+              "lessonId": 302,
+              "lessonName": "i u ü - 复杂元音",
+              "duration": 35,
+              "completed": false
+            },
+            {
+              "lessonId": 303,
+              "lessonName": "声调练习",
+              "duration": 40,
+              "completed": false
+            }
           ]
         }
-      ]
+      ],
+      "id": "RObclFwni_8"
     },
     {
       "courseId": 4,
@@ -130,7 +214,8 @@
       "totalDuration": 800,
       "isFeatured": false,
       "coverImage": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Professional+English+intermediate+daily+conversation+course+cover+image%2C+modern+design+with+British+and+American+culture+elements%2C+London+Big+Ben+and+New+York+Statue+of+Liberty+silhouettes%2C+people+having+conversations+in+cafes+and+offices%2C+speech+bubbles+with+English+text%2C+business+and+casual+settings%2C+vibrant+professional+visual+style&image_size=landscape_4_3",
-      "units": []
+      "units": [],
+      "id": "WYZQYVCYWQ4"
     },
     {
       "courseId": 5,
@@ -144,7 +229,8 @@
       "totalDuration": 1200,
       "isFeatured": true,
       "coverImage": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Professional+Japanese+JLPT+N3+exam+preparation+course+cover+image%2C+modern+design+with+Japanese+theme%2C+JLPT+exam+materials+and+textbooks+floating%2C+Japanese+characters+and+kanji+writing%2C+Tokyo+cityscape+silhouette%2C+study+desk+with+laptop+and+notebooks%2C+passing+exam+with+high+score+concept%2C+motivational+educational+style&image_size=landscape_4_3",
-      "units": []
+      "units": [],
+      "id": "0e9wNq9Xudc"
     },
     {
       "courseId": 6,
@@ -158,80 +244,406 @@
       "totalDuration": 1050,
       "isFeatured": false,
       "coverImage": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Professional+Chinese+HSK+4+exam+preparation+course+cover+image%2C+modern+design+with+Chinese+red+and+gold+theme%2C+HSK+exam+materials+and+Chinese+characters+floating%2C+Great+Wall+and+modern+Beijing+skyline%2C+textbooks+and+pencils+on+study+desk%2C+passing+exam+success+concept+with+gold+medal%2C+motivational+educational+style&image_size=landscape_4_3",
-      "units": []
+      "units": [],
+      "id": "w8DQHjD5PRI"
     }
   ],
   "vocabulary": {
     "en": [
-      {"id": 1, "word": "hello", "phonetic": "[həˈloʊ]", "translation": "你好", "example": "Hello, how are you?"},
-      {"id": 2, "word": "goodbye", "phonetic": "[ɡʊdˈbaɪ]", "translation": "再见", "example": "Goodbye, see you tomorrow!"},
-      {"id": 3, "word": "thank you", "phonetic": "[θæŋk ju]", "translation": "谢谢", "example": "Thank you for your help."},
-      {"id": 4, "word": "please", "phonetic": "[pliːz]", "translation": "请", "example": "Please sit down."},
-      {"id": 5, "word": "yes", "phonetic": "[jɛs]", "translation": "是的", "example": "Yes, I understand."},
-      {"id": 6, "word": "no", "phonetic": "[noʊ]", "translation": "不", "example": "No, I don't think so."},
-      {"id": 7, "word": "book", "phonetic": "[bʊk]", "translation": "书", "example": "This is an interesting book."},
-      {"id": 8, "word": "water", "phonetic": "[ˈwɔːtər]", "translation": "水", "example": "I want to drink some water."},
-      {"id": 9, "word": "food", "phonetic": "[fuːd]", "translation": "食物", "example": "The food is delicious."},
-      {"id": 10, "word": "friend", "phonetic": "[frɛnd]", "translation": "朋友", "example": "She is my best friend."}
+      {
+        "id": 1,
+        "word": "hello",
+        "phonetic": "[həˈloʊ]",
+        "translation": "你好",
+        "example": "Hello, how are you?"
+      },
+      {
+        "id": 2,
+        "word": "goodbye",
+        "phonetic": "[ɡʊdˈbaɪ]",
+        "translation": "再见",
+        "example": "Goodbye, see you tomorrow!"
+      },
+      {
+        "id": 3,
+        "word": "thank you",
+        "phonetic": "[θæŋk ju]",
+        "translation": "谢谢",
+        "example": "Thank you for your help."
+      },
+      {
+        "id": 4,
+        "word": "please",
+        "phonetic": "[pliːz]",
+        "translation": "请",
+        "example": "Please sit down."
+      },
+      {
+        "id": 5,
+        "word": "yes",
+        "phonetic": "[jɛs]",
+        "translation": "是的",
+        "example": "Yes, I understand."
+      },
+      {
+        "id": 6,
+        "word": "no",
+        "phonetic": "[noʊ]",
+        "translation": "不",
+        "example": "No, I don't think so."
+      },
+      {
+        "id": 7,
+        "word": "book",
+        "phonetic": "[bʊk]",
+        "translation": "书",
+        "example": "This is an interesting book."
+      },
+      {
+        "id": 8,
+        "word": "water",
+        "phonetic": "[ˈwɔːtər]",
+        "translation": "水",
+        "example": "I want to drink some water."
+      },
+      {
+        "id": 9,
+        "word": "food",
+        "phonetic": "[fuːd]",
+        "translation": "食物",
+        "example": "The food is delicious."
+      },
+      {
+        "id": 10,
+        "word": "friend",
+        "phonetic": "[frɛnd]",
+        "translation": "朋友",
+        "example": "She is my best friend."
+      }
     ],
     "ja": [
-      {"id": 101, "word": "こんにちは", "phonetic": "[konnichiwa]", "translation": "你好", "example": "こんにちは、元気ですか？"},
-      {"id": 102, "word": "さようなら", "phonetic": "[sayounara]", "translation": "再见", "example": "さようなら、また会いましょう。"},
-      {"id": 103, "word": "ありがとう", "phonetic": "[arigatou]", "translation": "谢谢", "example": "ありがとうございます！"},
-      {"id": 104, "word": "すみません", "phonetic": "[sumimasen]", "translation": "对不起/请问", "example": "すみません、駅はどこですか？"},
-      {"id": 105, "word": "はい", "phonetic": "[hai]", "translation": "是的/好的", "example": "はい、わかりました。"},
-      {"id": 106, "word": "いいえ", "phonetic": "[iie]", "translation": "不", "example": "いいえ、違います。"},
-      {"id": 107, "word": "本", "phonetic": "[hon]", "translation": "书", "example": "この本很好看です。"},
-      {"id": 108, "word": "水", "phonetic": "[mizu]", "translation": "水", "example": "水をください。"},
-      {"id": 109, "word": "友達", "phonetic": "[tomodachi]", "translation": "朋友", "example": "友達と映画を見ました。"},
-      {"id": 110, "word": "先生", "phonetic": "[sensei]", "translation": "老师", "example": "先生が優しいです。"}
+      {
+        "id": 101,
+        "word": "こんにちは",
+        "phonetic": "[konnichiwa]",
+        "translation": "你好",
+        "example": "こんにちは、元気ですか？"
+      },
+      {
+        "id": 102,
+        "word": "さようなら",
+        "phonetic": "[sayounara]",
+        "translation": "再见",
+        "example": "さようなら、また会いましょう。"
+      },
+      {
+        "id": 103,
+        "word": "ありがとう",
+        "phonetic": "[arigatou]",
+        "translation": "谢谢",
+        "example": "ありがとうございます！"
+      },
+      {
+        "id": 104,
+        "word": "すみません",
+        "phonetic": "[sumimasen]",
+        "translation": "对不起/请问",
+        "example": "すみません、駅はどこですか？"
+      },
+      {
+        "id": 105,
+        "word": "はい",
+        "phonetic": "[hai]",
+        "translation": "是的/好的",
+        "example": "はい、わかりました。"
+      },
+      {
+        "id": 106,
+        "word": "いいえ",
+        "phonetic": "[iie]",
+        "translation": "不",
+        "example": "いいえ、違います。"
+      },
+      {
+        "id": 107,
+        "word": "本",
+        "phonetic": "[hon]",
+        "translation": "书",
+        "example": "この本很好看です。"
+      },
+      {
+        "id": 108,
+        "word": "水",
+        "phonetic": "[mizu]",
+        "translation": "水",
+        "example": "水をください。"
+      },
+      {
+        "id": 109,
+        "word": "友達",
+        "phonetic": "[tomodachi]",
+        "translation": "朋友",
+        "example": "友達と映画を見ました。"
+      },
+      {
+        "id": 110,
+        "word": "先生",
+        "phonetic": "[sensei]",
+        "translation": "老师",
+        "example": "先生が優しいです。"
+      }
     ],
     "zh": [
-      {"id": 201, "word": "你好", "phonetic": "[nǐ hǎo]", "translation": "hello", "example": "你好，很高兴认识你！"},
-      {"id": 202, "word": "再见", "phonetic": "[zài jiàn]", "translation": "goodbye", "example": "再见，明天见！"},
-      {"id": 203, "word": "谢谢", "phonetic": "[xiè xiè]", "translation": "thank you", "example": "谢谢你的帮助。"},
-      {"id": 204, "word": "对不起", "phonetic": "[duì bù qǐ]", "translation": "sorry", "example": "对不起，我来晚了。"},
-      {"id": 205, "word": "是", "phonetic": "[shì]", "translation": "yes / to be", "example": "是的，我明白了。"},
-      {"id": 206, "word": "不", "phonetic": "[bù]", "translation": "no / not", "example": "不，不是这样的。"},
-      {"id": 207, "word": "书", "phonetic": "[shū]", "translation": "book", "example": "这本书很有趣。"},
-      {"id": 208, "word": "水", "phonetic": "[shuǐ]", "translation": "water", "example": "我想喝一杯水。"},
-      {"id": 209, "word": "朋友", "phonetic": "[péng yǒu]", "translation": "friend", "example": "她是我最好的朋友。"},
-      {"id": 210, "word": "老师", "phonetic": "[lǎo shī]", "translation": "teacher", "example": "老师讲课很好。"}
+      {
+        "id": 201,
+        "word": "你好",
+        "phonetic": "[nǐ hǎo]",
+        "translation": "hello",
+        "example": "你好，很高兴认识你！"
+      },
+      {
+        "id": 202,
+        "word": "再见",
+        "phonetic": "[zài jiàn]",
+        "translation": "goodbye",
+        "example": "再见，明天见！"
+      },
+      {
+        "id": 203,
+        "word": "谢谢",
+        "phonetic": "[xiè xiè]",
+        "translation": "thank you",
+        "example": "谢谢你的帮助。"
+      },
+      {
+        "id": 204,
+        "word": "对不起",
+        "phonetic": "[duì bù qǐ]",
+        "translation": "sorry",
+        "example": "对不起，我来晚了。"
+      },
+      {
+        "id": 205,
+        "word": "是",
+        "phonetic": "[shì]",
+        "translation": "yes / to be",
+        "example": "是的，我明白了。"
+      },
+      {
+        "id": 206,
+        "word": "不",
+        "phonetic": "[bù]",
+        "translation": "no / not",
+        "example": "不，不是这样的。"
+      },
+      {
+        "id": 207,
+        "word": "书",
+        "phonetic": "[shū]",
+        "translation": "book",
+        "example": "这本书很有趣。"
+      },
+      {
+        "id": 208,
+        "word": "水",
+        "phonetic": "[shuǐ]",
+        "translation": "water",
+        "example": "我想喝一杯水。"
+      },
+      {
+        "id": 209,
+        "word": "朋友",
+        "phonetic": "[péng yǒu]",
+        "translation": "friend",
+        "example": "她是我最好的朋友。"
+      },
+      {
+        "id": 210,
+        "word": "老师",
+        "phonetic": "[lǎo shī]",
+        "translation": "teacher",
+        "example": "老师讲课很好。"
+      }
     ]
   },
   "grammar": {
     "en": [
-      {"id": 1, "title": "一般现在时", "explanation": "表示经常性或习惯性的动作", "example": "I drink water every day."},
-      {"id": 2, "title": "现在进行时", "explanation": "表示正在进行的动作", "example": "I am reading a book now."},
-      {"id": 3, "title": "一般过去时", "explanation": "表示过去发生的动作", "example": "I visited Tokyo last year."}
+      {
+        "id": 1,
+        "title": "一般现在时",
+        "explanation": "表示经常性或习惯性的动作",
+        "example": "I drink water every day."
+      },
+      {
+        "id": 2,
+        "title": "现在进行时",
+        "explanation": "表示正在进行的动作",
+        "example": "I am reading a book now."
+      },
+      {
+        "id": 3,
+        "title": "一般过去时",
+        "explanation": "表示过去发生的动作",
+        "example": "I visited Tokyo last year."
+      }
     ],
     "ja": [
-      {"id": 101, "title": "肯定形", "explanation": "表示动作或状态的肯定", "example": "私は学生です。（我是学生。）"},
-      {"id": 102, "title": "否定形", "explanation": "表示动作或状态的否定", "example": "私は学生ではありません。（我不是学生。）"},
-      {"id": 103, "title": "過去形", "explanation": "表示过去的动作或状态", "example": "昨日、東京に行きました。（昨天去了东京。）"}
+      {
+        "id": 101,
+        "title": "肯定形",
+        "explanation": "表示动作或状态的肯定",
+        "example": "私は学生です。（我是学生。）"
+      },
+      {
+        "id": 102,
+        "title": "否定形",
+        "explanation": "表示动作或状态的否定",
+        "example": "私は学生ではありません。（我不是学生。）"
+      },
+      {
+        "id": 103,
+        "title": "過去形",
+        "explanation": "表示过去的动作或状态",
+        "example": "昨日、東京に行きました。（昨天去了东京。）"
+      }
     ],
     "zh": [
-      {"id": 201, "title": "主谓宾结构", "explanation": "中文基本句型结构", "example": "我学习中文。（I study Chinese。）"},
-      {"id": 202, "title": "时间状语位置", "explanation": "时间词通常放在句首或句末", "example": "今天我很高兴。（Today I am happy。）"},
-      {"id": 203, "title": "量词使用", "explanation": "中文特有的量词系统", "example": "一本书、两个人、三杯茶"}
+      {
+        "id": 201,
+        "title": "主谓宾结构",
+        "explanation": "中文基本句型结构",
+        "example": "我学习中文。（I study Chinese。）"
+      },
+      {
+        "id": 202,
+        "title": "时间状语位置",
+        "explanation": "时间词通常放在句首或句末",
+        "example": "今天我很高兴。（Today I am happy。）"
+      },
+      {
+        "id": 203,
+        "title": "量词使用",
+        "explanation": "中文特有的量词系统",
+        "example": "一本书、两个人、三杯茶"
+      }
     ]
   },
   "achievements": [
-    {"achievementId": 1, "achievementName": "初学者", "description": "完成第一个课程", "reward": 100, "completed": true, "current": 1, "target": 1, "progress": 100},
-    {"achievementId": 2, "achievementName": "单词达人", "description": "学习100个单词", "reward": 200, "completed": true, "current": 100, "target": 100, "progress": 100},
-    {"achievementId": 3, "achievementName": "英语入门", "description": "完成英语基础课程", "reward": 300, "completed": true, "current": 1, "target": 1, "progress": 100},
-    {"achievementId": 4, "achievementName": "日语初学", "description": "完成日语五十音图学习", "reward": 300, "completed": false, "current": 15, "target": 25, "progress": 60},
-    {"achievementId": 5, "achievementName": "汉语入门", "description": "掌握汉语拼音基础", "reward": 300, "completed": false, "current": 10, "target": 30, "progress": 33},
-    {"achievementId": 6, "achievementName": "连续学习7天", "description": "连续学习7天不间断", "reward": 500, "completed": true, "current": 7, "target": 7, "progress": 100},
-    {"achievementId": 7, "achievementName": "连续学习30天", "description": "连续学习30天不间断", "reward": 1000, "completed": false, "current": 15, "target": 30, "progress": 50}
+    {
+      "achievementId": 1,
+      "achievementName": "初学者",
+      "description": "完成第一个课程",
+      "reward": 100,
+      "completed": true,
+      "current": 1,
+      "target": 1,
+      "progress": 100,
+      "id": "zT_NQcOm3JI"
+    },
+    {
+      "achievementId": 2,
+      "achievementName": "单词达人",
+      "description": "学习100个单词",
+      "reward": 200,
+      "completed": true,
+      "current": 100,
+      "target": 100,
+      "progress": 100,
+      "id": "2HuVYx1ZePA"
+    },
+    {
+      "achievementId": 3,
+      "achievementName": "英语入门",
+      "description": "完成英语基础课程",
+      "reward": 300,
+      "completed": true,
+      "current": 1,
+      "target": 1,
+      "progress": 100,
+      "id": "jQYhDr4yI3o"
+    },
+    {
+      "achievementId": 4,
+      "achievementName": "日语初学",
+      "description": "完成日语五十音图学习",
+      "reward": 300,
+      "completed": false,
+      "current": 15,
+      "target": 25,
+      "progress": 60,
+      "id": "iURZWq-RJ9A"
+    },
+    {
+      "achievementId": 5,
+      "achievementName": "汉语入门",
+      "description": "掌握汉语拼音基础",
+      "reward": 300,
+      "completed": false,
+      "current": 10,
+      "target": 30,
+      "progress": 33,
+      "id": "_FfWzQDl_tE"
+    },
+    {
+      "achievementId": 6,
+      "achievementName": "连续学习7天",
+      "description": "连续学习7天不间断",
+      "reward": 500,
+      "completed": true,
+      "current": 7,
+      "target": 7,
+      "progress": 100,
+      "id": "ziVDxdTZU4M"
+    },
+    {
+      "achievementId": 7,
+      "achievementName": "连续学习30天",
+      "description": "连续学习30天不间断",
+      "reward": 1000,
+      "completed": false,
+      "current": 15,
+      "target": 30,
+      "progress": 50,
+      "id": "DWLjpSA6njA"
+    }
   ],
   "badges": [
-    {"badgeId": 1, "badgeName": "英语达人", "earned": true},
-    {"badgeId": 2, "badgeName": "日语新星", "earned": true},
-    {"badgeId": 3, "badgeName": "汉语学习者", "earned": false},
-    {"badgeId": 4, "badgeName": "全语种大师", "earned": false},
-    {"badgeId": 5, "badgeName": "学习达人", "earned": true},
-    {"badgeId": 6, "badgeName": "连续王者", "earned": false}
+    {
+      "badgeId": 1,
+      "badgeName": "英语达人",
+      "earned": true,
+      "id": "UzbcS6LfZ34"
+    },
+    {
+      "badgeId": 2,
+      "badgeName": "日语新星",
+      "earned": true,
+      "id": "InZWACuNBio"
+    },
+    {
+      "badgeId": 3,
+      "badgeName": "汉语学习者",
+      "earned": false,
+      "id": "yLUPyjCxHUw"
+    },
+    {
+      "badgeId": 4,
+      "badgeName": "全语种大师",
+      "earned": false,
+      "id": "d5bJFUpNS_Q"
+    },
+    {
+      "badgeId": 5,
+      "badgeName": "学习达人",
+      "earned": true,
+      "id": "6tNRet8W7mk"
+    },
+    {
+      "badgeId": 6,
+      "badgeName": "连续王者",
+      "earned": false,
+      "id": "C2Q-vWI6mkY"
+    }
   ],
   "posts": [
     {
@@ -244,7 +656,8 @@
       "createTime": "2026-05-10 10:30",
       "viewCount": 125,
       "commentCount": 15,
-      "likeCount": 42
+      "likeCount": 42,
+      "id": "Q7JwdPcwI6o"
     },
     {
       "postId": 2,
@@ -256,7 +669,8 @@
       "createTime": "2026-05-09 15:20",
       "viewCount": 89,
       "commentCount": 8,
-      "likeCount": 28
+      "likeCount": 28,
+      "id": "cUFAsRDBVOQ"
     },
     {
       "postId": 3,
@@ -268,20 +682,52 @@
       "createTime": "2026-05-09 09:15",
       "viewCount": 156,
       "commentCount": 23,
-      "likeCount": 15
+      "likeCount": 15,
+      "id": "IPhzsRhd6cA"
     }
   ],
   "learningRecords": [
-    {"id": 1, "lessonName": "Hello和Good morning", "duration": 30, "score": 95, "createTime": "2026-05-10 10:30"},
-    {"id": 2, "lessonName": "あいうえお - 元音", "duration": 35, "score": 88, "createTime": "2026-05-10 09:15"},
-    {"id": 3, "lessonName": "你好和再见", "duration": 30, "score": 92, "createTime": "2026-05-09 20:45"},
-    {"id": 4, "lessonName": "英语基础语法", "duration": 40, "score": 85, "createTime": "2026-05-09 15:30"},
-    {"id": 5, "lessonName": "日语自我介绍", "duration": 35, "score": 78, "createTime": "2026-05-09 10:00"}
+    {
+      "id": "1",
+      "lessonName": "Hello和Good morning",
+      "duration": 30,
+      "score": 95,
+      "createTime": "2026-05-10 10:30"
+    },
+    {
+      "id": "2",
+      "lessonName": "あいうえお - 元音",
+      "duration": 35,
+      "score": 88,
+      "createTime": "2026-05-10 09:15"
+    },
+    {
+      "id": "3",
+      "lessonName": "你好和再见",
+      "duration": 30,
+      "score": 92,
+      "createTime": "2026-05-09 20:45"
+    },
+    {
+      "id": "4",
+      "lessonName": "英语基础语法",
+      "duration": 40,
+      "score": 85,
+      "createTime": "2026-05-09 15:30"
+    },
+    {
+      "id": "5",
+      "lessonName": "日语自我介绍",
+      "duration": 35,
+      "score": 78,
+      "createTime": "2026-05-09 10:00"
+    }
   ],
   "skillScores": {
     "vocabulary": 85,
     "grammar": 72,
     "listening": 68,
     "speaking": 65
-  }
+  },
+  "$schema": "./node_modules/json-server/schema.json"
 }

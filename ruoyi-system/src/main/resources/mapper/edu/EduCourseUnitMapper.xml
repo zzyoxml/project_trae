@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduCourseUnitMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduCourseUnit" id="EduCourseUnitResult">
+        <result property="unitId" column="unit_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="unitName" column="unit_name"/>
+        <result property="unitOrder" column="unit_order"/>
+        <result property="description" column="description"/>
+        <result property="totalLessons" column="total_lessons"/>
+        <result property="totalDuration" column="total_duration"/>
+        <result property="isLocked" column="is_locked"/>
+        <result property="passingScore" column="passing_score"/>
+        <result property="experienceReward" column="experience_reward"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectEduCourseUnitVo">
+        select unit_id, course_id, unit_name, unit_order, description, total_lessons,
+               total_duration, is_locked, passing_score, experience_reward,
+               create_by, create_time, update_by, update_time, del_flag
+        from edu_course_unit
+        where del_flag = '0'
+    </sql>
+
+    <select id="selectEduCourseUnitById" parameterType="Long" resultMap="EduCourseUnitResult">
+        <include refid="selectEduCourseUnitVo"/>
+        and unit_id = #{unitId}
+    </select>
+
+    <select id="selectUnitsByCourseId" parameterType="Long" resultMap="EduCourseUnitResult">
+        <include refid="selectEduCourseUnitVo"/>
+        and course_id = #{courseId}
+        order by unit_order asc
+    </select>
+
+    <insert id="insertEduCourseUnit" parameterType="com.ruoyi.edu.domain.EduCourseUnit" useGeneratedKeys="true" keyProperty="unitId">
+        insert into edu_course_unit (
+            course_id, unit_name, unit_order, description, total_lessons,
+            total_duration, is_locked, passing_score, experience_reward,
+            create_by, create_time, del_flag
+        ) values (
+            #{courseId}, #{unitName}, #{unitOrder}, #{description}, #{totalLessons},
+            #{totalDuration}, #{isLocked}, #{passingScore}, #{experienceReward},
+            #{createBy}, sysdate(), '0'
+        )
+    </insert>
+
+    <update id="updateEduCourseUnit" parameterType="com.ruoyi.edu.domain.EduCourseUnit">
+        update edu_course_unit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="unitOrder != null">unit_order = #{unitOrder},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="totalLessons != null">total_lessons = #{totalLessons},</if>
+            <if test="totalDuration != null">total_duration = #{totalDuration},</if>
+            <if test="isLocked != null">is_locked = #{isLocked},</if>
+            <if test="passingScore != null">passing_score = #{passingScore},</if>
+            <if test="experienceReward != null">experience_reward = #{experienceReward},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate(),
+        </trim>
+        where unit_id = #{unitId}
+    </update>
+
+    <delete id="deleteEduCourseUnitById" parameterType="Long">
+        update edu_course_unit set del_flag = '1' where unit_id = #{unitId}
+    </delete>
+
+    <delete id="deleteEduCourseUnitByIds" parameterType="Long">
+        update edu_course_unit set del_flag = '1' where unit_id in
+        <foreach item="unitId" collection="array" open="(" separator="," close=")">
+            #{unitId}
+        </foreach>
+    </delete>
+
+</mapper>

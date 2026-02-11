@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduUserCourseMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduUserCourse" id="EduUserCourseResult">
+        <result property="id"               column="id"                />
+        <result property="userId"            column="user_id"           />
+        <result property="courseId"          column="course_id"         />
+        <result property="enrollmentDate"    column="enrollment_date"   />
+        <result property="progressPercent"   column="progress_percent"  />
+        <result property="status"            column="status"            />
+        <result property="currentLessonId"   column="current_lesson_id" />
+        <result property="startDate"         column="start_date"        />
+        <result property="completionDate"    column="completion_date"   />
+        <result property="certificateUrl"    column="certificate_url"   />
+        <result property="isFavorite"        column="is_favorite"       />
+        <result property="rating"            column="rating"            />
+        <result property="review"            column="review"            />
+        <result property="createTime"        column="create_time"       />
+        <result property="updateTime"        column="update_time"       />
+    </resultMap>
+
+    <sql id="selectEduUserCourseVo">
+        select id, user_id, course_id, enrollment_date, progress_percent, status,
+               current_lesson_id, start_date, completion_date, certificate_url,
+               is_favorite, rating, review, create_time, update_time
+        from edu_user_course
+    </sql>
+
+    <select id="selectUserCourse" resultMap="EduUserCourseResult">
+        <include refid="selectEduUserCourseVo"/>
+        where user_id = #{userId} and course_id = #{courseId}
+    </select>
+
+    <insert id="insertEduUserCourse" parameterType="com.ruoyi.edu.domain.EduUserCourse" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_user_course (
+            user_id, course_id, enrollment_date, progress_percent, status,
+            current_lesson_id, start_date, completion_date, certificate_url,
+            is_favorite, rating, review, create_time
+        ) values (
+            #{userId}, #{courseId}, #{enrollmentDate}, #{progressPercent}, #{status},
+            #{currentLessonId}, #{startDate}, #{completionDate}, #{certificateUrl},
+            #{isFavorite}, #{rating}, #{review}, sysdate()
+        )
+    </insert>
+
+    <update id="updateEduUserCourse" parameterType="com.ruoyi.edu.domain.EduUserCourse">
+        update edu_user_course
+        <set>
+            <if test="progressPercent != null">progress_percent = #{progressPercent},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="currentLessonId != null">current_lesson_id = #{currentLessonId},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="completionDate != null">completion_date = #{completionDate},</if>
+            <if test="certificateUrl != null">certificate_url = #{certificateUrl},</if>
+            <if test="isFavorite != null">is_favorite = #{isFavorite},</if>
+            <if test="rating != null">rating = #{rating},</if>
+            <if test="review != null">review = #{review},</if>
+            update_time = sysdate(),
+        </set>
+        where user_id = #{userId} and course_id = #{courseId}
+    </update>
+
+    <delete id="deleteUserCourse">
+        delete from edu_user_course where user_id = #{userId} and course_id = #{courseId}
+    </delete>
+
+</mapper>

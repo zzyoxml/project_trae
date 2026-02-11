@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduCourseLessonMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduCourseLesson" id="EduCourseLessonResult">
+        <result property="lessonId" column="lesson_id"/>
+        <result property="unitId" column="unit_id"/>
+        <result property="lessonName" column="lesson_name"/>
+        <result property="lessonOrder" column="lesson_order"/>
+        <result property="lessonType" column="lesson_type"/>
+        <result property="content" column="content"/>
+        <result property="duration" column="duration"/>
+        <result property="isFree" column="is_free"/>
+        <result property="isPreview" column="is_preview"/>
+        <result property="experienceReward" column="experience_reward"/>
+        <result property="coinReward" column="coin_reward"/>
+        <result property="passingScore" column="passing_score"/>
+        <result property="maxAttempts" column="max_attempts"/>
+        <result property="resources" column="resources"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectEduCourseLessonVo">
+        select lesson_id, unit_id, lesson_name, lesson_order, lesson_type, content,
+               duration, is_free, is_preview, experience_reward, coin_reward,
+               passing_score, max_attempts, resources,
+               create_by, create_time, update_by, update_time, del_flag
+        from edu_course_lesson
+        where del_flag = '0'
+    </sql>
+
+    <select id="selectEduCourseLessonById" parameterType="Long" resultMap="EduCourseLessonResult">
+        <include refid="selectEduCourseLessonVo"/>
+        and lesson_id = #{lessonId}
+    </select>
+
+    <select id="selectEduCourseLessonList" parameterType="com.ruoyi.edu.domain.EduCourseLesson" resultMap="EduCourseLessonResult">
+        <include refid="selectEduCourseLessonVo"/>
+        <where>
+            <if test="unitId != null">
+                AND unit_id = #{unitId}
+            </if>
+            <if test="lessonType != null and lessonType != ''">
+                AND lesson_type = #{lessonType}
+            </if>
+        </where>
+        order by lesson_order asc
+    </select>
+
+    <select id="selectLessonsByUnitId" parameterType="Long" resultMap="EduCourseLessonResult">
+        <include refid="selectEduCourseLessonVo"/>
+        and unit_id = #{unitId}
+        order by lesson_order asc
+    </select>
+
+    <insert id="insertEduCourseLesson" parameterType="com.ruoyi.edu.domain.EduCourseLesson" useGeneratedKeys="true" keyProperty="lessonId">
+        insert into edu_course_lesson (
+            unit_id, lesson_name, lesson_order, lesson_type, content,
+            duration, is_free, is_preview, experience_reward, coin_reward,
+            passing_score, max_attempts, resources,
+            create_by, create_time, del_flag
+        ) values (
+            #{unitId}, #{lessonName}, #{lessonOrder}, #{lessonType}, #{content},
+            #{duration}, #{isFree}, #{isPreview}, #{experienceReward}, #{coinReward},
+            #{passingScore}, #{maxAttempts}, #{resources},
+            #{createBy}, sysdate(), '0'
+        )
+    </insert>
+
+    <update id="updateEduCourseLesson" parameterType="com.ruoyi.edu.domain.EduCourseLesson">
+        update edu_course_lesson
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lessonName != null and lessonName != ''">lesson_name = #{lessonName},</if>
+            <if test="lessonOrder != null">lesson_order = #{lessonOrder},</if>
+            <if test="lessonType != null and lessonType != ''">lesson_type = #{lessonType},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="isFree != null">is_free = #{isFree},</if>
+            <if test="isPreview != null">is_preview = #{isPreview},</if>
+            <if test="experienceReward != null">experience_reward = #{experienceReward},</if>
+            <if test="coinReward != null">coin_reward = #{coinReward},</if>
+            <if test="passingScore != null">passing_score = #{passingScore},</if>
+            <if test="maxAttempts != null">max_attempts = #{maxAttempts},</if>
+            <if test="resources != null">resources = #{resources},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate(),
+        </trim>
+        where lesson_id = #{lessonId}
+    </update>
+
+    <delete id="deleteEduCourseLessonById" parameterType="Long">
+        update edu_course_lesson set del_flag = '1' where lesson_id = #{lessonId}
+    </delete>
+
+    <delete id="deleteEduCourseLessonByIds" parameterType="Long">
+        update edu_course_lesson set del_flag = '1' where lesson_id in
+        <foreach item="lessonId" collection="array" open="(" separator="," close=")">
+            #{lessonId}
+        </foreach>
+    </delete>
+
+</mapper>
