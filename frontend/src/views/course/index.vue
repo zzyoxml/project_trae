@@ -13,9 +13,9 @@
 
       <el-select v-model="filters.level" placeholder="选择等级" clearable @change="handleFilterChange">
         <el-option label="全部等级" value="" />
-        <el-option label="初级" :value="1" />
-        <el-option label="中级" :value="2" />
-        <el-option label="高级" :value="3" />
+        <el-option label="初级" value="beginner" />
+        <el-option label="中级" value="intermediate" />
+        <el-option label="高级" value="advanced" />
       </el-select>
 
       <el-select v-model="filters.category" placeholder="选择分类" clearable @change="handleFilterChange">
@@ -156,7 +156,7 @@ const goToDetail = (courseId) => {
 }
 
 const getLevelText = (level) => {
-  const levelMap = { 1: '初级', 2: '中级', 3: '高级' }
+  const levelMap = { beginner: '初级', intermediate: '中级', advanced: '高级' }
   return levelMap[level] || '初级'
 }
 
@@ -251,9 +251,9 @@ const handleImageError = (e) => {
           font-size: 12px;
           color: white;
 
-          &.level-1 { background: #67c23a; }
-          &.level-2 { background: #e6a23c; }
-          &.level-3 { background: #f56c6c; }
+          &.level-beginner { background: #67c23a; }
+          &.level-intermediate { background: #e6a23c; }
+          &.level-advanced { background: #f56c6c; }
         }
 
         .course-language {

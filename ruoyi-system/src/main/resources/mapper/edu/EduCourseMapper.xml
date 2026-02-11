@@ -53,29 +53,22 @@
 
     <select id="selectEduCourseList" parameterType="com.ruoyi.edu.domain.EduCourse" resultMap="EduCourseResult">
         <include refid="selectEduCourseVo"/>
-        <where>
-            <if test="courseName != null and courseName != ''">
-                AND course_name like concat('%', #{courseName}, '%')
-            </if>
-            <if test="language != null and language != ''">
-                AND language = #{language}
-            </if>
-            <if test="level != null and level != ''">
-                AND level = #{level}
-            </if>
-            <if test="courseType != null and courseType != ''">
-                AND course_type = #{courseType}
-            </if>
-            <if test="categoryId != null">
-                AND category_id = #{categoryId}
-            </if>
-            <if test="isPublished != null">
-                AND is_published = #{isPublished}
-            </if>
-            <if test="isFeatured != null">
-                AND is_featured = #{isFeatured}
-            </if>
-        </where>
+        and is_published = 1
+        <if test="courseName != null and courseName != ''">
+            AND course_name like concat('%', #{courseName}, '%')
+        </if>
+        <if test="language != null and language != ''">
+            AND language = #{language}
+        </if>
+        <if test="level != null and level != ''">
+            AND level = #{level}
+        </if>
+        <if test="courseType != null and courseType != ''">
+            AND course_type = #{courseType}
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
         order by create_time desc
     </select>
 
