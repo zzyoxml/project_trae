@@ -44,6 +44,15 @@ export default defineConfig({
     cors: true,
     allowedHosts: true,
     proxy: {
+      '/ruoyi-api': {
+        target: 'http://localhost:6666',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/ruoyi-api/, '')
+      },
+      '/profile': {
+        target: 'http://localhost:6666',
+        changeOrigin: true
+      },
       '/api': {
         target: 'http://localhost:3002',
         changeOrigin: true,

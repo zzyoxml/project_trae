@@ -123,10 +123,15 @@
             <if test="price != null">price,</if>
             <if test="isPublished != null">is_published,</if>
             <if test="isFeatured != null">is_featured,</if>
+            <if test="prerequisites != null">prerequisites,</if>
+            <if test="learningObjectives != null">learning_objectives,</if>
             <if test="tags != null">tags,</if>
             <if test="difficultyScore != null">difficulty_score,</if>
+            <if test="popularityScore != null">popularity_score,</if>
             <if test="createDept != null">create_dept,</if>
             <if test="createBy != null">create_by,</if>
+            create_time,
+            del_flag,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="courseName != null and courseName != ''">#{courseName},</if>
@@ -145,10 +150,15 @@
             <if test="price != null">#{price},</if>
             <if test="isPublished != null">#{isPublished},</if>
             <if test="isFeatured != null">#{isFeatured},</if>
+            <if test="prerequisites != null">#{prerequisites},</if>
+            <if test="learningObjectives != null">#{learningObjectives},</if>
             <if test="tags != null">#{tags},</if>
             <if test="difficultyScore != null">#{difficultyScore},</if>
+            <if test="popularityScore != null">#{popularityScore},</if>
             <if test="createDept != null">#{createDept},</if>
             <if test="createBy != null">#{createBy},</if>
+            sysdate(),
+            '0',
         </trim>
     </insert>
 
@@ -171,10 +181,13 @@
             <if test="price != null">price = #{price},</if>
             <if test="isPublished != null">is_published = #{isPublished},</if>
             <if test="isFeatured != null">is_featured = #{isFeatured},</if>
+            <if test="prerequisites != null">prerequisites = #{prerequisites},</if>
+            <if test="learningObjectives != null">learning_objectives = #{learningObjectives},</if>
             <if test="tags != null">tags = #{tags},</if>
             <if test="difficultyScore != null">difficulty_score = #{difficultyScore},</if>
             <if test="popularityScore != null">popularity_score = #{popularityScore},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate(),
         </trim>
         where course_id = #{courseId}
     </update>

@@ -27,6 +27,7 @@ public class EduCourseController extends BaseController {
     /**
      * 查询课程列表
      */
+    @Anonymous
     @GetMapping("/list")
     public TableDataInfo list(EduCourse eduCourse) {
         startPage();
@@ -37,6 +38,7 @@ public class EduCourseController extends BaseController {
     /**
      * 获取课程详情
      */
+    @Anonymous
     @GetMapping("/{courseId}")
     public AjaxResult getCourseDetails(@PathVariable Long courseId) {
         Long userId = null;
@@ -104,14 +106,13 @@ public class EduCourseController extends BaseController {
      */
     @PostMapping
     public AjaxResult add(@RequestBody EduCourse eduCourse) {
+        eduCourse.setCreateBy(getUsername());
         return toAjax(eduCourseService.insertEduCourse(eduCourse));
     }
 
-    /**
-     * 修改课程
-     */
     @PutMapping
     public AjaxResult edit(@RequestBody EduCourse eduCourse) {
+        eduCourse.setUpdateBy(getUsername());
         return toAjax(eduCourseService.updateEduCourse(eduCourse));
     }
 

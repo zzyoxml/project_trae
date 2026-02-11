@@ -12,22 +12,16 @@
       </el-form-item>
       <el-form-item label="语言" prop="language">
         <el-select v-model="queryParams.language" placeholder="请选择语言" clearable size="small">
-          <el-option label="英语" value="英语" />
-          <el-option label="日语" value="日语" />
-          <el-option label="汉语" value="汉语" />
+          <el-option label="英语" value="en" />
+          <el-option label="日语" value="ja" />
+          <el-option label="汉语" value="zh" />
         </el-select>
       </el-form-item>
-      <el-form-item label="难度" prop="difficulty">
-        <el-select v-model="queryParams.difficulty" placeholder="请选择难度" clearable size="small">
-          <el-option label="初级" value="初级" />
-          <el-option label="中级" value="中级" />
-          <el-option label="高级" value="高级" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
-          <el-option label="启用" value="0" />
-          <el-option label="禁用" value="1" />
+      <el-form-item label="等级" prop="level">
+        <el-select v-model="queryParams.level" placeholder="请选择等级" clearable size="small">
+          <el-option label="初级" value="beginner" />
+          <el-option label="中级" value="intermediate" />
+          <el-option label="高级" value="advanced" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -44,6 +38,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
+          v-hasPermi="['edu:course:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -54,6 +49,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
+          v-hasPermi="['edu:course:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -64,16 +60,8 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
+          v-hasPermi="['edu:course:remove']"
         >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-        >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -85,58 +73,64 @@
       <el-table-column label="语言" align="center" prop="language" width="80">
         <template slot-scope="scope">
           <el-tag :type="getLanguageType(scope.row.language)" size="small">
-            {{ scope.row.language }}
+            {{ getLanguageLabel(scope.row.language) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="难度" align="center" prop="difficulty" width="80">
+      <el-table-column label="等级" align="center" prop="level" width="80">
         <template slot-scope="scope">
-          <el-tag :type="getDifficultyType(scope.row.difficulty)" size="small">
-            {{ scope.row.difficulty }}
+          <el-tag :type="getLevelType(scope.row.level)" size="small">
+            {{ getLevelLabel(scope.row.level) }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="课程描述" align="center" prop="description" :show-overflow-tooltip="true" />
-      <el-table-column label="学习人数" align="center" prop="enrollCount" width="100" />
-      <el-table-column label="课程时长" align="center" prop="duration" width="100">
+      <el-table-column label="课程类型" align="center" prop="courseType" width="100">
         <template slot-scope="scope">
-          {{ scope.row.duration }}分钟
+          {{ getCourseTypeLabel(scope.row.courseType) }}
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center" prop="status" width="80">
+      <el-table-column label="封面" align="center" prop="coverImage" width="100">
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.status"
-            active-value="0"
-            inactive-value="1"
-            @change="handleStatusChange(scope.row)"
-          ></el-switch>
+          <image-preview :src="scope.row.coverImage" v-if="scope.row.coverImage" />
+          <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+      <el-table-column label="学习人数" align="center" prop="totalStudents" width="80" />
+      <el-table-column label="总课时" align="center" prop="totalLessons" width="80" />
+      <el-table-column label="是否免费" align="center" prop="isFree" width="80">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.isFree ? 'success' : 'warning'" size="small">
+            {{ scope.row.isFree ? '免费' : '付费' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否发布" align="center" prop="isPublished" width="80">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.isPublished ? 'success' : 'info'" size="small">
+            {{ scope.row.isPublished ? '已发布' : '未发布' }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180">
         <template slot-scope="scope">
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            v-hasPermi="['edu:course:edit']"
           >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handleDetail(scope.row)"
-          >详情</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            v-hasPermi="['edu:course:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -159,49 +153,98 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="课程编码" prop="courseCode">
+              <el-input v-model="form.courseCode" placeholder="请输入课程编码" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="语言" prop="language">
               <el-select v-model="form.language" placeholder="请选择语言">
-                <el-option label="英语" value="英语" />
-                <el-option label="日语" value="日语" />
-                <el-option label="汉语" value="汉语" />
+                <el-option label="英语" value="en" />
+                <el-option label="日语" value="ja" />
+                <el-option label="汉语" value="zh" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="等级" prop="level">
+              <el-select v-model="form.level" placeholder="请选择等级">
+                <el-option label="初级" value="beginner" />
+                <el-option label="基础" value="elementary" />
+                <el-option label="中级" value="intermediate" />
+                <el-option label="高级" value="advanced" />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="难度等级" prop="difficulty">
-              <el-select v-model="form.difficulty" placeholder="请选择难度">
-                <el-option label="初级" value="初级" />
-                <el-option label="中级" value="中级" />
-                <el-option label="高级" value="高级" />
+            <el-form-item label="课程类型" prop="courseType">
+              <el-select v-model="form.courseType" placeholder="请选择课程类型">
+                <el-option label="综合" value="general" />
+                <el-option label="会话" value="conversation" />
+                <el-option label="语法" value="grammar" />
+                <el-option label="词汇" value="vocabulary" />
+                <el-option label="听力" value="listening" />
+                <el-option label="口语" value="speaking" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="课程时长" prop="duration">
-              <el-input-number v-model="form.duration" :min="1" label="请输入课程时长（分钟）" />
+            <el-form-item label="总时长(分)" prop="totalDuration">
+              <el-input-number v-model="form.totalDuration" :min="0" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="总课时数" prop="totalLessons">
+              <el-input-number v-model="form.totalLessons" :min="0" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="难度系数" prop="difficultyScore">
+              <el-input-number v-model="form.difficultyScore" :min="1" :max="5" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="课程描述" prop="description">
-          <el-input v-model="form.description" type="textarea" :rows="4" placeholder="请输入课程描述" />
+          <el-input v-model="form.description" type="textarea" :rows="3" placeholder="请输入课程描述" />
+        </el-form-item>
+        <el-form-item label="学习目标" prop="learningObjectives">
+          <el-input v-model="form.learningObjectives" type="textarea" :rows="3" placeholder="请输入学习目标" />
         </el-form-item>
         <el-form-item label="课程封面" prop="coverImage">
-          <image-upload v-model="form.coverImage" />
+          <image-upload v-model="form.coverImage" :limit="1" />
         </el-form-item>
         <el-row>
+          <el-col :span="8">
+            <el-form-item label="是否免费" prop="isFree">
+              <el-switch v-model="form.isFree" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="价格" prop="price" v-if="!form.isFree">
+              <el-input-number v-model="form.price" :min="0" :precision="2" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="是否发布" prop="isPublished">
+              <el-switch v-model="form.isPublished" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="排序" prop="orderNum">
-              <el-input-number v-model="form.orderNum" :min="0" />
+            <el-form-item label="是否精选" prop="isFeatured">
+              <el-switch v-model="form.isFeatured" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="状态" prop="status">
-              <el-radio-group v-model="form.status">
-                <el-radio label="0">启用</el-radio>
-                <el-radio label="1">禁用</el-radio>
-              </el-radio-group>
+            <el-form-item label="标签" prop="tags">
+              <el-input v-model="form.tags" placeholder="多个标签用逗号分隔" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -211,35 +254,12 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
-    <el-dialog title="课程详情" :visible.sync="detailOpen" width="900px" append-to-body>
-      <el-descriptions :column="2" border>
-        <el-descriptions-item label="课程ID">{{ detailData.courseId }}</el-descriptions-item>
-        <el-descriptions-item label="课程名称">{{ detailData.courseName }}</el-descriptions-item>
-        <el-descriptions-item label="语言">
-          <el-tag :type="getLanguageType(detailData.language)" size="small">
-            {{ detailData.language }}
-          </el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="难度">
-          <el-tag :type="getDifficultyType(detailData.difficulty)" size="small">
-            {{ detailData.difficulty }}
-          </el-tag>
-        </el-descriptions-item>
-        <el-descriptions-item label="课程时长">{{ detailData.duration }}分钟</el-descriptions-item>
-        <el-descriptions-item label="学习人数">{{ detailData.enrollCount }}</el-descriptions-item>
-        <el-descriptions-item label="课程描述" :span="2">{{ detailData.description }}</el-descriptions-item>
-        <el-descriptions-item label="创建时间">{{ parseTime(detailData.createTime) }}</el-descriptions-item>
-        <el-descriptions-item label="更新时间">{{ parseTime(detailData.updateTime) }}</el-descriptions-item>
-      </el-descriptions>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="detailOpen = false">关 闭</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import { listCourse, getCourse, addCourse, updateCourse, delCourse } from '@/api/edu/course'
+
 export default {
   name: 'EduCourse',
   data() {
@@ -253,15 +273,12 @@ export default {
       courseList: [],
       title: '',
       open: false,
-      detailOpen: false,
-      detailData: {},
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         courseName: null,
         language: null,
-        difficulty: null,
-        status: null
+        level: null
       },
       form: {},
       rules: {
@@ -271,8 +288,8 @@ export default {
         language: [
           { required: true, message: '请选择语言', trigger: 'change' }
         ],
-        difficulty: [
-          { required: true, message: '请选择难度', trigger: 'change' }
+        level: [
+          { required: true, message: '请选择等级', trigger: 'change' }
         ]
       }
     }
@@ -283,72 +300,11 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      setTimeout(() => {
-        this.courseList = [
-          {
-            courseId: 1,
-            courseName: '英语口语入门',
-            language: '英语',
-            difficulty: '初级',
-            description: '专为初学者设计的英语口语基础课程',
-            enrollCount: 1234,
-            duration: 120,
-            status: '0',
-            createTime: '2024-01-01 10:00:00',
-            updateTime: '2024-01-15 14:30:00'
-          },
-          {
-            courseId: 2,
-            courseName: '日语五十音图',
-            language: '日语',
-            difficulty: '初级',
-            description: '学习日语假名发音和书写',
-            enrollCount: 987,
-            duration: 90,
-            status: '0',
-            createTime: '2024-01-02 10:00:00',
-            updateTime: '2024-01-16 14:30:00'
-          },
-          {
-            courseId: 3,
-            courseName: '汉语拼音基础',
-            language: '汉语',
-            difficulty: '初级',
-            description: '学习汉语拼音发音规则',
-            enrollCount: 876,
-            duration: 80,
-            status: '0',
-            createTime: '2024-01-03 10:00:00',
-            updateTime: '2024-01-17 14:30:00'
-          },
-          {
-            courseId: 4,
-            courseName: '英语语法精讲',
-            language: '英语',
-            difficulty: '中级',
-            description: '深入讲解英语语法知识',
-            enrollCount: 654,
-            duration: 150,
-            status: '0',
-            createTime: '2024-01-04 10:00:00',
-            updateTime: '2024-01-18 14:30:00'
-          },
-          {
-            courseId: 5,
-            courseName: '日语N3备考',
-            language: '日语',
-            difficulty: '中级',
-            description: '针对JLPT N3级别的备考课程',
-            enrollCount: 543,
-            duration: 180,
-            status: '0',
-            createTime: '2024-01-05 10:00:00',
-            updateTime: '2024-01-19 14:30:00'
-          }
-        ]
-        this.total = this.courseList.length
+      listCourse(this.queryParams).then(response => {
+        this.courseList = response.rows
+        this.total = response.total
         this.loading = false
-      }, 500)
+      })
     },
     handleQuery() {
       this.queryParams.pageNum = 1
@@ -370,25 +326,29 @@ export default {
     },
     handleUpdate(row) {
       this.reset()
-      const courseId = row.courseId || this.ids
-      this.form = { ...row }
-      this.open = true
-      this.title = '修改课程'
-    },
-    handleDetail(row) {
-      this.detailData = { ...row }
-      this.detailOpen = true
+      const courseId = row.courseId || this.ids[0]
+      getCourse(courseId).then(response => {
+        this.form = response.data
+        this.open = true
+        this.title = '修改课程'
+      })
     },
     submitForm() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          if (this.form.courseId) {
-            this.$message.success('修改成功')
+          if (this.form.courseId != null) {
+            updateCourse(this.form).then(response => {
+              this.$modal.msgSuccess('修改成功')
+              this.open = false
+              this.getList()
+            })
           } else {
-            this.$message.success('新增成功')
+            addCourse(this.form).then(response => {
+              this.$modal.msgSuccess('新增成功')
+              this.open = false
+              this.getList()
+            })
           }
-          this.open = false
-          this.getList()
         }
       })
     },
@@ -400,52 +360,52 @@ export default {
       this.form = {
         courseId: null,
         courseName: null,
+        courseCode: null,
         language: null,
-        difficulty: null,
+        level: null,
+        courseType: 'general',
         description: null,
-        duration: 60,
         coverImage: null,
-        orderNum: 0,
-        status: '0'
+        totalDuration: 0,
+        totalLessons: 0,
+        isFree: true,
+        price: 0,
+        isPublished: false,
+        isFeatured: false,
+        learningObjectives: null,
+        tags: null,
+        difficultyScore: 1
       }
       this.resetForm('form')
     },
-    handleStatusChange(row) {
-      const text = row.status === '0' ? '启用' : '禁用'
-      this.$message.success(`${text}课程成功`)
-    },
     handleDelete(row) {
       const courseIds = row.courseId || this.ids
-      this.$confirm(`是否确认删除课程ID为"${courseIds}"的数据项?`, '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$modal.confirm('是否确认删除课程编号为"' + courseIds + '"的数据项？').then(function() {
+        return delCourse(courseIds)
       }).then(() => {
-        this.$message.success('删除成功')
         this.getList()
-      })
-    },
-    handleExport() {
-      this.$message.info('导出功能开发中')
+        this.$modal.msgSuccess('删除成功')
+      }).catch(() => {})
     },
     getLanguageType(language) {
-      const types = {
-        '英语': 'primary',
-        '日语': 'success',
-        '汉语': 'warning'
-      }
+      const types = { 'en': 'primary', 'ja': 'success', 'zh': 'warning' }
       return types[language] || 'info'
     },
-    getDifficultyType(difficulty) {
-      const types = {
-        '初级': 'success',
-        '中级': 'warning',
-        '高级': 'danger'
-      }
-      return types[difficulty] || 'info'
+    getLanguageLabel(language) {
+      const labels = { 'en': '英语', 'ja': '日语', 'zh': '汉语' }
+      return labels[language] || language
     },
-    parseTime(time) {
-      return time || '-'
+    getLevelType(level) {
+      const types = { 'beginner': 'success', 'elementary': '', 'intermediate': 'warning', 'advanced': 'danger' }
+      return types[level] || 'info'
+    },
+    getLevelLabel(level) {
+      const labels = { 'beginner': '初级', 'elementary': '基础', 'intermediate': '中级', 'advanced': '高级' }
+      return labels[level] || level
+    },
+    getCourseTypeLabel(type) {
+      const labels = { 'general': '综合', 'conversation': '会话', 'grammar': '语法', 'vocabulary': '词汇', 'listening': '听力', 'speaking': '口语' }
+      return labels[type] || type
     }
   }
 }

@@ -3,8 +3,12 @@ package com.ruoyi.edu.service.impl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.edu.domain.EduCourse;
+import com.ruoyi.edu.domain.EduCourseLesson;
+import com.ruoyi.edu.domain.EduCourseUnit;
 import com.ruoyi.edu.domain.EduUserCourse;
+import com.ruoyi.edu.mapper.EduCourseLessonMapper;
 import com.ruoyi.edu.mapper.EduCourseMapper;
+import com.ruoyi.edu.mapper.EduCourseUnitMapper;
 import com.ruoyi.edu.mapper.EduUserCourseMapper;
 import com.ruoyi.edu.service.IEduCourseService;
 import org.slf4j.Logger;
@@ -30,6 +34,12 @@ public class EduCourseServiceImpl implements IEduCourseService {
 
     @Autowired
     private EduUserCourseMapper eduUserCourseMapper;
+
+    @Autowired
+    private EduCourseUnitMapper eduCourseUnitMapper;
+
+    @Autowired
+    private EduCourseLessonMapper eduCourseLessonMapper;
 
     /**
      * 查询课程
@@ -161,7 +171,13 @@ public class EduCourseServiceImpl implements IEduCourseService {
             throw new ServiceException("课程不存在");
         }
 
-        // 如果提供了用户ID，检查用户是否已报名
+        List<EduCourseUnit> units = eduCourseUnitMapper.selectUnitsByCourseId(courseId);
+        for (EduCourseUnit unit : units) {
+            List<EduCourseLesson> lessons = eduCourseLessonMapper.selectLessonsByUnitId(unit.getUnitId());
+            unit.setLessons(lessons);
+        }
+        course.setUnits(units);
+
         if (userId != null) {
             EduUserCourse userCourse = eduUserCourseMapper.selectUserCourse(userId, courseId);
             course.setIsEnrolled(userCourse != null);
