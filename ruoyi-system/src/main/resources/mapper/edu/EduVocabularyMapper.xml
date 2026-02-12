@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduVocabularyMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduVocabulary" id="EduVocabularyResult">
+        <result property="vocabId" column="vocab_id"/>
+        <result property="word" column="word"/>
+        <result property="language" column="language"/>
+        <result property="pronunciation" column="pronunciation"/>
+        <result property="audioUrl" column="audio_url"/>
+        <result property="partOfSpeech" column="part_of_speech"/>
+        <result property="level" column="level"/>
+        <result property="definition" column="definition"/>
+        <result property="exampleSentences" column="example_sentences"/>
+        <result property="synonyms" column="synonyms"/>
+        <result property="antonyms" column="antonyms"/>
+        <result property="wordFamily" column="word_family"/>
+        <result property="difficulty" column="difficulty"/>
+        <result property="frequency" column="frequency"/>
+        <result property="tags" column="tags"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectEduVocabularyVo">
+        select vocab_id, word, language, pronunciation, audio_url, part_of_speech,
+               level, definition, example_sentences, synonyms, antonyms, word_family,
+               difficulty, frequency, tags, image_url, create_by, create_time,
+               update_by, update_time, del_flag
+        from edu_vocabulary
+        where del_flag = '0'
+    </sql>
+
+    <select id="selectEduVocabularyById" parameterType="Long" resultMap="EduVocabularyResult">
+        <include refid="selectEduVocabularyVo"/>
+        and vocab_id = #{vocabId}
+    </select>
+
+    <select id="selectEduVocabularyList" parameterType="com.ruoyi.edu.domain.EduVocabulary" resultMap="EduVocabularyResult">
+        <include refid="selectEduVocabularyVo"/>
+        <where>
+            <if test="word != null and word != ''">
+                AND word LIKE CONCAT('%', #{word}, '%')
+            </if>
+            <if test="language != null and language != ''">
+                AND language = #{language}
+            </if>
+            <if test="level != null and level != ''">
+                AND level = #{level}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectEduVocabularyByLanguage" parameterType="String" resultMap="EduVocabularyResult">
+        <include refid="selectEduVocabularyVo"/>
+        and language = #{language}
+        order by frequency desc
+    </select>
+
+    <insert id="insertEduVocabulary" parameterType="com.ruoyi.edu.domain.EduVocabulary" useGeneratedKeys="true" keyProperty="vocabId">
+        insert into edu_vocabulary (
+            word, language, pronunciation, audio_url, part_of_speech,
+            level, definition, example_sentences, synonyms, antonyms,
+            word_family, difficulty, frequency, tags, image_url,
+            create_by, create_time, del_flag
+        ) values (
+            #{word}, #{language}, #{pronunciation}, #{audioUrl}, #{partOfSpeech},
+            #{level}, #{definition}, #{exampleSentences}, #{synonyms}, #{antonyms},
+            #{wordFamily}, #{difficulty}, #{frequency}, #{tags}, #{imageUrl},
+            #{createBy}, sysdate(), '0'
+        )
+    </insert>
+
+    <update id="updateEduVocabulary" parameterType="com.ruoyi.edu.domain.EduVocabulary">
+        update edu_vocabulary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="word != null and word != ''">word = #{word},</if>
+            <if test="language != null and language != ''">language = #{language},</if>
+            <if test="pronunciation != null">pronunciation = #{pronunciation},</if>
+            <if test="audioUrl != null">audio_url = #{audioUrl},</if>
+            <if test="partOfSpeech != null">part_of_speech = #{partOfSpeech},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="definition != null">definition = #{definition},</if>
+            <if test="exampleSentences != null">example_sentences = #{exampleSentences},</if>
+            <if test="synonyms != null">synonyms = #{synonyms},</if>
+            <if test="antonyms != null">antonyms = #{antonyms},</if>
+            <if test="wordFamily != null">word_family = #{wordFamily},</if>
+            <if test="difficulty != null">difficulty = #{difficulty},</if>
+            <if test="frequency != null">frequency = #{frequency},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate(),
+        </trim>
+        where vocab_id = #{vocabId}
+    </update>
+
+    <delete id="deleteEduVocabularyById" parameterType="Long">
+        update edu_vocabulary set del_flag = '1' where vocab_id = #{vocabId}
+    </delete>
+
+    <delete id="deleteEduVocabularyByIds" parameterType="Long">
+        update edu_vocabulary set del_flag = '1' where vocab_id in
+        <foreach item="vocabId" collection="array" open="(" separator="," close=")">
+            #{vocabId}
+        </foreach>
+    </delete>
+
+</mapper>

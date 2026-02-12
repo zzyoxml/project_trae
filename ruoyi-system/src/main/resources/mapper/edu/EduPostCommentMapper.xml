@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduPostCommentMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduPostComment" id="EduPostCommentResult">
+        <result property="commentId" column="comment_id"/>
+        <result property="postId" column="post_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="parentCommentId" column="parent_comment_id"/>
+        <result property="content" column="content"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="username" column="username"/>
+        <result property="userAvatar" column="user_avatar"/>
+        <result property="replyCount" column="reply_count"/>
+        <result property="isLiked" column="is_liked"/>
+    </resultMap>
+
+    <sql id="selectEduPostCommentVo">
+        select c.comment_id, c.post_id, c.user_id, c.parent_comment_id, c.content, c.like_count,
+               c.is_deleted, c.create_by, c.create_time, c.update_by, c.update_time,
+               u.user_name as username, u.avatar as user_avatar
+        from edu_post_comment c
+        left join sys_user u on c.user_id = u.user_id
+        where c.is_deleted = 0
+    </sql>
+
+    <select id="selectEduPostCommentById" parameterType="Long" resultMap="EduPostCommentResult">
+        <include refid="selectEduPostCommentVo"/>
+        and c.comment_id = #{commentId}
+    </select>
+
+    <select id="selectCommentsByPostId" parameterType="Long" resultMap="EduPostCommentResult">
+        <include refid="selectEduPostCommentVo"/>
+        and c.post_id = #{postId}
+        and c.parent_comment_id is null
+        order by c.create_time desc
+    </select>
+
+    <select id="selectReplies" parameterType="Long" resultMap="EduPostCommentResult">
+        <include refid="selectEduPostCommentVo"/>
+        and c.parent_comment_id = #{parentCommentId}
+        order by c.create_time asc
+    </select>
+
+    <insert id="insertEduPostComment" parameterType="com.ruoyi.edu.domain.EduPostComment" useGeneratedKeys="true" keyProperty="commentId">
+        insert into edu_post_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postId != null">post_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="parentCommentId != null">parent_comment_id,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="createBy != null">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postId != null">#{postId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="parentCommentId != null">#{parentCommentId},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="createBy != null">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEduPostComment" parameterType="com.ruoyi.edu.domain.EduPostComment">
+        update edu_post_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where comment_id = #{commentId}
+    </update>
+
+    <delete id="deleteEduPostCommentById" parameterType="Long">
+        update edu_post_comment set is_deleted = 1 where comment_id = #{commentId}
+    </delete>
+
+    <update id="incrementLikeCount" parameterType="Long">
+        update edu_post_comment set like_count = like_count + 1 where comment_id = #{commentId}
+    </update>
+
+</mapper>

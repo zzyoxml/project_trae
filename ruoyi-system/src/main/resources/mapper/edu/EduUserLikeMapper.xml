@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduUserLikeMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduUserLike" id="EduUserLikeResult">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="likeType" column="like_type"/>
+        <result property="targetId" column="target_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectEduUserLikeVo">
+        select id, user_id, like_type, target_id, create_time
+        from edu_user_like
+    </sql>
+
+    <select id="selectUserLike" resultMap="EduUserLikeResult">
+        <include refid="selectEduUserLikeVo"/>
+        where user_id = #{userId}
+        and like_type = #{likeType}
+        and target_id = #{targetId}
+    </select>
+
+    <insert id="insertEduUserLike" parameterType="com.ruoyi.edu.domain.EduUserLike" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_user_like (user_id, like_type, target_id)
+        values (#{userId}, #{likeType}, #{targetId})
+    </insert>
+
+    <delete id="deleteEduUserLike">
+        delete from edu_user_like
+        where user_id = #{userId}
+        and like_type = #{likeType}
+        and target_id = #{targetId}
+    </delete>
+
+</mapper>
