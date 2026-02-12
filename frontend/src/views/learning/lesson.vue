@@ -127,7 +127,7 @@ const loadLesson = async () => {
   try {
     const lessonId = route.params.id
     const res = await getLessonDetail(lessonId)
-    lesson.value = res.data || {}
+    lesson.value = res.data?.data || res.data || {}
     courseName.value = lesson.value.courseName || '课程'
   } catch (error) {
     console.error('加载课时失败:', error)
@@ -142,13 +142,30 @@ const playAudio = (word) => {
 }
 
 const speakWord = (text) => {
-  if ('speechSynthesis' in window) {
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = lesson.value.language || 'en-US'
-    speechSynthesis.speak(utterance)
-  } else {
-    ElMessage.warning('您的浏览器不支持语音合成')
+  const language = lesson.value.language || 'en'
+  speakWithTTS(text, language)
+}
+
+const speakWithTTS = (text, language) => {
+  const voiceMap = {
+    'en': 'en-US-JennyNeural',
+    'ja': 'ja-JP-NanamiNeural',
+    'zh': 'zh-CN-XiaoxiaoNeural'
   }
+  const voice = voiceMap[language] || voiceMap['en']
+  
+  const url = `http://36.248.181.23:22335/tts?t=${encodeURIComponent(text)}&v=${voice}&r=0&p=0&s=&api_key=`
+  const audio = new Audio(url)
+  
+  audio.addEventListener('canplay', () => {
+    audio.play().catch(err => {
+      console.error('播放失败:', err)
+    })
+  })
+  
+  audio.addEventListener('error', () => {
+    ElMessage.warning('语音加载失败')
+  })
 }
 
 const checkListening = () => {

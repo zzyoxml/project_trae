@@ -248,21 +248,95 @@ export function getLearningRecords(params) {
 }
 
 export function getLessonDetail(lessonId) {
-  return Promise.resolve({
-    data: {
-      code: 200,
+  return mockApi.get('/courses').then(coursesResponse => {
+    const courses = coursesResponse.data || []
+    let vocabularyList = []
+    let grammarList = []
+    let language = 'en'
+    let courseName = '课程'
+    let lessonName = '课时'
+    let duration = 20
+
+    for (const course of courses) {
+      for (const unit of course.units || []) {
+        for (const lesson of unit.lessons || []) {
+          if (lesson.lessonId == lessonId) {
+            language = course.language || 'en'
+            courseName = course.courseName || '课程'
+            lessonName = lesson.lessonName || '课时'
+            duration = lesson.duration || 20
+            break
+          }
+        }
+      }
+    }
+
+    return mockApi.get('/vocabulary').then(vocabResponse => {
+      const vocabData = vocabResponse.data || {}
+      vocabularyList = vocabData[language] || vocabData.en || []
+
+      return mockApi.get('/grammar').then(grammarResponse => {
+        const grammarData = grammarResponse.data || {}
+        grammarList = grammarData[language] || grammarData.en || []
+
+        return {
+          data: {
+            code: 200,
+            data: {
+              lessonId,
+              lessonName,
+              title: lessonName,
+              content: '这是第 ' + lessonId + ' 课的内容，包含词汇学习和练习。',
+              duration,
+              courseId: 1,
+              courseName,
+              language,
+              vocabularyList: vocabularyList.slice(0, 8),
+              grammarList: grammarList.slice(0, 3),
+              audioUrl: '#',
+              speakingPrompt: '请朗读以下句子：Hello, how are you?',
+              materials: [
+                { type: 'video', title: '教学视频', url: '#' },
+                { type: 'text', title: '课文内容', url: '#' },
+                { type: 'exercise', title: '练习题', url: '#' }
+              ]
+            }
+          }
+        }
+      })
+    })
+  }).catch(error => {
+    console.error('获取课时详情失败:', error)
+    return {
       data: {
-        lessonId,
-        title: 'Lesson ' + lessonId,
-        content: '这是第 ' + lessonId + ' 课的内容，包含词汇学习和练习。',
-        duration: 20,
-        courseId: 1,
-        courseName: '英语入门',
-        materials: [
-          { type: 'video', title: '教学视频', url: '#' },
-          { type: 'text', title: '课文内容', url: '#' },
-          { type: 'exercise', title: '练习题', url: '#' }
-        ]
+        code: 200,
+        data: {
+          lessonId,
+          lessonName: '课时 ' + lessonId,
+          title: '课时 ' + lessonId,
+          content: '这是第 ' + lessonId + ' 课的内容',
+          duration: 20,
+          courseId: 1,
+          courseName: '英语入门',
+          language: 'en',
+          vocabularyList: [
+            { id: 1, word: 'hello', phonetic: '[həˈloʊ]', translation: '你好', example: 'Hello, how are you?' },
+            { id: 2, word: 'goodbye', phonetic: '[ɡʊdˈbaɪ]', translation: '再见', example: 'Goodbye, see you tomorrow!' },
+            { id: 3, word: 'thank you', phonetic: '[θæŋk ju]', translation: '谢谢', example: 'Thank you for your help.' },
+            { id: 4, word: 'please', phonetic: '[pliːz]', translation: '请', example: 'Please sit down.' },
+            { id: 5, word: 'yes', phonetic: '[jɛs]', translation: '是的', example: 'Yes, I understand.' },
+            { id: 6, word: 'no', phonetic: '[noʊ]', translation: '不', example: 'No, I don\'t think so.' },
+            { id: 7, word: 'book', phonetic: '[bʊk]', translation: '书', example: 'This is an interesting book.' },
+            { id: 8, word: 'water', phonetic: '[ˈwɔːtər]', translation: '水', example: 'I want to drink some water.' }
+          ],
+          grammarList: [
+            { id: 1, title: '一般现在时', explanation: '表示经常性或习惯性的动作', example: 'I drink water every day.' },
+            { id: 2, title: '现在进行时', explanation: '表示正在进行的动作', example: 'I am reading a book now.' },
+            { id: 3, title: '一般过去时', explanation: '表示过去发生的动作', example: 'I visited Tokyo last year.' }
+          ],
+          audioUrl: '#',
+          speakingPrompt: '请朗读以下句子：Hello, how are you?'
+        }
       }
     }
   })
