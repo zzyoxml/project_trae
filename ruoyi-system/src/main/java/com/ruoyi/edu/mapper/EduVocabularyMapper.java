@@ -19,4 +19,6 @@ public interface EduVocabularyMapper {
     int updateEduVocabulary(EduVocabulary eduVocabulary);
 
     int deleteEduVocabularyById(Long vocabId);
+
+    int deleteEduVocabularyByIds(Long[] vocabIds);
 }

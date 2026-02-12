@@ -28,7 +28,15 @@ VALUES (2003, '社区管理', 2000, 3, 'community', 'edu/community/index', '1', 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, is_frame, is_cache, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
 VALUES (2004, '成就管理', 2000, 4, 'achievement', 'edu/achievement/index', '1', '0', '0', '0', 'edu:achievement:list', 'star', 'admin', NOW(), NULL, NULL, '成就系统管理菜单');
 
--- 7. 为超级管理员角色添加所有教育管理菜单权限
+-- 7. 插入单元管理菜单
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, is_frame, is_cache, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2005, '单元管理', 2000, 5, 'unit', 'edu/unit/index', '1', '0', '0', '0', 'edu:unit:list', 'tree-table', 'admin', NOW(), NULL, NULL, '课程单元管理菜单');
+
+-- 8. 插入课时管理菜单
+INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, is_frame, is_cache, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
+VALUES (2006, '课时管理', 2000, 6, 'lesson', 'edu/lesson/index', '1', '0', '0', '0', 'edu:lesson:list', 'list', 'admin', NOW(), NULL, NULL, '课时内容管理菜单');
+
+-- 9. 为超级管理员角色添加所有教育管理菜单权限
 INSERT INTO sys_role_menu (role_id, menu_id)
 SELECT 1, menu_id FROM sys_menu WHERE menu_id >= 2000;
 

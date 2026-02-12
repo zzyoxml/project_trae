@@ -123,40 +123,47 @@ export function getCourseList(params = {}) {
 }
 
 export function getCourseDetail(courseId) {
-  return ruoyiApi.get(`/edu/course/${courseId}`).then(response => {
-    const res = response.data
-    if (res.code === 200) {
-      const course = res.data || {}
+  return mockApi.get('/courses').then(response => {
+    const courses = response.data || []
+    const course = courses.find(c => c.courseId == courseId || c.id == courseId)
+    
+    if (course) {
       return {
-        data: {
-          ...course,
-          courseId: course.courseId,
-          courseName: course.courseName,
-          description: course.description,
-          language: course.language,
-          level: course.level,
-          courseType: course.courseType,
-          coverImage: course.coverImage,
-          totalDuration: course.totalDuration,
-          totalLessons: course.totalLessons,
-          totalStudents: course.totalStudents,
-          rating: course.rating,
-          ratingCount: course.ratingCount,
-          units: course.units || [],
-          isFeatured: course.isFeatured
-        }
+        data: mapCourse(course)
       }
     }
-    return { data: null }
+    
+    return ruoyiApi.get(`/edu/course/${courseId}`).then(response => {
+      const res = response.data
+      if (res.code === 200) {
+        const course = res.data || {}
+        const mockCourse = courses.find(c => c.courseId == courseId || c.id == courseId)
+        
+        return {
+          data: {
+            ...course,
+            courseId: course.courseId,
+            courseName: course.courseName,
+            description: course.description,
+            language: course.language,
+            level: course.level,
+            courseType: course.courseType,
+            coverImage: course.coverImage || mockCourse?.coverImage,
+            totalDuration: course.totalDuration,
+            totalLessons: course.totalLessons,
+            totalStudents: course.totalStudents,
+            rating: course.rating,
+            ratingCount: course.ratingCount,
+            units: course.units || mockCourse?.units || [],
+            isFeatured: course.isFeatured
+          }
+        }
+      }
+      return { data: null }
+    }).catch(() => ({ data: null }))
   }).catch(error => {
     console.error('获取课程详情失败:', error)
-    return mockApi.get('/courses').then(response => {
-      const courses = response.data || []
-      const course = courses.find(c => c.courseId == courseId || c.id == courseId)
-      return {
-        data: course ? mapCourse(course) : null
-      }
-    })
+    return { data: null }
   })
 }
 

@@ -101,6 +101,11 @@ public class EduVocabulary extends BaseEntity {
      */
     private Boolean isLearned;
 
+    /**
+     * 删除标志
+     */
+    private String delFlag;
+
     public Long getVocabId() {
         return vocabId;
     }
@@ -243,6 +248,14 @@ public class EduVocabulary extends BaseEntity {
 
     public void setIsLearned(Boolean isLearned) {
         this.isLearned = isLearned;
+    }
+
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
     }
 
     @Override

@@ -33,6 +33,19 @@
         and unit_id = #{unitId}
     </select>
 
+    <select id="selectEduCourseUnitList" parameterType="com.ruoyi.edu.domain.EduCourseUnit" resultMap="EduCourseUnitResult">
+        <include refid="selectEduCourseUnitVo"/>
+        <where>
+            <if test="courseId != null">
+                AND course_id = #{courseId}
+            </if>
+            <if test="unitName != null and unitName != ''">
+                AND unit_name LIKE CONCAT('%', #{unitName}, '%')
+            </if>
+        </where>
+        order by course_id asc, unit_order asc
+    </select>
+
     <select id="selectUnitsByCourseId" parameterType="Long" resultMap="EduCourseUnitResult">
         <include refid="selectEduCourseUnitVo"/>
         and course_id = #{courseId}

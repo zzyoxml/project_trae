@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -31,18 +32,11 @@ public class EduMenuController extends BaseController
     /**
      * 获取教育平台的路由菜单
      */
-    @GetMapping("/getRouters")
+    @Anonymous
+    @GetMapping(value = "/getRouters", produces = "application/json;charset=UTF-8")
     public AjaxResult getRouters()
     {
         List<RouterVo> routers = new ArrayList<>();
-        
-        // 首页
-        RouterVo indexRouter = new RouterVo();
-        indexRouter.setPath("/index");
-        indexRouter.setComponent("index");
-        indexRouter.setMeta(new MetaVo("首页", "dashboard", false, ""));
-        indexRouter.setName("Index");
-        routers.add(indexRouter);
         
         // 课程管理
         RouterVo courseRouter = new RouterVo();
@@ -50,6 +44,7 @@ public class EduMenuController extends BaseController
         courseRouter.setRedirect("noRedirect");
         courseRouter.setAlwaysShow(true);
         courseRouter.setName("Edu");
+        courseRouter.setComponent("Layout");
         courseRouter.setMeta(new MetaVo("教育管理", "education", false, ""));
         
         List<RouterVo> courseChildren = new ArrayList<>();
@@ -81,6 +76,27 @@ public class EduMenuController extends BaseController
         achievementManage.setName("AchievementManage");
         achievementManage.setMeta(new MetaVo("成就管理", "star", false, ""));
         courseChildren.add(achievementManage);
+        
+        RouterVo unitManage = new RouterVo();
+        unitManage.setPath("unit");
+        unitManage.setComponent("edu/unit/index");
+        unitManage.setName("UnitManage");
+        unitManage.setMeta(new MetaVo("章节管理", "tree-table", false, ""));
+        courseChildren.add(unitManage);
+        
+        RouterVo lessonManage = new RouterVo();
+        lessonManage.setPath("lesson");
+        lessonManage.setComponent("edu/lesson/index");
+        lessonManage.setName("LessonManage");
+        lessonManage.setMeta(new MetaVo("课时管理", "list", false, ""));
+        courseChildren.add(lessonManage);
+        
+        RouterVo vocabularyManage = new RouterVo();
+        vocabularyManage.setPath("vocabulary");
+        vocabularyManage.setComponent("edu/vocabulary/index");
+        vocabularyManage.setName("VocabularyManage");
+        vocabularyManage.setMeta(new MetaVo("词汇管理", "word", false, ""));
+        courseChildren.add(vocabularyManage);
         
         courseRouter.setChildren(courseChildren);
         routers.add(courseRouter);
