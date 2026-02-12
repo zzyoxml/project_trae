@@ -100,8 +100,12 @@ const loadPost = async () => {
   loading.value = true
   try {
     const postId = route.params.id
+    console.log('Loading post with id:', postId)
     const res = await getPostDetail(postId)
-    post.value = res.data
+    console.log('Post data received:', res)
+    post.value = res
+    console.log('Post after assignment:', post.value)
+    console.log('Post postId:', post.value?.postId)
   } catch (error) {
     console.error('加载帖子失败:', error)
     ElMessage.error('加载帖子失败')
@@ -114,7 +118,7 @@ const loadComments = async () => {
   try {
     const postId = route.params.id
     const res = await getPostComments(postId)
-    comments.value = res.data || []
+    comments.value = res || []
   } catch (error) {
     console.error('加载评论失败:', error)
   }
@@ -126,7 +130,20 @@ const submitComment = async () => {
     return
   }
 
+  if (!post.value || !post.value.postId) {
+    console.log('Post object:', post.value)
+    console.log('Post postId value:', post.value?.postId)
+    ElMessage.error('帖子信息加载失败，请刷新重试')
+    return
+  }
+
   try {
+    console.log('Submitting comment with postId:', post.value.postId)
+    const commentData = {
+      postId: post.value.postId,
+      content: newComment.value
+    }
+    console.log('Comment data:', commentData)
     await addComment({
       postId: post.value.postId,
       content: newComment.value

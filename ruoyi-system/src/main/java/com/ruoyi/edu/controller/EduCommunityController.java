@@ -29,6 +29,7 @@ public class EduCommunityController extends BaseController {
     /**
      * 查询帖子列表
      */
+    @Anonymous
     @GetMapping("/post/list")
     public TableDataInfo postList(EduPost eduPost) {
         startPage();
@@ -60,6 +61,7 @@ public class EduCommunityController extends BaseController {
     /**
      * 获取帖子详情
      */
+    @Anonymous
     @GetMapping("/post/{postId}")
     public AjaxResult getPostDetails(@PathVariable Long postId) {
         EduPost post = communityService.selectEduPostById(postId);
@@ -122,6 +124,7 @@ public class EduCommunityController extends BaseController {
     /**
      * 获取帖子评论
      */
+    @Anonymous
     @GetMapping("/post/{postId}/comments")
     public AjaxResult getPostComments(@PathVariable Long postId) {
         Long userId = null;

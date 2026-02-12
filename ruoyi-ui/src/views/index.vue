@@ -211,7 +211,7 @@ export default {
       this.recentUsers = [
         { nickName: '张小明', language: '英语', joinTime: '2024-01-15' },
         { nickName: '李华', language: '日语', joinTime: '2024-01-14' },
-        { nickName: '王芳', language: '汉语', joinTime: '2024-01-13' },
+        { nickName: '小明', language: '汉语', joinTime: '2024-01-13' },
         { nickName: 'John', language: '英语', joinTime: '2024-01-12' },
         { nickName: '田中', language: '日语', joinTime: '2024-01-11' }
       ]

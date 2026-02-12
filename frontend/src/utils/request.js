@@ -54,7 +54,7 @@ service.interceptors.response.use(
     
     // 根据业务状态码判断请求是否成功
     if (res.code === 200) {
-      return res
+      return res.data !== undefined ? res.data : res
     } else {
       // 处理业务错误
       ElMessage.error(res.msg || '请求失败')

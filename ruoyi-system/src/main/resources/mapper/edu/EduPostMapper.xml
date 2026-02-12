@@ -29,17 +29,20 @@
                like_count, comment_count, is_pinned, is_featured, is_deleted, status,
                create_by, create_time, update_by, update_time
         from edu_post
-        where is_deleted = 0
     </sql>
 
     <select id="selectEduPostById" parameterType="Long" resultMap="EduPostResult">
         <include refid="selectEduPostVo"/>
-        and post_id = #{postId}
+        <where>
+            is_deleted = 0
+            and post_id = #{postId}
+        </where>
     </select>
 
     <select id="selectEduPostList" parameterType="com.ruoyi.edu.domain.EduPost" resultMap="EduPostResult">
         <include refid="selectEduPostVo"/>
         <where>
+            is_deleted = 0
             <if test="postType != null and postType != ''">
                 AND post_type = #{postType}
             </if>
@@ -53,22 +56,31 @@
         order by create_time desc
     </select>
 
-    <select id="selectEduPostByLanguage" resultMap="EduPostResult">
-        <include refid="selectEduPostVo"/>
-        and (language = #{language} or language = 'all')
+    <select id="selectEduPostByLanguage" resultType="com.ruoyi.edu.domain.EduPost">
+        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
+               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
+               create_by, create_time, update_by, update_time
+        from edu_post
+        where (language = #{language} or language = 'all')
         order by like_count desc, view_count desc
         limit #{limit}
     </select>
 
-    <select id="selectEduPostByUserId" parameterType="Long" resultMap="EduPostResult">
-        <include refid="selectEduPostVo"/>
-        and user_id = #{userId}
+    <select id="selectEduPostByUserId" parameterType="Long" resultType="com.ruoyi.edu.domain.EduPost">
+        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
+               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
+               create_by, create_time, update_by, update_time
+        from edu_post
+        where user_id = #{userId}
         order by create_time desc
     </select>
 
-    <select id="selectHotPosts" parameterType="Integer" resultMap="EduPostResult">
-        <include refid="selectEduPostVo"/>
-        and status = 'published'
+    <select id="selectHotPosts" parameterType="Integer" resultType="com.ruoyi.edu.domain.EduPost">
+        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
+               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
+               create_by, create_time, update_by, update_time
+        from edu_post
+        where status = 'published'
         order by (like_count * 2 + view_count) desc
         limit #{limit}
     </select>

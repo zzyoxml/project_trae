@@ -61,8 +61,8 @@ export const useUserStore = defineStore('user', {
   actions: {
     async login(loginForm) {
       try {
-        const response = await login(loginForm)
-        const { code, token, user, msg } = response.data
+        const res = await login(loginForm)
+        const { code, token, user, msg } = res
         
         if (code !== 200) {
           throw new Error(msg || '登录失败')
@@ -75,7 +75,7 @@ export const useUserStore = defineStore('user', {
           this.setUserInfo(user)
         }
         
-        return response
+        return res
       } catch (error) {
         console.error('登录失败:', error)
         throw error
@@ -84,8 +84,8 @@ export const useUserStore = defineStore('user', {
 
     async register(registerForm) {
       try {
-        const response = await register(registerForm)
-        return response
+        const res = await register(registerForm)
+        return res
       } catch (error) {
         console.error('注册失败:', error)
         throw error
@@ -94,8 +94,8 @@ export const useUserStore = defineStore('user', {
 
     async getUserInfo() {
       try {
-        const response = await getUserInfo()
-        const user = response.data
+        const res = await getUserInfo()
+        const user = res.user || res
         
         this.setUserInfo(user)
         

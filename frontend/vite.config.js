@@ -49,7 +49,27 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ruoyi-api/, '')
       },
+      '/login': {
+        target: 'http://localhost:6666',
+        changeOrigin: true
+      },
+      '/register': {
+        target: 'http://localhost:6666',
+        changeOrigin: true
+      },
+      '/logout': {
+        target: 'http://localhost:6666',
+        changeOrigin: true
+      },
+      '/getInfo': {
+        target: 'http://localhost:6666',
+        changeOrigin: true
+      },
       '/profile': {
+        target: 'http://localhost:6666',
+        changeOrigin: true
+      },
+      '/edu': {
         target: 'http://localhost:6666',
         changeOrigin: true
       },

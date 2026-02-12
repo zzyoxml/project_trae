@@ -25,10 +25,10 @@
     <div class="posts-section">
       <div class="posts-filters">
         <el-radio-group v-model="filterType" @change="loadPosts">
-          <el-radio-button label="">全部</el-radio-button>
-          <el-radio-button label="experience">学习心得</el-radio-button>
-          <el-radio-button label="question">问题求助</el-radio-button>
-          <el-radio-button label="resource">资源分享</el-radio-button>
+          <el-radio-button value="">全部</el-radio-button>
+          <el-radio-button value="experience">学习心得</el-radio-button>
+          <el-radio-button value="question">问题求助</el-radio-button>
+          <el-radio-button value="resource">资源分享</el-radio-button>
         </el-radio-group>
       </div>
 
@@ -121,8 +121,8 @@ const loadPosts = async () => {
       ...pagination
     }
     const res = await getPostList(params)
-    posts.value = res.data?.rows || []
-    total.value = res.data?.total || 0
+    posts.value = res.rows || []
+    total.value = res.total || 0
   } catch (error) {
     console.error('加载帖子失败:', error)
   } finally {
