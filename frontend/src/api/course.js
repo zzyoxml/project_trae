@@ -123,14 +123,16 @@ export function getCourseList(params = {}) {
 }
 
 export function getCourseDetail(courseId) {
-  return mockApi.get('/courses/' + courseId).then(response => {
+  return mockApi.get('/courses').then(response => {
+    const courses = response.data || []
+    const course = courses.find(c => c.courseId == courseId || c.id == courseId)
     return {
-      data: mapCourse(response.data || {})
+      data: course ? mapCourse(course) : null
     }
   }).catch(error => {
     console.error('获取课程详情失败:', error)
     return {
-      data: {}
+      data: null
     }
   })
 }
