@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduUserAchievementMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduUserAchievement" id="EduUserAchievementResult">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="achievementId" column="achievement_id"/>
+        <result property="progress" column="progress"/>
+        <result property="targetValue" column="target_value"/>
+        <result property="isCompleted" column="is_completed"/>
+        <result property="completedTime" column="completed_time"/>
+        <result property="notificationSent" column="notification_sent"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectEduUserAchievementVo">
+        select id, user_id, achievement_id, progress, target_value, is_completed,
+               completed_time, notification_sent, create_time, update_time
+        from edu_user_achievement
+    </sql>
+
+    <select id="selectUserAchievement" resultMap="EduUserAchievementResult">
+        <include refid="selectEduUserAchievementVo"/>
+        where user_id = #{userId} and achievement_id = #{achievementId}
+    </select>
+
+    <select id="selectUserAchievementList" resultMap="EduUserAchievementResult">
+        <include refid="selectEduUserAchievementVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertEduUserAchievement" parameterType="com.ruoyi.edu.domain.EduUserAchievement" useGeneratedKeys="true" keyProperty="id">
+        insert into edu_user_achievement (user_id, achievement_id, progress, target_value,
+               is_completed, completed_time, notification_sent)
+        values (#{userId}, #{achievementId}, #{progress}, #{targetValue},
+                #{isCompleted}, #{completedTime}, #{notificationSent})
+    </insert>
+
+    <update id="updateEduUserAchievement" parameterType="com.ruoyi.edu.domain.EduUserAchievement">
+        update edu_user_achievement
+        <set>
+            <if test="progress != null">progress = #{progress},</if>
+            <if test="targetValue != null">target_value = #{targetValue},</if>
+            <if test="isCompleted != null">is_completed = #{isCompleted},</if>
+            <if test="completedTime != null">completed_time = #{completedTime},</if>
+            <if test="notificationSent != null">notification_sent = #{notificationSent},</if>
+            update_time = sysdate()
+        </set>
+        where user_id = #{userId} and achievement_id = #{achievementId}
+    </update>
+
+    <delete id="deleteUserAchievement">
+        delete from edu_user_achievement where user_id = #{userId} and achievement_id = #{achievementId}
+    </delete>
+
+</mapper>

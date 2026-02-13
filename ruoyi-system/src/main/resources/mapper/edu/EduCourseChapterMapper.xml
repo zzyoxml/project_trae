@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduCourseChapterMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduCourseChapter" id="EduCourseChapterResult">
+        <result property="chapterId" column="chapter_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="chapterName" column="chapter_name"/>
+        <result property="chapterOrder" column="chapter_order"/>
+        <result property="description" column="description"/>
+        <result property="totalUnits" column="total_units"/>
+        <result property="totalLessons" column="total_lessons"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectEduCourseChapterVo">
+        select chapter_id, course_id, chapter_name, chapter_order, description,
+               total_units, total_lessons,
+               create_by, create_time, update_by, update_time, del_flag
+        from edu_course_chapter
+        where del_flag = '0'
+    </sql>
+
+    <select id="selectEduCourseChapterById" parameterType="Long" resultMap="EduCourseChapterResult">
+        <include refid="selectEduCourseChapterVo"/>
+        and chapter_id = #{chapterId}
+    </select>
+
+    <select id="selectEduCourseChapterList" parameterType="com.ruoyi.edu.domain.EduCourseChapter" resultMap="EduCourseChapterResult">
+        <include refid="selectEduCourseChapterVo"/>
+        <trim prefix="AND">
+            <if test="courseId != null">
+                course_id = #{courseId}
+            </if>
+            <if test="chapterName != null and chapterName != ''">
+                chapter_name LIKE CONCAT('%', #{chapterName}, '%')
+            </if>
+        </trim>
+        order by course_id asc, chapter_order asc
+    </select>
+
+    <select id="selectChaptersByCourseId" parameterType="Long" resultMap="EduCourseChapterResult">
+        <include refid="selectEduCourseChapterVo"/>
+        and course_id = #{courseId}
+        order by chapter_order asc
+    </select>
+
+    <insert id="insertEduCourseChapter" parameterType="com.ruoyi.edu.domain.EduCourseChapter" useGeneratedKeys="true" keyProperty="chapterId">
+        insert into edu_course_chapter (
+            course_id, chapter_name, chapter_order, description,
+            create_by, create_time, del_flag
+        ) values (
+            #{courseId}, #{chapterName}, #{chapterOrder}, #{description},
+            #{createBy}, sysdate(), '0'
+        )
+    </insert>
+
+    <update id="updateEduCourseChapter" parameterType="com.ruoyi.edu.domain.EduCourseChapter">
+        update edu_course_chapter
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="chapterName != null and chapterName != ''">chapter_name = #{chapterName},</if>
+            <if test="chapterOrder != null">chapter_order = #{chapterOrder},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = sysdate(),
+        </trim>
+        where chapter_id = #{chapterId}
+    </update>
+
+    <delete id="deleteEduCourseChapterById" parameterType="Long">
+        update edu_course_chapter set del_flag = '1' where chapter_id = #{chapterId}
+    </delete>
+
+    <delete id="deleteEduCourseChapterByIds" parameterType="Long">
+        update edu_course_chapter set del_flag = '1' where chapter_id in
+        <foreach item="chapterId" collection="array" open="(" separator="," close=")">
+            #{chapterId}
+        </foreach>
+    </delete>
+
+</mapper>

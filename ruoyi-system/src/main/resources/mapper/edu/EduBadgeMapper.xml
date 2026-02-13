@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduBadgeMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduBadge" id="EduBadgeResult">
+        <id property="badgeId" column="badge_id"/>
+        <result property="badgeName" column="badge_name"/>
+        <result property="badgeType" column="badge_type"/>
+        <result property="description" column="description"/>
+        <result property="iconUrl" column="icon_url"/>
+        <result property="tier" column="tier"/>
+        <result property="requirementType" column="requirement_type"/>
+        <result property="requirementValue" column="requirement_value"/>
+        <result property="xpReward" column="xp_reward"/>
+        <result property="coinReward" column="coin_reward"/>
+        <result property="isActive" column="is_active"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="rarity" column="rarity"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectEduBadgeVo">
+        select badge_id, badge_name, badge_type, description, icon_url, tier,
+               requirement_type, requirement_value, xp_reward, coin_reward,
+               is_active, display_order, rarity, create_by, create_time, update_by, update_time
+        from edu_badge
+    </sql>
+
+    <select id="selectEduBadgeById" parameterType="Long" resultMap="EduBadgeResult">
+        <include refid="selectEduBadgeVo"/>
+        where badge_id = #{badgeId}
+    </select>
+
+    <select id="selectEduBadgeList" parameterType="com.ruoyi.edu.domain.EduBadge" resultMap="EduBadgeResult">
+        <include refid="selectEduBadgeVo"/>
+        <where>
+            <if test="badgeType != null and badgeType != ''">and badge_type = #{badgeType}</if>
+            <if test="tier != null and tier != ''">and tier = #{tier}</if>
+            <if test="isActive != null">and is_active = #{isActive}</if>
+        </where>
+        order by display_order asc
+    </select>
+
+    <insert id="insertEduBadge" parameterType="com.ruoyi.edu.domain.EduBadge" useGeneratedKeys="true" keyProperty="badgeId">
+        insert into edu_badge (badge_name, badge_type, description, icon_url, tier,
+               requirement_type, requirement_value, xp_reward, coin_reward, is_active, display_order, rarity)
+        values (#{badgeName}, #{badgeType}, #{description}, #{iconUrl}, #{tier},
+                #{requirementType}, #{requirementValue}, #{xpReward}, #{coinReward}, #{isActive}, #{displayOrder}, #{rarity})
+    </insert>
+
+    <update id="updateEduBadge" parameterType="com.ruoyi.edu.domain.EduBadge">
+        update edu_badge
+        <set>
+            <if test="badgeName != null">badge_name = #{badgeName},</if>
+            <if test="badgeType != null">badge_type = #{badgeType},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="iconUrl != null">icon_url = #{iconUrl},</if>
+            <if test="tier != null">tier = #{tier},</if>
+            <if test="requirementType != null">requirement_type = #{requirementType},</if>
+            <if test="requirementValue != null">requirement_value = #{requirementValue},</if>
+            <if test="xpReward != null">xp_reward = #{xpReward},</if>
+            <if test="coinReward != null">coin_reward = #{coinReward},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="displayOrder != null">display_order = #{displayOrder},</if>
+            <if test="rarity != null">rarity = #{rarity},</if>
+            update_time = sysdate()
+        </set>
+        where badge_id = #{badgeId}
+    </update>
+
+    <delete id="deleteEduBadgeById" parameterType="Long">
+        delete from edu_badge where badge_id = #{badgeId}
+    </delete>
+
+</mapper>
