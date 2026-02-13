@@ -4,21 +4,13 @@
 
     <resultMap type="com.ruoyi.edu.domain.EduVocabulary" id="EduVocabularyResult">
         <result property="vocabId" column="vocab_id"/>
+        <result property="unitId" column="unit_id"/>
         <result property="word" column="word"/>
         <result property="language" column="language"/>
         <result property="pronunciation" column="pronunciation"/>
-        <result property="audioUrl" column="audio_url"/>
         <result property="partOfSpeech" column="part_of_speech"/>
-        <result property="level" column="level"/>
         <result property="definition" column="definition"/>
         <result property="exampleSentences" column="example_sentences"/>
-        <result property="synonyms" column="synonyms"/>
-        <result property="antonyms" column="antonyms"/>
-        <result property="wordFamily" column="word_family"/>
-        <result property="difficulty" column="difficulty"/>
-        <result property="frequency" column="frequency"/>
-        <result property="tags" column="tags"/>
-        <result property="imageUrl" column="image_url"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -27,9 +19,8 @@
     </resultMap>
 
     <sql id="selectEduVocabularyVo">
-        select vocab_id, word, language, pronunciation, audio_url, part_of_speech,
-               level, definition, example_sentences, synonyms, antonyms, word_family,
-               difficulty, frequency, tags, image_url, create_by, create_time,
+        select vocab_id, unit_id, word, language, pronunciation, part_of_speech,
+               definition, example_sentences, create_by, create_time,
                update_by, update_time, del_flag
         from edu_vocabulary
         where del_flag = '0'
@@ -41,59 +32,54 @@
     </select>
 
     <select id="selectEduVocabularyList" parameterType="com.ruoyi.edu.domain.EduVocabulary" resultMap="EduVocabularyResult">
-        <include refid="selectEduVocabularyVo"/>
-        <where>
-            <if test="word != null and word != ''">
-                AND word LIKE CONCAT('%', #{word}, '%')
-            </if>
-            <if test="language != null and language != ''">
-                AND language = #{language}
-            </if>
-            <if test="level != null and level != ''">
-                AND level = #{level}
-            </if>
-        </where>
+        select vocab_id, unit_id, word, language, pronunciation, part_of_speech,
+               definition, example_sentences, create_by, create_time
+        from edu_vocabulary
+        where del_flag = '0'
+        <if test="word != null and word != ''">
+            AND word LIKE CONCAT('%', #{word}, '%')
+        </if>
+        <if test="unitIds != null and unitIds != ''">
+            AND FIND_IN_SET(unit_id, #{unitIds})
+        </if>
+        <if test="unitId != null">
+            AND unit_id = #{unitId}
+        </if>
         order by create_time desc
     </select>
 
-    <select id="selectEduVocabularyByLanguage" parameterType="String" resultMap="EduVocabularyResult">
-        <include refid="selectEduVocabularyVo"/>
-        and language = #{language}
-        order by frequency desc
-    </select>
+    <delete id="deleteVocabularyWithMismatchedLanguage">
+        delete from edu_vocabulary 
+        where del_flag = '0'
+        and vocab_id in (
+            select v.vocab_id
+            from edu_vocabulary v
+            join edu_course_unit u on v.unit_id = u.unit_id
+            join edu_course c on u.course_id = c.course_id
+            where v.language != c.language
+        )
+    </delete>
 
     <insert id="insertEduVocabulary" parameterType="com.ruoyi.edu.domain.EduVocabulary" useGeneratedKeys="true" keyProperty="vocabId">
         insert into edu_vocabulary (
-            word, language, pronunciation, audio_url, part_of_speech,
-            level, definition, example_sentences, synonyms, antonyms,
-            word_family, difficulty, frequency, tags, image_url,
-            create_by, create_time, del_flag
+            unit_id, word, language, pronunciation, part_of_speech,
+            definition, example_sentences, create_by, create_time, del_flag
         ) values (
-            #{word}, #{language}, #{pronunciation}, #{audioUrl}, #{partOfSpeech},
-            #{level}, #{definition}, #{exampleSentences}, #{synonyms}, #{antonyms},
-            #{wordFamily}, #{difficulty}, #{frequency}, #{tags}, #{imageUrl},
-            #{createBy}, sysdate(), '0'
+            #{unitId}, #{word}, #{language}, #{pronunciation}, #{partOfSpeech},
+            #{definition}, #{exampleSentences}, #{createBy}, sysdate(), '0'
         )
     </insert>
 
     <update id="updateEduVocabulary" parameterType="com.ruoyi.edu.domain.EduVocabulary">
         update edu_vocabulary
         <trim prefix="SET" suffixOverrides=",">
+            <if test="unitId != null">unit_id = #{unitId},</if>
             <if test="word != null and word != ''">word = #{word},</if>
-            <if test="language != null and language != ''">language = #{language},</if>
+            <if test="language != null">language = #{language},</if>
             <if test="pronunciation != null">pronunciation = #{pronunciation},</if>
-            <if test="audioUrl != null">audio_url = #{audioUrl},</if>
             <if test="partOfSpeech != null">part_of_speech = #{partOfSpeech},</if>
-            <if test="level != null">level = #{level},</if>
             <if test="definition != null">definition = #{definition},</if>
             <if test="exampleSentences != null">example_sentences = #{exampleSentences},</if>
-            <if test="synonyms != null">synonyms = #{synonyms},</if>
-            <if test="antonyms != null">antonyms = #{antonyms},</if>
-            <if test="wordFamily != null">word_family = #{wordFamily},</if>
-            <if test="difficulty != null">difficulty = #{difficulty},</if>
-            <if test="frequency != null">frequency = #{frequency},</if>
-            <if test="tags != null">tags = #{tags},</if>
-            <if test="imageUrl != null">image_url = #{imageUrl},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             update_time = sysdate(),
         </trim>

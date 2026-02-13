@@ -51,3 +51,18 @@ export function getRecentRecords(days = 7) {
     params: { days }
   })
 }
+
+export function completeLesson(lessonId, courseId, data) {
+  return request({
+    url: '/edu/learning/complete',
+    method: 'post',
+    data: { lessonId, courseId, ...data }
+  })
+}
+
+export function getLessonDetail(lessonId) {
+  return request({
+    url: `/edu/learning/lesson/${lessonId}`,
+    method: 'get'
+  })
+}

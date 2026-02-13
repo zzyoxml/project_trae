@@ -92,4 +92,15 @@ public class EduVocabularyController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] vocabIds) {
         return toAjax(eduVocabularyService.deleteEduVocabularyByIds(vocabIds));
     }
+
+    /**
+     * 修复语言不匹配的词汇（删除词汇语言与课程语言不一致的记录）
+     */
+    @PreAuthorize("@ss.hasPermi('edu:vocabulary:fix')")
+    @Log(title = "词汇管理", businessType = BusinessType.CLEAN)
+    @PostMapping("/fix-language")
+    public AjaxResult fixLanguageMismatch() {
+        int count = eduVocabularyService.deleteVocabularyWithMismatchedLanguage();
+        return AjaxResult.success("成功修复 " + count + " 条语言不匹配的词汇记录");
+    }
 }

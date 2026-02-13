@@ -30,6 +30,12 @@ public class EduCourseUnitController extends BaseController {
         return success(list);
     }
 
+    @GetMapping("/byChapter/{chapterId}")
+    public AjaxResult listByChapter(@PathVariable Long chapterId) {
+        List<EduCourseUnit> list = eduCourseUnitService.selectUnitsByChapterId(chapterId);
+        return success(list);
+    }
+
     @GetMapping("/{unitId}")
     public AjaxResult getInfo(@PathVariable Long unitId) {
         return success(eduCourseUnitService.selectEduCourseUnitById(unitId));

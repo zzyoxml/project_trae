@@ -371,4 +371,57 @@ public class EduLearningServiceImpl implements IEduLearningService {
         }
         return learningRecordMapper.selectUserRecentRecords(userId, days);
     }
+
+    @Override
+    @Transactional
+    public Map<String, Object> completeLesson(Long userId, Long lessonId, Long courseId, Integer score, Integer duration) {
+        Map<String, Object> result = new HashMap<>();
+
+        EduCourseLesson lesson = lessonMapper.selectEduCourseLessonById(lessonId);
+        if (lesson == null) {
+            throw new RuntimeException("课时不存在");
+        }
+
+        EduLearningProgress progress = learningProgressMapper.selectEduLearningProgressByUserAndLesson(userId, lessonId);
+
+        if (progress == null) {
+            progress = new EduLearningProgress();
+            progress.setUserId(userId);
+            progress.setCourseId(courseId);
+            progress.setLessonId(lessonId);
+            progress.setUnitId(lesson.getUnitId());
+            progress.setProgressPercent(100);
+            progress.setBestScore(score);
+            progress.setAttemptCount(1);
+            progress.setTimeSpent(duration != null ? duration : 0);
+            progress.setStatus("completed");
+            progress.setCompletedTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            progress.setMasteryLevel(score);
+            learningProgressMapper.insertEduLearningProgress(progress);
+        } else {
+            progress.setProgressPercent(100);
+            progress.setBestScore(Math.max(progress.getBestScore() != null ? progress.getBestScore() : 0, score));
+            progress.setAttemptCount((progress.getAttemptCount() != null ? progress.getAttemptCount() : 0) + 1);
+            progress.setTimeSpent((progress.getTimeSpent() != null ? progress.getTimeSpent() : 0) + (duration != null ? duration : 0));
+            progress.setStatus("completed");
+            progress.setCompletedTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            progress.setMasteryLevel(score);
+            learningProgressMapper.updateEduLearningProgress(progress);
+        }
+
+        int xpReward = lesson.getExperienceReward() != null ? lesson.getExperienceReward() : 10;
+        int coinReward = lesson.getCoinReward() != null ? lesson.getCoinReward() : 5;
+
+        userService.updateStudyTime(userId, duration != null ? duration : 0);
+        userService.updateStreak(userId);
+        userService.rewardUser(userId, coinReward, xpReward);
+
+        result.put("xpEarned", xpReward);
+        result.put("coinsEarned", coinReward);
+        result.put("passed", true);
+        result.put("message", "课时完成");
+
+        log.info("完成课时: userId={}, lessonId={}, score={}", userId, lessonId, score);
+        return result;
+    }
 }

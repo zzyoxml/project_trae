@@ -126,4 +126,6 @@ public interface IEduLearningService {
      * @return 学习记录列表
      */
     public List<EduLearningRecord> selectUserRecentRecords(Long userId, Integer days);
+
+    public Map<String, Object> completeLesson(Long userId, Long lessonId, Long courseId, Integer score, Integer duration);
 }

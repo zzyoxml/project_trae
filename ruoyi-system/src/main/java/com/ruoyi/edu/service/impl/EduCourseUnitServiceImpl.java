@@ -35,10 +35,14 @@ public class EduCourseUnitServiceImpl implements IEduCourseUnitService {
 
     @Override
     public List<EduCourseUnit> selectUnitsByCourseId(Long courseId) {
-        if (courseId == null) {
-            throw new ServiceException("课程ID不能为空");
-        }
+        if (courseId == null) { throw new ServiceException("课程ID不能为空"); }
         return eduCourseUnitMapper.selectUnitsByCourseId(courseId);
+    }
+
+    @Override
+    public List<EduCourseUnit> selectUnitsByChapterId(Long chapterId) {
+        if (chapterId == null) { throw new ServiceException("章节ID不能为空"); }
+        return eduCourseUnitMapper.selectUnitsByChapterId(chapterId);
     }
 
     @Override

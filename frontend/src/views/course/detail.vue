@@ -235,7 +235,7 @@ const getLanguageText = (language) => {
 }
 
 const handleImageError = (e) => {
-  e.target.src = 'https://via.placeholder.com/400x300/409eff/ffffff?text=Course'
+  e.target.style.display = 'none'
 }
 </script>
 

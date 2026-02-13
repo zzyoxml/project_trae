@@ -96,6 +96,11 @@ public class EduCourseLesson extends BaseEntity {
     private Integer attemptCount;
 
     /**
+     * 单元ID列表（逗号分隔，非数据库字段）
+     */
+    private String unitIds;
+
+    /**
      * 删除标志
      */
     private String delFlag;
@@ -114,6 +119,14 @@ public class EduCourseLesson extends BaseEntity {
 
     public void setUnitId(Long unitId) {
         this.unitId = unitId;
+    }
+
+    public String getUnitIds() {
+        return unitIds;
+    }
+
+    public void setUnitIds(String unitIds) {
+        this.unitIds = unitIds;
     }
 
     public String getLessonName() {

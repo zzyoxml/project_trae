@@ -23,6 +23,11 @@ public class EduCourseUnit extends BaseEntity {
     private Long courseId;
 
     /**
+     * 章节ID
+     */
+    private Long chapterId;
+
+    /**
      * 单元名称
      */
     private String unitName;
@@ -96,6 +101,14 @@ public class EduCourseUnit extends BaseEntity {
 
     public void setCourseId(Long courseId) {
         this.courseId = courseId;
+    }
+
+    public Long getChapterId() {
+        return chapterId;
+    }
+
+    public void setChapterId(Long chapterId) {
+        this.chapterId = chapterId;
     }
 
     public String getUnitName() {

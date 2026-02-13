@@ -6,24 +6,23 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getLanguage } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 
-/**
- * 应用根组件
- * 
- * @description 应用的顶层组件，负责初始化用户状态
- */
+const router = useRouter()
 const userStore = useUserStore()
 
-// 初始化应用
 onMounted(async () => {
-  // 获取用户信息
   if (userStore.token) {
     try {
       await userStore.getUserInfo()
     } catch (error) {
-      console.error('获取用户信息失败:', error)
+      console.warn('Token已失效，已自动清除')
+      userStore.resetToken()
+      if (router.currentRoute.path !== '/login') {
+        router.push('/login')
+      }
     }
   }
 })

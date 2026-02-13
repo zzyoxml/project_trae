@@ -83,4 +83,14 @@ public class EduVocabularyServiceImpl implements IEduVocabularyService {
     public int deleteEduVocabularyById(Long vocabId) {
         return eduVocabularyMapper.deleteEduVocabularyById(vocabId);
     }
+
+    /**
+     * 删除语言不匹配的词汇（词汇语言与课程语言不一致的记录）
+     * 
+     * @return 结果
+     */
+    @Override
+    public int deleteVocabularyWithMismatchedLanguage() {
+        return eduVocabularyMapper.deleteVocabularyWithMismatchedLanguage();
+    }
 }

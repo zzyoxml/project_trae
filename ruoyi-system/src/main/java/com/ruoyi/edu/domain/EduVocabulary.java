@@ -17,6 +17,11 @@ public class EduVocabulary extends BaseEntity {
     private Long vocabId;
 
     /**
+     * 单元ID
+     */
+    private Long unitId;
+
+    /**
      * 单词
      */
     private String word;
@@ -102,6 +107,11 @@ public class EduVocabulary extends BaseEntity {
     private Boolean isLearned;
 
     /**
+     * 单元ID列表（逗号分隔，非数据库字段）
+     */
+    private String unitIds;
+
+    /**
      * 删除标志
      */
     private String delFlag;
@@ -112,6 +122,22 @@ public class EduVocabulary extends BaseEntity {
 
     public void setVocabId(Long vocabId) {
         this.vocabId = vocabId;
+    }
+
+    public Long getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Long unitId) {
+        this.unitId = unitId;
+    }
+
+    public String getUnitIds() {
+        return unitIds;
+    }
+
+    public void setUnitIds(String unitIds) {
+        this.unitIds = unitIds;
     }
 
     public String getWord() {

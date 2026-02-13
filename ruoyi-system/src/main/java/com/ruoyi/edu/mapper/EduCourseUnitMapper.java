@@ -15,6 +15,8 @@ public interface EduCourseUnitMapper {
 
     public List<EduCourseUnit> selectUnitsByCourseId(Long courseId);
 
+    public List<EduCourseUnit> selectUnitsByChapterId(Long chapterId);
+
     public int insertEduCourseUnit(EduCourseUnit eduCourseUnit);
 
     public int updateEduCourseUnit(EduCourseUnit eduCourseUnit);

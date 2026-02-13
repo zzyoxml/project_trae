@@ -3,7 +3,8 @@
     <el-page-header @back="$router.back()" content="课时学习" />
 
     <div class="lesson-content" v-loading="loading">
-      <div class="lesson-header">
+      <template v-if="lesson.lessonId">
+        <div class="lesson-header">
         <h2>{{ lesson.lessonName }}</h2>
         <div class="lesson-info">
           <span>课程：{{ courseName }}</span>
@@ -15,8 +16,8 @@
         <template #header>
           <div class="lesson-type-tabs">
             <el-tabs v-model="activeTab">
-              <el-tab-pane label="单词" name="vocabulary">
-                <div class="vocabulary-list">
+              <el-tab-pane label="字/词" name="vocabulary">
+                <div class="vocabulary-list" v-if="lesson.vocabularyList && lesson.vocabularyList.length > 0">
                   <div
                     v-for="word in lesson.vocabularyList"
                     :key="word.id"
@@ -39,25 +40,24 @@
                     <div class="word-example">{{ word.example }}</div>
                   </div>
                 </div>
+                <el-empty v-else description="暂无单词数据，请先在后台添加该单元的词汇" :image-size="100" />
               </el-tab-pane>
 
-              <el-tab-pane label="语法" name="grammar">
-                <div class="grammar-content">
+              <el-tab-pane label="例句" name="examples">
+                <div class="example-list" v-if="lesson.exampleList && lesson.exampleList.length > 0">
                   <div
-                    v-for="rule in lesson.grammarList"
-                    :key="rule.id"
-                    class="grammar-card"
+                    v-for="(ex, idx) in lesson.exampleList"
+                    :key="idx"
+                    class="example-card"
                   >
-                    <h3>{{ rule.title }}</h3>
-                    <p class="grammar-explanation">{{ rule.explanation }}</p>
-                    <div class="grammar-example">
-                      <p><strong>例句：</strong>{{ rule.example }}</p>
-                    </div>
+                    <div class="example-sentence">{{ ex.sentence }}</div>
+                    <div class="example-translation">{{ ex.translation }}</div>
                   </div>
                 </div>
+                <el-empty v-else description="暂无例句数据" :image-size="100" />
               </el-tab-pane>
 
-              <el-tab-pane label="听力" name="listening">
+              <!-- <el-tab-pane label="听力" name="listening">
                 <div class="listening-content">
                   <audio controls class="audio-player">
                     <source :src="lesson.audioUrl" type="audio/mpeg">
@@ -71,7 +71,7 @@
                   />
                   <el-button type="primary" @click="checkListening">提交答案</el-button>
                 </div>
-              </el-tab-pane>
+              </el-tab-pane> -->
 
               <el-tab-pane label="口语" name="speaking">
                 <div class="speaking-content">
@@ -97,6 +97,11 @@
         <el-button @click="$router.back()">返回</el-button>
         <el-button type="success" @click="completeLesson">完成学习</el-button>
       </div>
+      </template>
+
+      <el-empty v-else-if="!loading" description="课时不存在或暂无内容">
+        <el-button type="primary" @click="$router.back()">返回课程</el-button>
+      </el-empty>
     </div>
   </div>
 </template>
@@ -114,7 +119,7 @@ const loading = ref(false)
 const lesson = ref({})
 const courseName = ref('')
 const activeTab = ref('vocabulary')
-const listeningAnswer = ref('')
+// const listeningAnswer = ref('')  // 听力相关，暂时注释
 const isRecording = ref(false)
 const score = ref(null)
 
@@ -127,11 +132,15 @@ const loadLesson = async () => {
   try {
     const lessonId = route.params.id
     const res = await getLessonDetail(lessonId)
-    lesson.value = res.data?.data || res.data || {}
-    courseName.value = lesson.value.courseName || '课程'
+    const data = res?.data ?? res ?? {}
+    lesson.value = data
+    courseName.value = data.courseName || '课程'
+    if (!data.lessonId) {
+      ElMessage.warning('课时数据为空，请检查是否已添加课时内容')
+    }
   } catch (error) {
     console.error('加载课时失败:', error)
-    ElMessage.error('加载课时失败')
+    ElMessage.error('加载课时失败，请稍后重试')
   } finally {
     loading.value = false
   }
@@ -168,9 +177,9 @@ const speakWithTTS = (text, language) => {
   })
 }
 
-const checkListening = () => {
-  ElMessage.success('答案已提交')
-}
+// const checkListening = () => {
+//   ElMessage.success('答案已提交')
+// }  // 听力相关，暂时注释
 
 const startRecording = () => {
   isRecording.value = true
@@ -273,27 +282,28 @@ const scoreMessage = computed(() => {
         }
       }
 
-      .grammar-content {
-        .grammar-card {
+      .example-list {
+        .example-card {
           background: var(--el-bg-color-page, #f5f7fa);
-          padding: 20px;
+          padding: 16px 20px;
           border-radius: 8px;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
+          border-left: 4px solid #409eff;
 
-          h3 {
-            margin-bottom: 12px;
-            color: #409eff;
-          }
-
-          .grammar-explanation {
-            margin-bottom: 12px;
+          .example-sentence {
+            font-size: 17px;
+            font-weight: 500;
+            color: #303133;
+            margin-bottom: 8px;
             line-height: 1.6;
           }
 
-          .grammar-example {
-            background: var(--el-bg-color, white);
-            padding: 12px;
-            border-radius: 4px;
+          .example-translation {
+            font-size: 14px;
+            color: #909399;
+            line-height: 1.5;
+            padding-left: 12px;
+            border-left: 2px solid #dcdfe6;
           }
         }
       }

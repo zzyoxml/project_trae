@@ -56,4 +56,11 @@ public interface IEduVocabularyService {
      * @return 结果
      */
     public int deleteEduVocabularyById(Long vocabId);
+
+    /**
+     * 删除语言不匹配的词汇（词汇语言与课程语言不一致的记录）
+     * 
+     * @return 结果
+     */
+    public int deleteVocabularyWithMismatchedLanguage();
 }

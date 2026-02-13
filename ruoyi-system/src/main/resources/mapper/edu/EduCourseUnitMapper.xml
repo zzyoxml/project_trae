@@ -5,6 +5,7 @@
     <resultMap type="com.ruoyi.edu.domain.EduCourseUnit" id="EduCourseUnitResult">
         <result property="unitId" column="unit_id"/>
         <result property="courseId" column="course_id"/>
+        <result property="chapterId" column="chapter_id"/>
         <result property="unitName" column="unit_name"/>
         <result property="unitOrder" column="unit_order"/>
         <result property="description" column="description"/>
@@ -21,7 +22,7 @@
     </resultMap>
 
     <sql id="selectEduCourseUnitVo">
-        select unit_id, course_id, unit_name, unit_order, description, total_lessons,
+        select unit_id, course_id, chapter_id, unit_name, unit_order, description, total_lessons,
                total_duration, is_locked, passing_score, experience_reward,
                create_by, create_time, update_by, update_time, del_flag
         from edu_course_unit
@@ -35,14 +36,17 @@
 
     <select id="selectEduCourseUnitList" parameterType="com.ruoyi.edu.domain.EduCourseUnit" resultMap="EduCourseUnitResult">
         <include refid="selectEduCourseUnitVo"/>
-        <where>
+        <trim prefix="AND">
+            <if test="chapterId != null">
+                chapter_id = #{chapterId}
+            </if>
             <if test="courseId != null">
-                AND course_id = #{courseId}
+                course_id = #{courseId}
             </if>
             <if test="unitName != null and unitName != ''">
-                AND unit_name LIKE CONCAT('%', #{unitName}, '%')
+                unit_name LIKE CONCAT('%', #{unitName}, '%')
             </if>
-        </where>
+        </trim>
         order by course_id asc, unit_order asc
     </select>
 
@@ -52,13 +56,19 @@
         order by unit_order asc
     </select>
 
+    <select id="selectUnitsByChapterId" parameterType="Long" resultMap="EduCourseUnitResult">
+        <include refid="selectEduCourseUnitVo"/>
+        and chapter_id = #{chapterId}
+        order by unit_order asc
+    </select>
+
     <insert id="insertEduCourseUnit" parameterType="com.ruoyi.edu.domain.EduCourseUnit" useGeneratedKeys="true" keyProperty="unitId">
         insert into edu_course_unit (
-            course_id, unit_name, unit_order, description, total_lessons,
+            course_id, chapter_id, unit_name, unit_order, description, total_lessons,
             total_duration, is_locked, passing_score, experience_reward,
             create_by, create_time, del_flag
         ) values (
-            #{courseId}, #{unitName}, #{unitOrder}, #{description}, #{totalLessons},
+            #{courseId}, #{chapterId}, #{unitName}, #{unitOrder}, #{description}, #{totalLessons},
             #{totalDuration}, #{isLocked}, #{passingScore}, #{experienceReward},
             #{createBy}, sysdate(), '0'
         )
@@ -67,6 +77,7 @@
     <update id="updateEduCourseUnit" parameterType="com.ruoyi.edu.domain.EduCourseUnit">
         update edu_course_unit
         <trim prefix="SET" suffixOverrides=",">
+            <if test="chapterId != null">chapter_id = #{chapterId},</if>
             <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
             <if test="unitOrder != null">unit_order = #{unitOrder},</if>
             <if test="description != null">description = #{description},</if>

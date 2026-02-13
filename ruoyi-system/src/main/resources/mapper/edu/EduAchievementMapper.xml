@@ -41,17 +41,17 @@
 
     <select id="selectEduAchievementList" parameterType="com.ruoyi.edu.domain.EduAchievement" resultMap="EduAchievementResult">
         <include refid="selectEduAchievementVo"/>
-        <where>
+        <trim prefix="AND">
             <if test="achievementType != null and achievementType != ''">
-                AND achievement_type = #{achievementType}
+                achievement_type = #{achievementType}
             </if>
             <if test="language != null and language != ''">
-                AND language = #{language}
+                language = #{language}
             </if>
             <if test="tier != null and tier != ''">
-                AND tier = #{tier}
+                tier = #{tier}
             </if>
-        </where>
+        </trim>
         order by display_order asc
     </select>
 
@@ -134,5 +134,14 @@
             #{achievementId}
         </foreach>
     </delete>
+
+    <select id="selectPendingAchievements" parameterType="Long" resultMap="EduAchievementResult">
+        <include refid="selectEduAchievementVo"/>
+        and achievement_id not in (
+            select achievement_id from edu_user_achievement
+            where user_id = #{userId} and is_completed = 1
+        )
+        order by display_order asc
+    </select>
 
 </mapper>

@@ -15,6 +15,13 @@ export function listUnitByCourse(courseId) {
   })
 }
 
+export function listUnitByChapter(chapterId) {
+  return request({
+    url: '/edu/unit/byChapter/' + chapterId,
+    method: 'get'
+  })
+}
+
 export function getUnit(unitId) {
   return request({
     url: '/edu/unit/' + unitId,

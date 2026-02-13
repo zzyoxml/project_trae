@@ -91,7 +91,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getPostList, createPost as createPostApi } from '@/api/community'
+import { getPostList, createPost as createPostApi, likePost, unlikePost } from '@/api/community'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -155,9 +155,23 @@ const goToPost = (postId) => {
   router.push(`/community/post/${postId}`)
 }
 
-const toggleLike = (post) => {
-  post.liked = !post.liked
-  post.likeCount += post.liked ? 1 : -1
+const toggleLike = async (post) => {
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录')
+    return
+  }
+  try {
+    if (post.liked) {
+      await unlikePost(post.postId)
+    } else {
+      await likePost(post.postId)
+    }
+    post.liked = !post.liked
+    post.likeCount += post.liked ? 1 : -1
+  } catch (error) {
+    console.error('点赞失败:', error)
+    ElMessage.error('操作失败')
+  }
 }
 
 const getTypeText = (type) => {

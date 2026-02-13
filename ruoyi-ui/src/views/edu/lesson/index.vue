@@ -1,83 +1,98 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="88px">
-      <el-form-item label="所属单元" prop="unitId">
-        <el-select v-model="queryParams.unitId" placeholder="请选择单元" clearable size="small" @change="handleQuery">
-          <el-option
-            v-for="unit in unitOptions"
-            :key="unit.unitId"
-            :label="unit.unitName"
-            :value="unit.unitId"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="课时类型" prop="lessonType">
-        <el-select v-model="queryParams.lessonType" placeholder="请选择类型" clearable size="small">
-          <el-option label="词汇" value="vocabulary" />
-          <el-option label="语法" value="grammar" />
-          <el-option label="听力" value="listening" />
-          <el-option label="口语" value="speaking" />
-          <el-option label="测试" value="quiz" />
-          <el-option label="视频" value="video" />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <el-card shadow="never" class="filter-card">
+      <el-row :gutter="16" align="middle">
+        <el-col :span="5">
+          <span class="filter-label">选择课程：</span>
+          <el-select
+            v-model="selectedCourseId"
+            placeholder="请先选择课程"
+            clearable
+            size="medium"
+            style="width: 200px"
+            @change="onCourseChange"
+          >
+            <el-option
+              v-for="c in courseOptions"
+              :key="c.courseId"
+              :label="c.courseName + ' (' + getLanguageText(c.language) + ')'"
+              :value="c.courseId"
+            />
+          </el-select>
+        </el-col>
+        <el-col :span="5">
+          <span class="filter-label">所属单元：</span>
+          <el-select
+            v-model="queryParams.unitId"
+            placeholder="请选择单元"
+            clearable
+            size="medium"
+            style="width: 200px"
+            :disabled="!selectedCourseId"
+            @change="handleQuery"
+          >
+            <el-option
+              v-for="u in filteredUnitOptions"
+              :key="u.unitId"
+              :label="u.unitName"
+              :value="u.unitId"
+            />
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <span class="filter-label">类型：</span>
+          <el-select
+            v-model="queryParams.lessonType"
+            placeholder="课时类型"
+            clearable
+            size="medium"
+            style="width: 120px"
+            @change="handleQuery"
+          >
+            <el-option label="单词" value="vocabulary" />
+            <el-option label="例句" value="examples" />
+            <el-option label="听力" value="listening" />
+            <el-option label="口语" value="speaking" />
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <el-button type="primary" icon="el-icon-search" size="medium" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="medium" @click="resetQuery">重置</el-button>
+        </el-col>
+      </el-row>
+    </el-card>
 
-    <el-row :gutter="10" class="mb8">
+    <el-row :gutter="10" class="mb8 mt8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-        >新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" :disabled="!selectedCourseId">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-        >修改</el-button>
+        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-        >删除</el-button>
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-upload2"
-          size="mini"
-          @click="handleBatchImport"
-        >批量导入</el-button>
+        <el-button type="warning" plain icon="el-icon-upload2" size="mini" @click="handleBatchImport">批量导入</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="lessonList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="课时ID" align="center" prop="lessonId" width="80" />
-      <el-table-column label="所属单元" align="center" prop="unitId" width="120">
+    <el-table v-loading="loading" :data="lessonList" @selection-change="handleSelectionChange" border stripe>
+      <el-table-column type="selection" width="50" align="center" />
+      <el-table-column label="ID" align="center" prop="lessonId" width="70" />
+      <el-table-column label="所属课程" align="center" width="140">
+        <template slot-scope="scope">
+          <el-tag size="small" :type="getCourseTagType(scope.row.unitId)">
+            {{ getCourseNameByUnit(scope.row.unitId) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="所属单元" align="center" width="140">
         <template slot-scope="scope">
           {{ getUnitName(scope.row.unitId) }}
         </template>
       </el-table-column>
-      <el-table-column label="课时名称" align="center" prop="lessonName" :show-overflow-tooltip="true" width="160" />
+      <el-table-column label="课时名称" align="center" prop="lessonName" :show-overflow-tooltip="true" min-width="160" />
       <el-table-column label="类型" align="center" prop="lessonType" width="90">
         <template slot-scope="scope">
           <el-tag :type="getLessonTypeTag(scope.row.lessonType)" size="small">
@@ -87,63 +102,42 @@
       </el-table-column>
       <el-table-column label="排序" align="center" prop="lessonOrder" width="70" />
       <el-table-column label="时长(分)" align="center" prop="duration" width="80" />
-      <el-table-column label="是否免费" align="center" prop="isFree" width="80">
+      <el-table-column label="免费" align="center" prop="isFree" width="70">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.isFree ? 'success' : 'warning'" size="small">
-            {{ scope.row.isFree ? '免费' : '付费' }}
+          <el-tag :type="scope.row.isFree === '1' ? 'success' : 'warning'" size="small">
+            {{ scope.row.isFree === '1' ? '免费' : '付费' }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="经验奖励" align="center" prop="experienceReward" width="80" />
-      <el-table-column label="金币奖励" align="center" prop="coinReward" width="80" />
-      <el-table-column label="及格分数" align="center" prop="passingScore" width="80" />
-      <el-table-column label="创建时间" align="center" prop="createTime" width="160">
+      <el-table-column label="经验" align="center" prop="experienceReward" width="70" />
+      <el-table-column label="金币" align="center" prop="coinReward" width="70" />
+      <el-table-column label="及格分" align="center" prop="passingScore" width="70" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="150">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="220">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handlePreview(scope.row)"
-          >预览</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-          >删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-view" @click="handlePreview(scope.row)">预览</el-button>
+          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-delete" style="color:#f56c6c" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList" />
 
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="所属课程" prop="courseId">
+          <el-select v-model="formCourseId" placeholder="请选择课程" style="width: 100%" @change="onFormCourseChange">
+            <el-option v-for="c in courseOptions" :key="c.courseId" :label="c.courseName + ' (' + getLanguageText(c.language) + ')'" :value="c.courseId" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="所属单元" prop="unitId">
-          <el-select v-model="form.unitId" placeholder="请选择单元" style="width: 100%">
-            <el-option
-              v-for="unit in unitOptions"
-              :key="unit.unitId"
-              :label="unit.unitName + ' (' + getCourseName(unit.courseId) + ')'"
-              :value="unit.unitId"
-            />
+          <el-select v-model="form.unitId" placeholder="请选择单元" style="width: 100%" :disabled="!formCourseId">
+            <el-option v-for="u in formUnitOptions" :key="u.unitId" :label="u.unitName" :value="u.unitId" />
           </el-select>
         </el-form-item>
         <el-row>
@@ -155,12 +149,10 @@
           <el-col :span="12">
             <el-form-item label="课时类型" prop="lessonType">
               <el-select v-model="form.lessonType" placeholder="请选择类型" style="width: 100%">
-                <el-option label="词汇" value="vocabulary" />
-                <el-option label="语法" value="grammar" />
+                <el-option label="单词" value="vocabulary" />
+                <el-option label="例句" value="examples" />
                 <el-option label="听力" value="listening" />
                 <el-option label="口语" value="speaking" />
-                <el-option label="测试" value="quiz" />
-                <el-option label="视频" value="video" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -178,7 +170,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="是否免费" prop="isFree">
-              <el-switch v-model="form.isFree" />
+              <el-switch v-model="form.isFree" active-value="1" inactive-value="0" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -207,16 +199,11 @@
             v-model="form.content"
             type="textarea"
             :rows="10"
-            placeholder="请输入JSON格式的学习内容，例如：&#10;词汇类型：{&quot;words&quot;:[{&quot;en&quot;:&quot;hello&quot;,&quot;zh&quot;:&quot;你好&quot;}]}&#10;语法类型：{&quot;rules&quot;:[{&quot;title&quot;:&quot;一般现在时&quot;,&quot;content&quot;:&quot;...&quot;}]}"
+            placeholder="请输入JSON格式的学习内容"
           />
         </el-form-item>
         <el-form-item label="资源(JSON)" prop="resources">
-          <el-input
-            v-model="form.resources"
-            type="textarea"
-            :rows="3"
-            placeholder="请输入JSON格式的资源信息，可选"
-          />
+          <el-input v-model="form.resources" type="textarea" :rows="3" placeholder="请输入JSON格式的资源信息，可选" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -236,7 +223,7 @@
           </el-descriptions-item>
           <el-descriptions-item label="时长">{{ previewContent.duration }} 分钟</el-descriptions-item>
           <el-descriptions-item label="是否免费">
-            {{ previewContent.isFree ? '免费' : '付费' }}
+            {{ previewContent.isFree === '1' ? '免费' : '付费' }}
           </el-descriptions-item>
         </el-descriptions>
         <el-divider content-position="left">学习内容</el-divider>
@@ -245,23 +232,11 @@
     </el-dialog>
 
     <el-dialog title="批量导入" :visible.sync="importOpen" width="650px" append-to-body>
-      <el-alert
-        title="TXT文件格式说明"
-        type="info"
-        :closable="false"
-        style="margin-bottom: 15px;"
-      >
+      <el-alert title="TXT文件格式说明" type="info" :closable="false" style="margin-bottom: 15px;">
         <div style="line-height: 1.8; font-size: 13px;">
           <p><b>[COURSE]</b> 课程名称|语言|等级|课程类型|描述</p>
           <p><b>[UNIT]</b> 单元名称|排序|描述</p>
           <p><b>[LESSON]</b> 课时名称|类型|内容(JSON)|排序|时长|是否免费</p>
-          <p style="color: #909399; margin-top: 5px;">示例：</p>
-          <pre style="background: #f5f7fa; padding: 8px; border-radius: 4px; font-size: 12px;">[COURSE] 英语入门|en|beginner|general|英语入门课程
-[UNIT] 基础词汇|1|学习基础英语词汇
-[LESSON] 问候语|vocabulary|{"words":[{"en":"hello","zh":"你好"}]}|1|10|true
-[LESSON] 数字|vocabulary|{"words":[{"en":"one","zh":"一"}]}|2|10|true
-[UNIT] 基础语法|2|学习基础英语语法
-[LESSON] 现在时|grammar|{"rules":[{"title":"一般现在时","content":"..."}]}|1|15|true</pre>
         </div>
       </el-alert>
       <el-upload
@@ -297,15 +272,16 @@ export default {
   name: 'EduLesson',
   data() {
     return {
-      loading: true,
+      loading: false,
       ids: [],
       single: true,
       multiple: true,
-      showSearch: true,
       total: 0,
       lessonList: [],
       unitOptions: [],
       courseOptions: [],
+      selectedCourseId: null,
+      formCourseId: null,
       title: '',
       open: false,
       previewOpen: false,
@@ -313,76 +289,113 @@ export default {
       importOpen: false,
       fileList: [],
       uploadUrl: process.env.VUE_APP_BASE_API + '/edu/batch/import',
-      uploadHeaders: {
-        Authorization: 'Bearer ' + getToken()
-      },
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        unitId: null,
-        lessonType: null
-      },
+      uploadHeaders: { Authorization: 'Bearer ' + getToken() },
+      queryParams: { pageNum: 1, pageSize: 10, unitId: null, lessonType: null },
       form: {},
       rules: {
-        unitId: [
-          { required: true, message: '请选择所属单元', trigger: 'change' }
-        ],
-        lessonName: [
-          { required: true, message: '课时名称不能为空', trigger: 'blur' }
-        ],
-        lessonType: [
-          { required: true, message: '请选择课时类型', trigger: 'change' }
-        ],
-        lessonOrder: [
-          { required: true, message: '排序不能为空', trigger: 'blur' }
-        ]
+        unitId: [{ required: true, message: '请选择所属单元', trigger: 'change' }],
+        lessonName: [{ required: true, message: '课时名称不能为空', trigger: 'blur' }],
+        lessonType: [{ required: true, message: '请选择课时类型', trigger: 'change' }],
+        lessonOrder: [{ required: true, message: '排序不能为空', trigger: 'blur' }]
       }
     }
   },
+  computed: {
+    filteredUnitOptions() {
+      if (!this.selectedCourseId) return []
+      return this.unitOptions.filter(u => u.courseId === this.selectedCourseId)
+    },
+    formUnitOptions() {
+      if (!this.formCourseId) return []
+      return this.unitOptions.filter(u => u.courseId === this.formCourseId)
+    }
+  },
   created() {
-    this.loadUnits()
     this.loadCourses()
-    this.getList()
+    this.loadAllUnits()
   },
   methods: {
-    loadUnits() {
-      listUnit({ pageNum: 1, pageSize: 1000 }).then(response => {
-        this.unitOptions = response.rows || []
+    loadCourses() {
+      listCourse({ pageNum: 1, pageSize: 1000 }).then(res => {
+        this.courseOptions = res.rows || []
       })
     },
-    loadCourses() {
-      listCourse({ pageNum: 1, pageSize: 1000 }).then(response => {
-        this.courseOptions = response.rows || []
+    loadAllUnits() {
+      listUnit({ pageNum: 1, pageSize: 1000 }).then(res => {
+        this.unitOptions = res.rows || []
       })
+    },
+    getLanguageText(lang) {
+      const map = { en: '英语', ja: '日语', zh: '汉语' }
+      return map[lang] || lang
     },
     getUnitName(unitId) {
-      const unit = this.unitOptions.find(u => u.unitId === unitId)
-      return unit ? unit.unitName : unitId
+      const u = this.unitOptions.find(item => item.unitId === unitId)
+      return u ? u.unitName : (unitId || '-')
     },
-    getCourseName(courseId) {
-      const course = this.courseOptions.find(c => c.courseId === courseId)
-      return course ? course.courseName : courseId
+    getCourseNameByUnit(unitId) {
+      const u = this.unitOptions.find(item => item.unitId === unitId)
+      if (!u) return '-'
+      const c = this.courseOptions.find(item => item.courseId === u.courseId)
+      return c ? c.courseName : '-'
+    },
+    getCourseTagType(unitId) {
+      const u = this.unitOptions.find(item => item.unitId === unitId)
+      if (!u) return 'info'
+      const c = this.courseOptions.find(item => item.courseId === u.courseId)
+      if (!c) return 'info'
+      const map = { en: '', ja: 'success', zh: 'warning' }
+      return map[c.language] || 'info'
     },
     getLessonTypeTag(type) {
-      const tags = { 'vocabulary': '', 'grammar': 'success', 'listening': 'warning', 'speaking': 'danger', 'quiz': 'info', 'video': '' }
+      const tags = { 'vocabulary': '', 'examples': 'success', 'listening': 'warning', 'speaking': 'danger' }
       return tags[type] || 'info'
     },
     getLessonTypeLabel(type) {
-      const labels = { 'vocabulary': '词汇', 'grammar': '语法', 'listening': '听力', 'speaking': '口语', 'quiz': '测试', 'video': '视频' }
+      const labels = { 'vocabulary': '单词', 'examples': '例句', 'listening': '听力', 'speaking': '口语' }
       return labels[type] || type
     },
     formatJson(str) {
-      try {
-        return JSON.stringify(JSON.parse(str), null, 2)
-      } catch (e) {
-        return str
+      try { return JSON.stringify(JSON.parse(str), null, 2) } catch (e) { return str }
+    },
+    onCourseChange(courseId) {
+      this.queryParams.pageNum = 1
+      this.queryParams.unitId = null
+      if (courseId) {
+        this.getList()
+      } else {
+        this.lessonList = []
+        this.total = 0
       }
     },
+    onFormCourseChange(courseId) {
+      this.form.unitId = null
+    },
     getList() {
+      if (!this.selectedCourseId) {
+        this.lessonList = []
+        this.total = 0
+        return
+      }
       this.loading = true
-      listLesson(this.queryParams).then(response => {
-        this.lessonList = response.rows
-        this.total = response.total
+      const params = { ...this.queryParams }
+      if (!params.unitId) {
+        const courseUnitIds = this.unitOptions
+          .filter(u => u.courseId === this.selectedCourseId)
+          .map(u => u.unitId)
+        if (courseUnitIds.length === 0) {
+          this.lessonList = []
+          this.total = 0
+          this.loading = false
+          return
+        }
+        params.unitIds = courseUnitIds.join(',')
+      }
+      listLesson(params).then(res => {
+        this.lessonList = res.rows || []
+        this.total = res.total || 0
+        this.loading = false
+      }).catch(() => {
         this.loading = false
       })
     },
@@ -391,7 +404,8 @@ export default {
       this.getList()
     },
     resetQuery() {
-      this.resetForm('queryForm')
+      this.queryParams.unitId = null
+      this.queryParams.lessonType = null
       this.handleQuery()
     },
     handleSelectionChange(selection) {
@@ -400,15 +414,24 @@ export default {
       this.multiple = !selection.length
     },
     handleAdd() {
+      if (!this.selectedCourseId) {
+        this.$modal.msgWarning('请先选择课程')
+        return
+      }
       this.reset()
+      this.formCourseId = this.selectedCourseId
       this.open = true
       this.title = '添加课时'
     },
     handleUpdate(row) {
       this.reset()
       const lessonId = row.lessonId || this.ids[0]
-      getLesson(lessonId).then(response => {
-        this.form = response.data
+      getLesson(lessonId).then(res => {
+        this.form = res.data
+        const u = this.unitOptions.find(item => item.unitId === this.form.unitId)
+        if (u) {
+          this.formCourseId = u.courseId
+        }
         this.open = true
         this.title = '修改课时'
       })
@@ -421,13 +444,13 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.lessonId != null) {
-            updateLesson(this.form).then(response => {
+            updateLesson(this.form).then(() => {
               this.$modal.msgSuccess('修改成功')
               this.open = false
               this.getList()
             })
           } else {
-            addLesson(this.form).then(response => {
+            addLesson(this.form).then(() => {
               this.$modal.msgSuccess('新增成功')
               this.open = false
               this.getList()
@@ -449,19 +472,21 @@ export default {
         lessonOrder: 1,
         content: null,
         duration: 10,
-        isFree: true,
-        isPreview: false,
+        isFree: '1',
+        isPreview: '0',
         experienceReward: 10,
         coinReward: 5,
         passingScore: 60,
         maxAttempts: 3,
         resources: null
       }
+      this.formCourseId = null
       this.resetForm('form')
     },
     handleDelete(row) {
       const lessonIds = row.lessonId || this.ids
-      this.$modal.confirm('是否确认删除课时编号为"' + lessonIds + '"的数据项？').then(function() {
+      const name = row.lessonName || lessonIds
+      this.$modal.confirm('确认删除课时"' + name + '"？').then(() => {
         return delLesson(lessonIds)
       }).then(() => {
         this.getList()
@@ -487,15 +512,15 @@ export default {
       }
       const formData = new FormData()
       formData.append('file', this.fileList[0].raw)
-      batchImport(formData).then(response => {
-        const data = response.data
+      batchImport(formData).then(res => {
+        const data = res.data
         let msg = '导入完成！课程：' + data.courseCount + '个，单元：' + data.unitCount + '个，课时：' + data.lessonCount + '个'
         if (data.errors && data.errors.length > 0) {
           msg += '\n警告信息：\n' + data.errors.join('\n')
         }
         this.$modal.alert(msg)
         this.importOpen = false
-        this.loadUnits()
+        this.loadAllUnits()
         this.getList()
       }).catch(() => {
         this.$modal.msgError('导入失败')
@@ -504,7 +529,7 @@ export default {
     handleUploadSuccess(response, file, fileList) {
       this.fileList = fileList
     },
-    handleUploadError(err) {
+    handleUploadError() {
       this.$modal.msgError('上传失败')
     }
   }
@@ -512,6 +537,18 @@ export default {
 </script>
 
 <style scoped>
+.filter-card {
+  margin-bottom: 12px;
+}
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303133;
+  margin-right: 4px;
+}
+.mt8 {
+  margin-top: 8px;
+}
 .mb8 {
   margin-bottom: 8px;
 }

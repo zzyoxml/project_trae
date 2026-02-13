@@ -214,9 +214,9 @@ const userStore = useUserStore()
 const loading = ref(false)
 const inProgressCourses = ref([])
 const recommendedCourses = ref([])
-const todayMinutes = ref(45)
+const todayMinutes = ref(0)
 
-const completedCourses = ref(2)
+const completedCourses = ref(0)
 
 const learningModes = ref([
   { 
@@ -273,34 +273,19 @@ const loadInProgressCourses = async () => {
   loading.value = true
   try {
     const res = await getMyCourses()
-    inProgressCourses.value = (res || []).map(course => ({
-      ...course,
-      progress: Math.floor(Math.random() * 80) + 10,
-      completedLessons: Math.floor(Math.random() * course.lessonCount),
-      lastLesson: `第${Math.floor(Math.random() * course.lessonCount) + 1}课`
-    }))
+    if (res && Array.isArray(res)) {
+      inProgressCourses.value = res.map(course => ({
+        ...course,
+        progress: course.progressPercent || 0,
+        completedLessons: Math.floor((course.progressPercent || 0) / 100 * (course.totalLessons || 20)),
+        totalLessons: course.totalLessons || 20
+      }))
+      completedCourses.value = res.filter(c => c.status === 'completed').length || res.length
+      todayMinutes.value = res.reduce((sum, c) => sum + ((c.progressPercent || 0) * 0.5), 0)
+    }
   } catch (error) {
     console.error('加载学习中课程失败:', error)
-    inProgressCourses.value = [
-      {
-        courseId: 1,
-        courseName: '英语入门 - 基础词汇',
-        coverImage: 'https://via.placeholder.com/200x120/409eff/ffffff?text=English',
-        progress: 65,
-        completedLessons: 13,
-        totalLessons: 20,
-        lastLesson: '第13课'
-      },
-      {
-        courseId: 2,
-        courseName: '日语入门 - 五十音图',
-        coverImage: 'https://via.placeholder.com/200x120/f56c6c/ffffff?text=Japanese',
-        progress: 40,
-        completedLessons: 10,
-        totalLessons: 25,
-        lastLesson: '第10课'
-      }
-    ]
+    inProgressCourses.value = []
   } finally {
     loading.value = false
   }
@@ -309,7 +294,7 @@ const loadInProgressCourses = async () => {
 const loadRecommendedCourses = async () => {
   try {
     const res = await getFeaturedCourses(4)
-    recommendedCourses.value = res.data || []
+    recommendedCourses.value = res || []
   } catch (error) {
     console.error('加载推荐课程失败:', error)
     recommendedCourses.value = []
@@ -345,7 +330,7 @@ const formatNumber = (num) => {
 }
 
 const handleImageError = (e) => {
-  e.target.src = 'https://via.placeholder.com/200x120/409eff/ffffff?text=Course'
+  e.target.src = ''
 }
 </script>
 
