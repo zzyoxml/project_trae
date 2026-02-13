@@ -54,7 +54,12 @@ service.interceptors.response.use(
     
     // 根据业务状态码判断请求是否成功
     if (res.code === 200) {
-      return res.data !== undefined ? res.data : res
+      // 如果有 data 字段且不为空，返回 data；否则返回整个 res
+      if (res.data !== undefined) {
+        return res.data
+      }
+      // 兼容没有 data 字段的响应（如 getInfo 返回 {code: 200, user: {...}}）
+      return res
     } else {
       // 处理业务错误
       ElMessage.error(res.msg || '请求失败')

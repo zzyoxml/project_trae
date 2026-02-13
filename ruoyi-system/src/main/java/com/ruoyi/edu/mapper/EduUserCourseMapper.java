@@ -3,6 +3,7 @@ package com.ruoyi.edu.mapper;
 import com.ruoyi.edu.domain.EduUserCourse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import java.util.List;
 
 /**
  * 用户课程Mapper接口
@@ -45,4 +46,12 @@ public interface EduUserCourseMapper {
      * @return 结果
      */
     public int deleteUserCourse(@Param("userId") Long userId, @Param("courseId") Long courseId);
+
+    /**
+     * 获取用户已报名的课程ID列表
+     *
+     * @param userId 用户ID
+     * @return 课程ID列表
+     */
+    public List<Long> selectUserCourseIds(@Param("userId") Long userId);
 }

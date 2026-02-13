@@ -273,7 +273,7 @@ const loadInProgressCourses = async () => {
   loading.value = true
   try {
     const res = await getMyCourses()
-    inProgressCourses.value = (res.data || []).map(course => ({
+    inProgressCourses.value = (res || []).map(course => ({
       ...course,
       progress: Math.floor(Math.random() * 80) + 10,
       completedLessons: Math.floor(Math.random() * course.lessonCount),

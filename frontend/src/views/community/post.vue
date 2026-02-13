@@ -80,7 +80,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getPostDetail, getPostComments, addComment } from '@/api/community'
+import { getPostDetail, getPostComments, addComment, likePost, unlikePost } from '@/api/community'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -104,6 +104,9 @@ const loadPost = async () => {
     const res = await getPostDetail(postId)
     console.log('Post data received:', res)
     post.value = res
+    if (res.isLiked !== undefined && res.isLiked !== null) {
+      post.value.liked = res.isLiked
+    }
     console.log('Post after assignment:', post.value)
     console.log('Post postId:', post.value?.postId)
   } catch (error) {
@@ -157,10 +160,24 @@ const submitComment = async () => {
   }
 }
 
-const toggleLike = () => {
-  post.value.liked = !post.value.liked
-  post.value.likeCount += post.value.liked ? 1 : -1
-  ElMessage.success(post.value.liked ? '点赞成功' : '取消点赞')
+const toggleLike = async () => {
+  if (!post.value.postId) {
+    ElMessage.warning('帖子信息加载中')
+    return
+  }
+  try {
+    if (post.value.liked) {
+      await unlikePost(post.value.postId)
+    } else {
+      await likePost(post.value.postId)
+    }
+    post.value.liked = !post.value.liked
+    post.value.likeCount += post.value.liked ? 1 : -1
+    ElMessage.success(post.value.liked ? '点赞成功' : '取消点赞')
+  } catch (error) {
+    console.error('点赞失败:', error)
+    ElMessage.error('点赞失败')
+  }
 }
 
 const getTypeText = (type) => {

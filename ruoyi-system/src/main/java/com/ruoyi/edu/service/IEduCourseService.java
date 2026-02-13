@@ -60,6 +60,14 @@ public interface IEduCourseService {
     public List<EduCourse> selectPopularCourses(Integer limit);
 
     /**
+     * 获取我的课程
+     *
+     * @param userId 用户ID
+     * @return 我的课程列表
+     */
+    public List<EduCourse> selectMyCourses(Long userId);
+
+    /**
      * 新增课程
      *
      * @param eduCourse 课程

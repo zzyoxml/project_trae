@@ -67,4 +67,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from edu_user_course where user_id = #{userId} and course_id = #{courseId}
     </delete>
 
+    <select id="selectUserCourseIds" resultType="Long">
+        select course_id from edu_user_course where user_id = #{userId}
+    </select>
+
 </mapper>

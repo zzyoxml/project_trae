@@ -63,6 +63,14 @@ public interface EduCourseMapper {
     public List<EduCourse> selectPopularCourses(@Param("limit") Integer limit);
 
     /**
+     * 获取我的课程
+     *
+     * @param courseIds 课程ID列表
+     * @return 我的课程列表
+     */
+    public List<EduCourse> selectMyCourses(@Param("courseIds") List<Long> courseIds);
+
+    /**
      * 新增课程
      *
      * @param eduCourse 课程

@@ -5,8 +5,8 @@
  * @author LingLearn Team
  */
 
-const TOKEN_KEY = 'token'
-const USER_KEY = 'user'
+const TOKEN_KEY = 'ruoyi_token'
+const USER_KEY = 'ruoyi_user'
 
 /**
  * 获取Token

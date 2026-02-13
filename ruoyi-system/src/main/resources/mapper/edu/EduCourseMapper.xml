@@ -96,6 +96,14 @@
         limit #{limit}
     </select>
 
+    <select id="selectMyCourses" resultMap="EduCourseResult">
+        <include refid="selectEduCourseVo"/>
+        and course_id in
+        <foreach collection="courseIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
     <insert id="insertEduCourse" parameterType="com.ruoyi.edu.domain.EduCourse" useGeneratedKeys="true" keyProperty="courseId">
         insert into edu_course
         <trim prefix="(" suffix=")" suffixOverrides=",">

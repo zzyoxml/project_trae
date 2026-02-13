@@ -175,8 +175,9 @@ const loadCourseDetail = async () => {
   try {
     const courseId = route.params.id
     const res = await getCourseDetail(courseId)
-    if (res.data) {
-      course.value = res.data
+    if (res) {
+      course.value = res
+      isEnrolled.value = res.isEnrolled === true
     } else {
       ElMessage.warning('课程不存在')
     }
@@ -195,12 +196,17 @@ const handleEnroll = async () => {
     return
   }
   try {
-    await enrollCourse({ courseId: course.value.courseId })
+    await enrollCourse(course.value.courseId)
     ElMessage.success('报名成功！')
     isEnrolled.value = true
   } catch (error) {
     console.error('报名失败:', error)
-    ElMessage.error('报名失败')
+    if (error.message && error.message.includes('已报名')) {
+      isEnrolled.value = true
+      ElMessage.warning('您已报名该课程')
+    } else {
+      ElMessage.error('报名失败')
+    }
   }
 }
 

@@ -113,6 +113,18 @@ public class EduCourseServiceImpl implements IEduCourseService {
         return eduCourseMapper.selectPopularCourses(limit);
     }
 
+    @Override
+    public List<EduCourse> selectMyCourses(Long userId) {
+        if (userId == null) {
+            return new java.util.ArrayList<>();
+        }
+        List<Long> courseIds = eduUserCourseMapper.selectUserCourseIds(userId);
+        if (courseIds == null || courseIds.isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+        return eduCourseMapper.selectMyCourses(courseIds);
+    }
+
     /**
      * 新增课程
      *

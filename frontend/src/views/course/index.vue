@@ -141,8 +141,8 @@ const loadCourses = async () => {
       pageSize: pagination.pageSize
     }
     const res = await getCourseList(params)
-    courses.value = res.data?.rows || []
-    total.value = res.data?.total || 0
+    courses.value = res.rows || []
+    total.value = res.total || 0
   } catch (error) {
     console.error('加载课程失败:', error)
     ElMessage.error('加载课程失败')

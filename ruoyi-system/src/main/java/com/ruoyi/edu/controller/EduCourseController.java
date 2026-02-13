@@ -102,6 +102,16 @@ public class EduCourseController extends BaseController {
     }
 
     /**
+     * 获取我的课程
+     */
+    @GetMapping("/my")
+    public AjaxResult getMyCourses() {
+        Long userId = SecurityUtils.getUserId();
+        List<EduCourse> list = eduCourseService.selectMyCourses(userId);
+        return success(list);
+    }
+
+    /**
      * 新增课程
      */
     @PostMapping
