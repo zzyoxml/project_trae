@@ -29,13 +29,32 @@
             size="medium"
             style="width: 200px"
             :disabled="!selectedCourseId"
-            @change="handleQuery"
+            @change="onUnitChange"
           >
             <el-option
               v-for="u in filteredUnitOptions"
               :key="u.unitId"
               :label="u.unitName"
               :value="u.unitId"
+            />
+          </el-select>
+        </el-col>
+        <el-col :span="5">
+          <span class="filter-label">所属课时：</span>
+          <el-select
+            v-model="queryParams.lessonId"
+            placeholder="请选择课时"
+            clearable
+            size="medium"
+            style="width: 200px"
+            :disabled="!queryParams.unitId"
+            @change="handleQuery"
+          >
+            <el-option
+              v-for="l in filteredLessonOptions"
+              :key="l.lessonId"
+              :label="l.lessonName"
+              :value="l.lessonId"
             />
           </el-select>
         </el-col>
@@ -80,6 +99,11 @@
       <el-table-column label="所属单元" align="center" width="140">
         <template slot-scope="scope">
           {{ getUnitName(scope.row.unitId) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="所属课时" align="center" width="100">
+        <template slot-scope="scope">
+          {{ getLessonName(scope.row.lessonId) }}
         </template>
       </el-table-column>
       <el-table-column label="语言" align="center" width="70">
@@ -164,6 +188,7 @@
 import { listVocabulary, getVocabulary, addVocabulary, updateVocabulary, delVocabulary } from '@/api/edu/vocabulary'
 import { listUnit } from '@/api/edu/unit'
 import { listCourse } from '@/api/edu/course'
+import { listLesson } from '@/api/edu/lesson'
 
 export default {
   name: 'EduVocabulary',
@@ -177,11 +202,12 @@ export default {
       vocabularyList: [],
       unitOptions: [],
       courseOptions: [],
+      lessonOptions: [],
       selectedCourseId: null,
       formCourseId: null,
       title: '',
       open: false,
-      queryParams: { pageNum: 1, pageSize: 10, word: null, unitId: null },
+      queryParams: { pageNum: 1, pageSize: 10, word: null, unitId: null, lessonId: null },
       form: {},
       rules: {
         word: [{ required: true, message: '单词不能为空', trigger: 'blur' }],
@@ -194,6 +220,10 @@ export default {
     filteredUnitOptions() {
       if (!this.selectedCourseId) return []
       return this.unitOptions.filter(u => u.courseId === this.selectedCourseId)
+    },
+    filteredLessonOptions() {
+      if (!this.queryParams.unitId) return []
+      return this.lessonOptions.filter(l => l.unitId === this.queryParams.unitId)
     },
     formUnitOptions() {
       if (!this.formCourseId) return []
@@ -215,6 +245,15 @@ export default {
         this.unitOptions = res.rows || []
       })
     },
+    loadLessons() {
+      if (!this.queryParams.unitId) {
+        this.lessonOptions = []
+        return
+      }
+      listLesson({ unitId: this.queryParams.unitId, pageNum: 1, pageSize: 1000 }).then(res => {
+        this.lessonOptions = res.rows || []
+      })
+    },
     getLanguageText(lang) {
       const map = { en: '英语', ja: '日语', zh: '汉语' }
       return map[lang] || lang
@@ -226,6 +265,11 @@ export default {
     getUnitName(unitId) {
       const u = this.unitOptions.find(item => item.unitId === unitId)
       return u ? u.unitName : (unitId || '-')
+    },
+    getLessonName(lessonId) {
+      if (!lessonId) return '-'
+      const l = this.lessonOptions.find(item => item.lessonId === lessonId)
+      return l ? l.lessonName : (lessonId || '-')
     },
     getCourseNameByUnit(unitId) {
       const u = this.unitOptions.find(item => item.unitId === unitId)
@@ -244,11 +288,24 @@ export default {
     onCourseChange(courseId) {
       this.queryParams.pageNum = 1
       this.queryParams.unitId = null
+      this.queryParams.lessonId = null
+      this.lessonOptions = []
       if (courseId) {
         this.getList()
       } else {
         this.vocabularyList = []
         this.total = 0
+      }
+    },
+    onUnitChange(unitId) {
+      this.queryParams.pageNum = 1
+      this.queryParams.lessonId = null
+      if (unitId) {
+        this.loadLessons()
+        this.getList()
+      } else {
+        this.lessonOptions = []
+        this.getList()
       }
     },
     onFormCourseChange() {
@@ -268,7 +325,9 @@ export default {
       }
       this.loading = true
       const params = { ...this.queryParams }
-      if (!params.unitId) {
+      if (params.lessonId) {
+        // 按课时筛选，不需要额外处理
+      } else if (!params.unitId) {
         const courseUnitIds = this.unitOptions
           .filter(u => u.courseId === this.selectedCourseId)
           .map(u => u.unitId)
@@ -295,6 +354,8 @@ export default {
     resetQuery() {
       this.queryParams.word = null
       this.queryParams.unitId = null
+      this.queryParams.lessonId = null
+      this.lessonOptions = []
       this.handleQuery()
     },
     handleSelectionChange(selection) {

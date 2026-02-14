@@ -5,6 +5,7 @@
     <resultMap type="com.ruoyi.edu.domain.EduVocabulary" id="EduVocabularyResult">
         <result property="vocabId" column="vocab_id"/>
         <result property="unitId" column="unit_id"/>
+        <result property="lessonId" column="lesson_id"/>
         <result property="word" column="word"/>
         <result property="language" column="language"/>
         <result property="pronunciation" column="pronunciation"/>
@@ -19,7 +20,7 @@
     </resultMap>
 
     <sql id="selectEduVocabularyVo">
-        select vocab_id, unit_id, word, language, pronunciation, part_of_speech,
+        select vocab_id, unit_id, lesson_id, word, language, pronunciation, part_of_speech,
                definition, example_sentences, create_by, create_time,
                update_by, update_time, del_flag
         from edu_vocabulary
@@ -32,7 +33,7 @@
     </select>
 
     <select id="selectEduVocabularyList" parameterType="com.ruoyi.edu.domain.EduVocabulary" resultMap="EduVocabularyResult">
-        select vocab_id, unit_id, word, language, pronunciation, part_of_speech,
+        select vocab_id, unit_id, lesson_id, word, language, pronunciation, part_of_speech,
                definition, example_sentences, create_by, create_time
         from edu_vocabulary
         where del_flag = '0'
@@ -45,7 +46,10 @@
         <if test="unitId != null">
             AND unit_id = #{unitId}
         </if>
-        order by create_time desc
+        <if test="lessonId != null">
+            AND lesson_id = #{lessonId}
+        </if>
+        order by lesson_id, vocab_id
     </select>
 
     <delete id="deleteVocabularyWithMismatchedLanguage">
@@ -62,10 +66,10 @@
 
     <insert id="insertEduVocabulary" parameterType="com.ruoyi.edu.domain.EduVocabulary" useGeneratedKeys="true" keyProperty="vocabId">
         insert into edu_vocabulary (
-            unit_id, word, language, pronunciation, part_of_speech,
+            unit_id, lesson_id, word, language, pronunciation, part_of_speech,
             definition, example_sentences, create_by, create_time, del_flag
         ) values (
-            #{unitId}, #{word}, #{language}, #{pronunciation}, #{partOfSpeech},
+            #{unitId}, #{lessonId}, #{word}, #{language}, #{pronunciation}, #{partOfSpeech},
             #{definition}, #{exampleSentences}, #{createBy}, sysdate(), '0'
         )
     </insert>
@@ -74,6 +78,7 @@
         update edu_vocabulary
         <trim prefix="SET" suffixOverrides=",">
             <if test="unitId != null">unit_id = #{unitId},</if>
+            <if test="lessonId != null">lesson_id = #{lessonId},</if>
             <if test="word != null and word != ''">word = #{word},</if>
             <if test="language != null">language = #{language},</if>
             <if test="pronunciation != null">pronunciation = #{pronunciation},</if>
@@ -95,6 +100,10 @@
         <foreach item="vocabId" collection="array" open="(" separator="," close=")">
             #{vocabId}
         </foreach>
+    </delete>
+
+    <delete id="deleteVocabularyByUnitId" parameterType="Long">
+        update edu_vocabulary set del_flag = '1' where unit_id = #{unitId}
     </delete>
 
 </mapper>

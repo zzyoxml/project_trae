@@ -10,6 +10,7 @@ import com.ruoyi.edu.mapper.EduCourseLessonMapper;
 import com.ruoyi.edu.mapper.EduCourseMapper;
 import com.ruoyi.edu.mapper.EduCourseUnitMapper;
 import com.ruoyi.edu.mapper.EduUserCourseMapper;
+import com.ruoyi.edu.mapper.EduVocabularyMapper;
 import com.ruoyi.edu.service.IEduCourseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,9 @@ public class EduCourseServiceImpl implements IEduCourseService {
 
     @Autowired
     private EduCourseLessonMapper eduCourseLessonMapper;
+
+    @Autowired
+    private EduVocabularyMapper eduVocabularyMapper;
 
     /**
      * 查询课程
@@ -148,13 +152,37 @@ public class EduCourseServiceImpl implements IEduCourseService {
     }
 
     /**
-     * 删除课程
+     * 删除课程（级联删除所有下级数据）
      *
      * @param courseId 课程ID
      * @return 结果
      */
     @Override
+    @Transactional
     public int deleteEduCourseById(Long courseId) {
+        // 1. 获取所有单元
+        List<EduCourseUnit> units = eduCourseUnitMapper.selectUnitsByCourseId(courseId);
+
+        // 2. 删除每个单元下的课时和字词
+        for (EduCourseUnit unit : units) {
+            List<EduCourseLesson> lessons = eduCourseLessonMapper.selectLessonsByUnitId(unit.getUnitId());
+            if (lessons != null && !lessons.isEmpty()) {
+                List<Long> lessonIds = lessons.stream().map(EduCourseLesson::getLessonId).collect(java.util.stream.Collectors.toList());
+                Long[] lessonIdArray = lessonIds.toArray(new Long[0]);
+                // 删除课时
+                eduCourseLessonMapper.deleteEduCourseLessonByIds(lessonIdArray);
+                // 删除字词
+                eduVocabularyMapper.deleteVocabularyByUnitId(unit.getUnitId());
+            }
+        }
+
+        // 3. 删除所有单元
+        if (!units.isEmpty()) {
+            List<Long> unitIds = units.stream().map(EduCourseUnit::getUnitId).collect(java.util.stream.Collectors.toList());
+            eduCourseUnitMapper.deleteEduCourseUnitByIds(unitIds.toArray(new Long[0]));
+        }
+
+        // 4. 删除课程
         return eduCourseMapper.deleteEduCourseById(courseId);
     }
 

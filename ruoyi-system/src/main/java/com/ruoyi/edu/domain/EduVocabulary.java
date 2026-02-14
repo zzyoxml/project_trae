@@ -22,6 +22,11 @@ public class EduVocabulary extends BaseEntity {
     private Long unitId;
 
     /**
+     * 课时ID
+     */
+    private Long lessonId;
+
+    /**
      * 单词
      */
     private String word;
@@ -130,6 +135,14 @@ public class EduVocabulary extends BaseEntity {
 
     public void setUnitId(Long unitId) {
         this.unitId = unitId;
+    }
+
+    public Long getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(Long lessonId) {
+        this.lessonId = lessonId;
     }
 
     public String getUnitIds() {

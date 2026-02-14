@@ -171,7 +171,7 @@ public class EduLearningController extends BaseController {
         result.put("language", language);
 
         EduVocabulary query = new EduVocabulary();
-        query.setUnitId(lesson.getUnitId());
+        query.setLessonId(lessonId);
         java.util.List<EduVocabulary> vocabList = vocabularyMapper.selectEduVocabularyList(query);
 
         java.util.List<java.util.Map<String, Object>> vocabularyList = new java.util.ArrayList<>();

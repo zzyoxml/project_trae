@@ -22,5 +22,7 @@ public interface EduVocabularyMapper {
 
     int deleteEduVocabularyByIds(Long[] vocabIds);
 
+    int deleteVocabularyByUnitId(Long unitId);
+
     int deleteVocabularyWithMismatchedLanguage();
 }
