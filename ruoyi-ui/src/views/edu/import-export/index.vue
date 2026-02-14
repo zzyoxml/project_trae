@@ -6,7 +6,7 @@
     </div>
 
     <el-row :gutter="20">
-      <el-col :span="14">
+      <el-col :span="16">
         <el-card class="import-card" shadow="hover">
           <div slot="header" class="card-header">
             <span><i class="el-icon-magic-stick"></i> 智能导入词汇</span>
@@ -145,9 +145,43 @@
             <p>导入成功！共导入 <strong>{{ importResult.successCount }}</strong> 个词汇</p>
           </div>
         </el-card>
+
+        <el-card class="format-card" shadow="hover">
+          <div slot="header" class="card-header">
+            <span><i class="el-icon-info"></i> 支持的文件格式</span>
+          </div>
+
+          <el-collapse v-model="activeCollapse" accordion>
+            <el-collapse-item title="TXT 格式" name="txt">
+              <div class="format-examples">
+                <p><strong>格式1：制表符分隔（推荐）</strong></p>
+                <pre class="code-block">apple	苹果
+banana	香蕉</pre>
+
+                <p><strong>格式2：多空格分隔</strong></p>
+                <pre class="code-block">apple  苹果
+banana  香蕉</pre>
+
+                <p><strong>格式3：词性标注</strong></p>
+                <pre class="code-block">boat n. 小船  v. 划船</pre>
+              </div>
+            </el-collapse-item>
+
+            <el-collapse-item title="JSON 格式" name="json">
+              <div class="format-examples">
+                <pre class="code-block">[
+  {
+    "word": "boat",
+    "definitions": ["n. 小船", "v. 划船"]
+  }
+]</pre>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+        </el-card>
       </el-col>
 
-      <el-col :span="10">
+      <el-col :span="8">
         <el-card class="export-card" shadow="hover">
           <div slot="header" class="card-header">
             <span><i class="el-icon-download"></i> 导出词汇</span>
@@ -228,40 +262,6 @@
               </div>
             </div>
           </el-upload>
-        </el-card>
-
-        <el-card class="format-card" shadow="hover">
-          <div slot="header" class="card-header">
-            <span><i class="el-icon-info"></i> 支持的文件格式</span>
-          </div>
-
-          <el-collapse v-model="activeCollapse" accordion>
-            <el-collapse-item title="TXT 格式" name="txt">
-              <div class="format-examples">
-                <p><strong>格式1：制表符分隔（推荐）</strong></p>
-                <pre class="code-block">apple	苹果
-banana	香蕉</pre>
-
-                <p><strong>格式2：多空格分隔</strong></p>
-                <pre class="code-block">apple  苹果
-banana  香蕉</pre>
-
-                <p><strong>格式3：词性标注</strong></p>
-                <pre class="code-block">boat n. 小船  v. 划船</pre>
-              </div>
-            </el-collapse-item>
-
-            <el-collapse-item title="JSON 格式" name="json">
-              <div class="format-examples">
-                <pre class="code-block">[
-  {
-    "word": "boat",
-    "definitions": ["n. 小船", "v. 划船"]
-  }
-]</pre>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
         </el-card>
       </el-col>
     </el-row>
