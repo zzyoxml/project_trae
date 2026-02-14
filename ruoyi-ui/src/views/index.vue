@@ -97,7 +97,7 @@
             <el-table-column prop="language" label="语言" width="80">
               <template slot-scope="scope">
                 <el-tag :type="getLanguageType(scope.row.language)" size="small">
-                  {{ scope.row.language }}
+                  {{ getLanguageLabel(scope.row.language) }}
                 </el-tag>
               </template>
             </el-table-column>
@@ -178,6 +178,7 @@
 
 <script>
 import * as echarts from 'echarts'
+import { getFeaturedCourses } from '@/api/edu/course'
 
 export default {
   name: 'Dashboard',
@@ -197,6 +198,7 @@ export default {
   },
   mounted() {
     this.loadStats()
+    this.loadPopularCourses()
     this.loadCharts()
   },
   methods: {
@@ -214,14 +216,6 @@ export default {
         { nickName: '小明', language: '汉语', joinTime: '2024-01-13' },
         { nickName: 'John', language: '英语', joinTime: '2024-01-12' },
         { nickName: '田中', language: '日语', joinTime: '2024-01-11' }
-      ]
-
-      this.popularCourses = [
-        { courseName: '英语口语入门', language: '英语', enrollCount: 1234 },
-        { courseName: '日语五十音图', language: '日语', enrollCount: 987 },
-        { courseName: '汉语拼音基础', language: '汉语', enrollCount: 876 },
-        { courseName: '英语语法精讲', language: '英语', enrollCount: 654 },
-        { courseName: '日语N3备考', language: '日语', enrollCount: 543 }
       ]
 
       this.topLearners = [
@@ -244,6 +238,19 @@ export default {
         { title: '学习打卡第二天', authorName: 'John', likeCount: 28, createTime: '2024-01-12' },
         { title: '每日一句日语', authorName: '田中', likeCount: 25, createTime: '2024-01-11' }
       ]
+    },
+
+    async loadPopularCourses() {
+      try {
+        const res = await getFeaturedCourses(5)
+        this.popularCourses = res.data.map(course => ({
+          courseName: course.courseName,
+          language: course.language,
+          enrollCount: course.totalStudents || 0
+        }))
+      } catch (e) {
+        this.popularCourses = []
+      }
     },
 
     loadCharts() {
@@ -389,11 +396,22 @@ export default {
 
     getLanguageType(language) {
       const types = {
+        'en': 'primary',
+        'ja': 'success',
+        'zh': 'warning',
         '英语': 'primary',
         '日语': 'success',
         '汉语': 'warning'
       }
       return types[language] || 'info'
+    },
+    getLanguageLabel(language) {
+      const labels = {
+        'en': '英语',
+        'ja': '日语',
+        'zh': '汉语'
+      }
+      return labels[language] || language
     }
   }
 }

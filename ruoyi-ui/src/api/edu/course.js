@@ -37,3 +37,11 @@ export function delCourse(courseIds) {
     method: 'delete'
   })
 }
+
+export function getFeaturedCourses(limit) {
+  return request({
+    url: '/edu/course/featured',
+    method: 'get',
+    params: { limit: limit || 10 }
+  })
+}

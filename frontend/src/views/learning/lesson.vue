@@ -30,7 +30,7 @@
                       <el-button
                         type="primary"
                         circle
-                        siUPDATE sys_config SET config_value = 'N' WHERE config_key = 'sys.account.captchaEnabled';ze="small"
+                        size="small"
                         @click.stop="speakWord(word.word)"
                       >
                         🔊

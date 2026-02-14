@@ -101,7 +101,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getCourseList } from '@/api/course'
+import { getCourseList, getFeaturedCourses } from '@/api/course'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -121,11 +121,11 @@ onMounted(async () => {
 const loadCourses = async () => {
   loading.value = true
   try {
-    const res = await getCourseList({ pageNum: 1, pageSize: 6 })
-    courses.value = res.data?.rows || []
+    const res = await getFeaturedCourses(6)
+    courses.value = res || []
   } catch (error) {
-    console.error('加载课程失败:', error)
-    ElMessage.error('加载课程失败')
+    console.error('加载热门课程失败:', error)
+    ElMessage.error('加载热门课程失败')
   } finally {
     loading.value = false
   }

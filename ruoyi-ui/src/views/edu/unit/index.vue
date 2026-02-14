@@ -65,8 +65,8 @@
       <el-table-column label="总时长(分)" align="center" prop="totalDuration" width="90" />
       <el-table-column label="状态" align="center" width="80">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.isLocked === '1' ? 'danger' : 'success'" size="small">
-            {{ scope.row.isLocked === '1' ? '锁定' : '开放' }}
+          <el-tag :type="scope.row.isLocked === true || scope.row.isLocked === '1' ? 'danger' : 'success'" size="small">
+            {{ scope.row.isLocked === true || scope.row.isLocked === '1' ? '锁定' : '开放' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -115,7 +115,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="是否锁定" prop="isLocked">
-              <el-switch v-model="form.isLocked" active-value="1" inactive-value="0" />
+              <el-switch v-model="form.isLocked" :active-value="true" :inactive-value="false" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -277,7 +277,7 @@ export default {
         description: null,
         totalLessons: 0,
         totalDuration: 0,
-        isLocked: '0',
+        isLocked: false,
         passingScore: 60,
         experienceReward: 100
       }

@@ -40,22 +40,6 @@
           </el-select>
         </el-col>
         <el-col :span="4">
-          <span class="filter-label">类型：</span>
-          <el-select
-            v-model="queryParams.lessonType"
-            placeholder="课时类型"
-            clearable
-            size="medium"
-            style="width: 120px"
-            @change="handleQuery"
-          >
-            <el-option label="单词" value="vocabulary" />
-            <el-option label="例句" value="examples" />
-            <el-option label="听力" value="listening" />
-            <el-option label="口语" value="speaking" />
-          </el-select>
-        </el-col>
-        <el-col :span="4">
           <el-button type="primary" icon="el-icon-search" size="medium" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="medium" @click="resetQuery">重置</el-button>
         </el-col>
@@ -93,13 +77,6 @@
         </template>
       </el-table-column>
       <el-table-column label="课时名称" align="center" prop="lessonName" :show-overflow-tooltip="true" min-width="160" />
-      <el-table-column label="类型" align="center" prop="lessonType" width="90">
-        <template slot-scope="scope">
-          <el-tag :type="getLessonTypeTag(scope.row.lessonType)" size="small">
-            {{ getLessonTypeLabel(scope.row.lessonType) }}
-          </el-tag>
-        </template>
-      </el-table-column>
       <el-table-column label="排序" align="center" prop="lessonOrder" width="70" />
       <el-table-column label="时长(分)" align="center" prop="duration" width="80" />
       <el-table-column label="免费" align="center" prop="isFree" width="70">
@@ -144,16 +121,6 @@
           <el-col :span="12">
             <el-form-item label="课时名称" prop="lessonName">
               <el-input v-model="form.lessonName" placeholder="请输入课时名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="课时类型" prop="lessonType">
-              <el-select v-model="form.lessonType" placeholder="请选择类型" style="width: 100%">
-                <el-option label="单词" value="vocabulary" />
-                <el-option label="例句" value="examples" />
-                <el-option label="听力" value="listening" />
-                <el-option label="口语" value="speaking" />
-              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -216,11 +183,6 @@
       <div v-if="previewContent" class="content-preview">
         <el-descriptions :column="2" border>
           <el-descriptions-item label="课时名称">{{ previewContent.lessonName }}</el-descriptions-item>
-          <el-descriptions-item label="课时类型">
-            <el-tag :type="getLessonTypeTag(previewContent.lessonType)" size="small">
-              {{ getLessonTypeLabel(previewContent.lessonType) }}
-            </el-tag>
-          </el-descriptions-item>
           <el-descriptions-item label="时长">{{ previewContent.duration }} 分钟</el-descriptions-item>
           <el-descriptions-item label="是否免费">
             {{ previewContent.isFree === '1' ? '免费' : '付费' }}
@@ -290,12 +252,11 @@ export default {
       fileList: [],
       uploadUrl: process.env.VUE_APP_BASE_API + '/edu/batch/import',
       uploadHeaders: { Authorization: 'Bearer ' + getToken() },
-      queryParams: { pageNum: 1, pageSize: 10, unitId: null, lessonType: null },
+      queryParams: { pageNum: 1, pageSize: 10, unitId: null },
       form: {},
       rules: {
         unitId: [{ required: true, message: '请选择所属单元', trigger: 'change' }],
         lessonName: [{ required: true, message: '课时名称不能为空', trigger: 'blur' }],
-        lessonType: [{ required: true, message: '请选择课时类型', trigger: 'change' }],
         lessonOrder: [{ required: true, message: '排序不能为空', trigger: 'blur' }]
       }
     }
@@ -347,14 +308,6 @@ export default {
       const map = { en: '', ja: 'success', zh: 'warning' }
       return map[c.language] || 'info'
     },
-    getLessonTypeTag(type) {
-      const tags = { 'vocabulary': '', 'examples': 'success', 'listening': 'warning', 'speaking': 'danger' }
-      return tags[type] || 'info'
-    },
-    getLessonTypeLabel(type) {
-      const labels = { 'vocabulary': '单词', 'examples': '例句', 'listening': '听力', 'speaking': '口语' }
-      return labels[type] || type
-    },
     formatJson(str) {
       try { return JSON.stringify(JSON.parse(str), null, 2) } catch (e) { return str }
     },
@@ -405,7 +358,6 @@ export default {
     },
     resetQuery() {
       this.queryParams.unitId = null
-      this.queryParams.lessonType = null
       this.handleQuery()
     },
     handleSelectionChange(selection) {
@@ -468,7 +420,6 @@ export default {
         lessonId: null,
         unitId: null,
         lessonName: null,
-        lessonType: 'vocabulary',
         lessonOrder: 1,
         content: null,
         duration: 10,

@@ -12,8 +12,8 @@ import router from '@/router'
 
 // 创建 Axios 实例
 const service = axios.create({
-  // API基础路径 - 使用相对路径，通过Vite代理
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/',
+  // API基础路径 - 使用相对路径，通过Vite代理到后端
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/ruoyi-api',
   // 请求超时时间
   timeout: 30000,
   // 请求头
