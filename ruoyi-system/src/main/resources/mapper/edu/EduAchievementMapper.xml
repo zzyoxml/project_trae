@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduAchievementMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduAchievement" id="EduAchievementResult">
+        <result property="achievementId" column="achievement_id"/>
+        <result property="achievementCode" column="achievement_code"/>
+        <result property="achievementName" column="achievement_name"/>
+        <result property="achievementType" column="achievement_type"/>
+        <result property="language" column="language"/>
+        <result property="description" column="description"/>
+        <result property="iconUrl" column="icon_url"/>
+        <result property="tier" column="tier"/>
+        <result property="requirementType" column="requirement_type"/>
+        <result property="requirementValue" column="requirement_value"/>
+        <result property="xpReward" column="xp_reward"/>
+        <result property="coinReward" column="coin_reward"/>
+        <result property="badgeId" column="badge_id"/>
+        <result property="isActive" column="is_active"/>
+        <result property="displayOrder" column="display_order"/>
+        <result property="rarity" column="rarity"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectEduAchievementVo">
+        select achievement_id, achievement_code, achievement_name, achievement_type, language, description,
+               icon_url, tier, requirement_type, requirement_value, xp_reward, coin_reward, badge_id,
+               is_active, display_order, rarity, del_flag, create_by, create_time, update_by, update_time
+        from edu_achievement
+        where del_flag = '0'
+    </sql>
+
+    <select id="selectEduAchievementById" parameterType="Long" resultMap="EduAchievementResult">
+        <include refid="selectEduAchievementVo"/>
+        and achievement_id = #{achievementId}
+    </select>
+
+    <select id="selectEduAchievementList" parameterType="com.ruoyi.edu.domain.EduAchievement" resultMap="EduAchievementResult">
+        <include refid="selectEduAchievementVo"/>
+        <where>
+            <if test="achievementType != null and achievementType != ''">
+                AND achievement_type = #{achievementType}
+            </if>
+            <if test="language != null and language != ''">
+                AND language = #{language}
+            </if>
+            <if test="tier != null and tier != ''">
+                AND tier = #{tier}
+            </if>
+        </where>
+        order by display_order asc
+    </select>
+
+    <select id="selectEduAchievementByType" parameterType="String" resultMap="EduAchievementResult">
+        <include refid="selectEduAchievementVo"/>
+        and achievement_type = #{type}
+        order by display_order asc
+    </select>
+
+    <insert id="insertEduAchievement" parameterType="com.ruoyi.edu.domain.EduAchievement" useGeneratedKeys="true" keyProperty="achievementId">
+        insert into edu_achievement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="achievementCode != null and achievementCode != ''">achievement_code,</if>
+            <if test="achievementName != null and achievementName != ''">achievement_name,</if>
+            <if test="achievementType != null and achievementType != ''">achievement_type,</if>
+            <if test="language != null">language,</if>
+            <if test="description != null">description,</if>
+            <if test="iconUrl != null">icon_url,</if>
+            <if test="tier != null">tier,</if>
+            <if test="requirementType != null">requirement_type,</if>
+            <if test="requirementValue != null">requirement_value,</if>
+            <if test="xpReward != null">xp_reward,</if>
+            <if test="coinReward != null">coin_reward,</if>
+            <if test="badgeId != null">badge_id,</if>
+            <if test="isActive != null">is_active,</if>
+            <if test="displayOrder != null">display_order,</if>
+            <if test="rarity != null">rarity,</if>
+            <if test="createBy != null">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="achievementCode != null and achievementCode != ''">#{achievementCode},</if>
+            <if test="achievementName != null and achievementName != ''">#{achievementName},</if>
+            <if test="achievementType != null and achievementType != ''">#{achievementType},</if>
+            <if test="language != null">#{language},</if>
+            <if test="description != null">#{description},</if>
+            <if test="iconUrl != null">#{iconUrl},</if>
+            <if test="tier != null">#{tier},</if>
+            <if test="requirementType != null">#{requirementType},</if>
+            <if test="requirementValue != null">#{requirementValue},</if>
+            <if test="xpReward != null">#{xpReward},</if>
+            <if test="coinReward != null">#{coinReward},</if>
+            <if test="badgeId != null">#{badgeId},</if>
+            <if test="isActive != null">#{isActive},</if>
+            <if test="displayOrder != null">#{displayOrder},</if>
+            <if test="rarity != null">#{rarity},</if>
+            <if test="createBy != null">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEduAchievement" parameterType="com.ruoyi.edu.domain.EduAchievement">
+        update edu_achievement
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="achievementCode != null and achievementCode != ''">achievement_code = #{achievementCode},</if>
+            <if test="achievementName != null and achievementName != ''">achievement_name = #{achievementName},</if>
+            <if test="achievementType != null and achievementType != ''">achievement_type = #{achievementType},</if>
+            <if test="language != null">language = #{language},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="iconUrl != null">icon_url = #{iconUrl},</if>
+            <if test="tier != null">tier = #{tier},</if>
+            <if test="requirementType != null">requirement_type = #{requirementType},</if>
+            <if test="requirementValue != null">requirement_value = #{requirementValue},</if>
+            <if test="xpReward != null">xp_reward = #{xpReward},</if>
+            <if test="coinReward != null">coin_reward = #{coinReward},</if>
+            <if test="badgeId != null">badge_id = #{badgeId},</if>
+            <if test="isActive != null">is_active = #{isActive},</if>
+            <if test="displayOrder != null">display_order = #{displayOrder},</if>
+            <if test="rarity != null">rarity = #{rarity},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where achievement_id = #{achievementId}
+    </update>
+
+    <delete id="deleteEduAchievementById" parameterType="Long">
+        update edu_achievement set del_flag = '1' where achievement_id = #{achievementId}
+    </delete>
+
+    <delete id="deleteEduAchievementByIds" parameterType="Long">
+        update edu_achievement set del_flag = '1' where achievement_id in
+        <foreach item="achievementId" collection="array" open="(" separator="," close=")">
+            #{achievementId}
+        </foreach>
+    </delete>
+
+</mapper>

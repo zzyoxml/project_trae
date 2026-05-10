@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduUserProfileMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduUserProfile" id="EduUserProfileResult">
+        <result property="userId" column="user_id"/>
+        <result property="nativeLanguage" column="native_language"/>
+        <result property="learningLanguages" column="learning_languages"/>
+        <result property="proficiencyLevel" column="proficiency_level"/>
+        <result property="totalStudyTime" column="total_study_time"/>
+        <result property="currentStreak" column="current_streak"/>
+        <result property="longestStreak" column="longest_streak"/>
+        <result property="lastStudyDate" column="last_study_date"/>
+        <result property="dailyGoal" column="daily_goal"/>
+        <result property="preferredLearningTime" column="preferred_learning_time"/>
+        <result property="voiceEnabled" column="voice_enabled"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="bio" column="bio"/>
+        <result property="totalPoints" column="total_points"/>
+        <result property="level" column="level"/>
+        <result property="experiencePoints" column="experience_points"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectEduUserProfileVo">
+        select user_id, native_language, learning_languages, proficiency_level, total_study_time,
+               current_streak, longest_streak, last_study_date, daily_goal, preferred_learning_time,
+               voice_enabled, avatar_url, bio, total_points, level, experience_points, create_time, update_time
+        from edu_user_profile
+    </sql>
+
+    <select id="selectEduUserProfileByUserId" parameterType="Long" resultMap="EduUserProfileResult">
+        <include refid="selectEduUserProfileVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectEduUserProfileList" parameterType="com.ruoyi.edu.domain.EduUserProfile" resultMap="EduUserProfileResult">
+        <include refid="selectEduUserProfileVo"/>
+        <where>
+            <if test="nativeLanguage != null and nativeLanguage != ''">
+                AND native_language = #{nativeLanguage}
+            </if>
+            <if test="proficiencyLevel != null and proficiencyLevel != ''">
+                AND proficiency_level = #{proficiencyLevel}
+            </if>
+            <if test="learningLanguages != null and learningLanguages != ''">
+                AND FIND_IN_SET(#{learningLanguages}, learning_languages)
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertEduUserProfile" parameterType="com.ruoyi.edu.domain.EduUserProfile" useGeneratedKeys="true" keyProperty="userId">
+        insert into edu_user_profile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="nativeLanguage != null and nativeLanguage != ''">native_language,</if>
+            <if test="learningLanguages != null and learningLanguages != ''">learning_languages,</if>
+            <if test="proficiencyLevel != null and proficiencyLevel != ''">proficiency_level,</if>
+            <if test="totalStudyTime != null">total_study_time,</if>
+            <if test="currentStreak != null">current_streak,</if>
+            <if test="longestStreak != null">longest_streak,</if>
+            <if test="lastStudyDate != null">last_study_date,</if>
+            <if test="dailyGoal != null">daily_goal,</if>
+            <if test="preferredLearningTime != null">preferred_learning_time,</if>
+            <if test="voiceEnabled != null">voice_enabled,</if>
+            <if test="avatarUrl != null">avatar_url,</if>
+            <if test="bio != null">bio,</if>
+            <if test="totalPoints != null">total_points,</if>
+            <if test="level != null">level,</if>
+            <if test="experiencePoints != null">experience_points,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="nativeLanguage != null and nativeLanguage != ''">#{nativeLanguage},</if>
+            <if test="learningLanguages != null and learningLanguages != ''">#{learningLanguages},</if>
+            <if test="proficiencyLevel != null and proficiencyLevel != ''">#{proficiencyLevel},</if>
+            <if test="totalStudyTime != null">#{totalStudyTime},</if>
+            <if test="currentStreak != null">#{currentStreak},</if>
+            <if test="longestStreak != null">#{longestStreak},</if>
+            <if test="lastStudyDate != null">#{lastStudyDate},</if>
+            <if test="dailyGoal != null">#{dailyGoal},</if>
+            <if test="preferredLearningTime != null">#{preferredLearningTime},</if>
+            <if test="voiceEnabled != null">#{voiceEnabled},</if>
+            <if test="avatarUrl != null">#{avatarUrl},</if>
+            <if test="bio != null">#{bio},</if>
+            <if test="totalPoints != null">#{totalPoints},</if>
+            <if test="level != null">#{level},</if>
+            <if test="experiencePoints != null">#{experiencePoints},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEduUserProfile" parameterType="com.ruoyi.edu.domain.EduUserProfile">
+        update edu_user_profile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nativeLanguage != null and nativeLanguage != ''">native_language = #{nativeLanguage},</if>
+            <if test="learningLanguages != null and learningLanguages != ''">learning_languages = #{learningLanguages},</if>
+            <if test="proficiencyLevel != null and proficiencyLevel != ''">proficiency_level = #{proficiencyLevel},</if>
+            <if test="totalStudyTime != null">total_study_time = #{totalStudyTime},</if>
+            <if test="currentStreak != null">current_streak = #{currentStreak},</if>
+            <if test="longestStreak != null">longest_streak = #{longestStreak},</if>
+            <if test="lastStudyDate != null">last_study_date = #{lastStudyDate},</if>
+            <if test="dailyGoal != null">daily_goal = #{dailyGoal},</if>
+            <if test="preferredLearningTime != null">preferred_learning_time = #{preferredLearningTime},</if>
+            <if test="voiceEnabled != null">voice_enabled = #{voiceEnabled},</if>
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="bio != null">bio = #{bio},</if>
+            <if test="totalPoints != null">total_points = #{totalPoints},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="experiencePoints != null">experience_points = #{experiencePoints},</if>
+        </trim>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteEduUserProfileByUserId" parameterType="Long">
+        delete from edu_user_profile where user_id = #{userId}
+    </delete>
+
+    <update id="updateStudyTime">
+        update edu_user_profile
+        set total_study_time = total_study_time + #{duration},
+            last_study_date = CURDATE()
+        where user_id = #{userId}
+    </update>
+
+    <update id="updateStreak">
+        update edu_user_profile
+        set
+            current_streak = CASE
+                WHEN last_study_date = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN current_streak + 1
+                WHEN last_study_date = CURDATE() THEN current_streak
+                ELSE 1
+            END,
+            longest_streak = GREATEST(longest_streak, current_streak),
+            last_study_date = CURDATE()
+        where user_id = #{userId}
+    </update>
+
+    <update id="updatePointsAndExperience">
+        update edu_user_profile
+        set total_points = total_points + #{points},
+            experience_points = experience_points + #{experience}
+        where user_id = #{userId}
+    </update>
+
+</mapper>

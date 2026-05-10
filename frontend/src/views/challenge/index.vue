@@ -1,0 +1,571 @@
+<template>
+  <div class="challenge-page">
+    <h1>🏆 闯关天梯</h1>
+
+    <!-- 挑战模式选择 -->
+    <div class="mode-tabs">
+      <el-radio-group v-model="currentMode" @change="handleModeChange">
+        <el-radio-button label="total">总榜</el-radio-button>
+        <el-radio-button label="daily">日榜</el-radio-button>
+        <el-radio-button label="weekly">周榜</el-radio-button>
+        <el-radio-button label="streak">连胜榜</el-radio-button>
+      </el-radio-group>
+    </div>
+
+    <!-- 语言筛选 -->
+    <div class="language-filter">
+      <el-radio-group v-model="language" @change="loadLeaderboard">
+        <el-radio-button label="all">全部语言</el-radio-button>
+        <el-radio-button label="en">英语</el-radio-button>
+        <el-radio-button label="ja">日语</el-radio-button>
+        <el-radio-button label="zh">汉语</el-radio-button>
+      </el-radio-group>
+    </div>
+
+    <div class="challenge-content">
+      <!-- 排行榜 -->
+      <el-card class="leaderboard-card">
+        <template #header>
+          <div class="card-header">
+            <span>{{ getModeTitle }}</span>
+            <el-tag type="success">{{ currentModeText }}</el-tag>
+          </div>
+        </template>
+
+        <div class="leaderboard" v-loading="loading">
+          <div class="top-three">
+            <div 
+              v-for="(user, index) in topThree" 
+              :key="index"
+              class="top-item"
+              :class="'rank-' + (index + 1)"
+            >
+              <div class="rank-badge">
+                <span v-if="index === 0">🥇</span>
+                <span v-else-if="index === 1">🥈</span>
+                <span v-else>🥉</span>
+              </div>
+              <el-avatar :size="64" :src="user.avatar">
+                {{ user.username?.charAt(0) || 'U' }}
+              </el-avatar>
+              <div class="user-info">
+                <div class="username">{{ user.username }}</div>
+                <div class="level-badge">
+                  <el-tag size="small" :type="getLevelType(user.level)">
+                    {{ user.levelName || 'Lv.' + user.level }}
+                  </el-tag>
+                </div>
+              </div>
+              <div class="score">
+                <span class="score-value">{{ user.score }}</span>
+                <span class="score-label">积分</span>
+              </div>
+            </div>
+          </div>
+
+          <el-divider />
+
+          <div class="rank-list">
+            <div 
+              v-for="(user, index) in rankList" 
+              :key="index"
+              class="rank-item"
+              :class="{ 'is-me': user.isMe }"
+            >
+              <div class="rank-number">
+                <span class="rank">{{ index + 4 }}</span>
+              </div>
+              <el-avatar :size="40" :src="user.avatar">
+                {{ user.username?.charAt(0) || 'U' }}
+              </el-avatar>
+              <div class="user-info">
+                <div class="username">
+                  {{ user.username }}
+                  <el-tag v-if="user.isMe" size="small" type="primary">我</el-tag>
+                </div>
+                <div class="meta">
+                  <span class="level">{{ user.levelName || 'Lv.' + user.level }}</span>
+                  <span class="achievements">🏆 {{ user.achievements }}</span>
+                </div>
+              </div>
+              <div class="stats">
+                <div class="stat">
+                  <span class="value">{{ user.score }}</span>
+                  <span class="label">积分</span>
+                </div>
+                <div class="stat">
+                  <span class="value">{{ user.totalMinutes }}</span>
+                  <span class="label">分钟</span>
+                </div>
+              </div>
+            </div>
+
+            <el-empty v-if="rankList.length === 0 && !loading" description="暂无排名数据" />
+          </div>
+        </div>
+      </el-card>
+
+      <!-- 我的排名 -->
+      <el-card class="my-rank-card">
+        <template #header>
+          <div class="card-header">
+            <span>我的排名</span>
+          </div>
+        </template>
+
+        <div class="my-rank-info" v-if="myRank">
+          <div class="rank-display">
+            <span class="rank-number">{{ myRank.rank }}</span>
+            <span class="rank-suffix">名</span>
+          </div>
+          <div class="rank-details">
+            <div class="detail-item">
+              <span class="label">当前积分</span>
+              <span class="value">{{ myRank.score }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">本周排名</span>
+              <span class="value">{{ myRank.weeklyRank || '-' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">连续学习</span>
+              <span class="value">{{ myRank.streakDays || 0 }} 天</span>
+            </div>
+          </div>
+        </div>
+
+        <el-empty v-else description="暂无排名信息" />
+      </el-card>
+
+      <!-- 挑战记录 -->
+      <el-card class="history-card">
+        <template #header>
+          <div class="card-header">
+            <span>最近挑战</span>
+            <el-button type="text">查看全部</el-button>
+          </div>
+        </template>
+
+        <div class="history-list">
+          <div 
+            v-for="(record, index) in challengeHistory" 
+            :key="index"
+            class="history-item"
+          >
+            <div class="history-icon" :class="record.result">
+              {{ record.result === 'win' ? '✓' : '✗' }}
+            </div>
+            <div class="history-content">
+              <div class="history-title">{{ record.title }}</div>
+              <div class="history-time">{{ record.time }}</div>
+            </div>
+            <div class="history-reward">
+              <span class="reward-value" :class="record.result">
+                +{{ record.reward }}
+              </span>
+              <span class="reward-label">积分</span>
+            </div>
+          </div>
+
+          <el-empty v-if="challengeHistory.length === 0" description="暂无挑战记录" />
+        </div>
+      </el-card>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { getLeaderboard, getMyRank } from '@/api/achievement'
+
+const loading = ref(false)
+const currentMode = ref('total')
+const language = ref('all')
+const leaderboard = ref([])
+const myRank = ref(null)
+
+const challengeHistory = ref([
+  { 
+    title: '英语词汇大挑战', 
+    time: '2小时前', 
+    result: 'win', 
+    reward: 50 
+  },
+  { 
+    title: '日语听力挑战', 
+    time: '5小时前', 
+    result: 'win', 
+    reward: 80 
+  },
+  { 
+    title: '汉语拼音测试', 
+    time: '1天前', 
+    result: 'lose', 
+    reward: 20 
+  }
+])
+
+const topThree = computed(() => leaderboard.value.slice(0, 3))
+const rankList = computed(() => leaderboard.value.slice(3))
+
+const currentModeText = computed(() => {
+  const modes = {
+    total: '按总积分排名',
+    daily: '按今日积分排名',
+    weekly: '按本周积分排名',
+    streak: '按连胜天数排名'
+  }
+  return modes[currentMode.value] || ''
+})
+
+const getModeTitle = computed(() => {
+  const lang = { all: '全部语言', en: '英语', ja: '日语', zh: '汉语' }
+  return lang[language.value] + ' - ' + currentModeText.value
+})
+
+onMounted(async () => {
+  await loadLeaderboard()
+  await loadMyRank()
+})
+
+const loadLeaderboard = async () => {
+  loading.value = true
+  try {
+    const res = await getLeaderboard(currentMode.value, language.value)
+    if (res.data?.rows) {
+      leaderboard.value = res.data.rows.map((user, index) => ({
+        ...user,
+        isMe: index === 5
+      }))
+    } else if (Array.isArray(res.data)) {
+      leaderboard.value = res.data.map((user, index) => ({
+        ...user,
+        isMe: index === 5
+      }))
+    }
+  } catch (error) {
+    console.error('加载排行榜失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const loadMyRank = async () => {
+  try {
+    const res = await getMyRank(currentMode.value, language.value)
+    if (res.data) {
+      myRank.value = res.data
+    }
+  } catch (error) {
+    console.error('加载我的排名失败:', error)
+  }
+}
+
+const handleModeChange = () => {
+  loadLeaderboard()
+  loadMyRank()
+}
+
+const getLevelType = (level) => {
+  if (level >= 10) return 'danger'
+  if (level >= 5) return 'warning'
+  return 'success'
+}
+</script>
+
+<style lang="scss" scoped>
+.challenge-page {
+  h1 {
+    font-size: 32px;
+    margin-bottom: 24px;
+  }
+
+  .mode-tabs {
+    margin-bottom: 16px;
+  }
+
+  .language-filter {
+    margin-bottom: 24px;
+  }
+
+  .challenge-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 20px;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+    }
+
+    .leaderboard-card {
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .leaderboard {
+        .top-three {
+          display: flex;
+          justify-content: center;
+          gap: 24px;
+          padding: 20px 0;
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .top-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f5f7fa;
+            min-width: 150px;
+
+            &.rank-1 {
+              background: linear-gradient(135deg, #fff9c4 0%, #fff176 100%);
+              order: 2;
+            }
+
+            &.rank-2 {
+              background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+              order: 1;
+            }
+
+            &.rank-3 {
+              background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+              order: 3;
+            }
+
+            .rank-badge {
+              font-size: 32px;
+            }
+
+            .user-info {
+              text-align: center;
+
+              .username {
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 8px;
+              }
+            }
+
+            .score {
+              text-align: center;
+
+              .score-value {
+                display: block;
+                font-size: 24px;
+                font-weight: bold;
+                color: #409eff;
+              }
+
+              .score-label {
+                font-size: 12px;
+                color: #909399;
+              }
+            }
+          }
+        }
+
+        .rank-list {
+          .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: background 0.3s;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            &:hover {
+              background: #f5f7fa;
+            }
+
+            &.is-me {
+              background: #ecf5ff;
+              border: 1px solid #409eff;
+            }
+
+            .rank-number {
+              width: 32px;
+              text-align: center;
+
+              .rank {
+                font-size: 18px;
+                font-weight: bold;
+                color: #909399;
+              }
+            }
+
+            .user-info {
+              flex: 1;
+
+              .username {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+                margin-bottom: 4px;
+              }
+
+              .meta {
+                display: flex;
+                gap: 12px;
+                font-size: 12px;
+                color: #909399;
+              }
+            }
+
+            .stats {
+              display: flex;
+              gap: 16px;
+
+              .stat {
+                text-align: center;
+                min-width: 60px;
+
+                .value {
+                  display: block;
+                  font-size: 16px;
+                  font-weight: bold;
+                  color: #303133;
+                }
+
+                .label {
+                  font-size: 12px;
+                  color: #909399;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .my-rank-card {
+      .my-rank-info {
+        .rank-display {
+          text-align: center;
+          margin-bottom: 24px;
+
+          .rank-number {
+            font-size: 64px;
+            font-weight: bold;
+            color: #409eff;
+          }
+
+          .rank-suffix {
+            font-size: 24px;
+            color: #909399;
+          }
+        }
+
+        .rank-details {
+          .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #ebeef5;
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            .label {
+              color: #909399;
+            }
+
+            .value {
+              font-weight: bold;
+              color: #303133;
+            }
+          }
+        }
+      }
+    }
+
+    .history-card {
+      .history-list {
+        .history-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 0;
+          border-bottom: 1px solid #ebeef5;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .history-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+
+            &.win {
+              background: #67c23a;
+              color: white;
+            }
+
+            &.lose {
+              background: #f56c6c;
+              color: white;
+            }
+          }
+
+          .history-content {
+            flex: 1;
+
+            .history-title {
+              font-size: 14px;
+              margin-bottom: 4px;
+            }
+
+            .history-time {
+              font-size: 12px;
+              color: #909399;
+            }
+          }
+
+          .history-reward {
+            text-align: right;
+
+            .reward-value {
+              display: block;
+              font-size: 16px;
+              font-weight: bold;
+
+              &.win {
+                color: #67c23a;
+              }
+
+              &.lose {
+                color: #f56c6c;
+              }
+            }
+
+            .reward-label {
+              font-size: 12px;
+              color: #909399;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+</style>
