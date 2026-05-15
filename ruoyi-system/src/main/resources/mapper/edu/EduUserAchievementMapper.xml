@@ -57,4 +57,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from edu_user_achievement where user_id = #{userId} and achievement_id = #{achievementId}
     </delete>
 
+    <select id="countAchievements" resultType="Integer">
+        select count(*) from edu_user_achievement where user_id = #{userId} and is_completed = 1
+    </select>
+
 </mapper>

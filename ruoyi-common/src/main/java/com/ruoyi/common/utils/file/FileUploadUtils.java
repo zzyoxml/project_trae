@@ -112,8 +112,8 @@ public class FileUploadUtils
 
         String fileName = extractFilename(file);
 
-        String absPath = getAbsoluteFile(baseDir, fileName).getAbsolutePath();
-        file.transferTo(Paths.get(absPath));
+        File desc = getAbsoluteFile(baseDir, fileName);
+        file.transferTo(desc);
         return getPathFileName(baseDir, fileName);
     }
 

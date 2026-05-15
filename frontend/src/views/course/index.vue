@@ -18,17 +18,17 @@
         <el-option label="高级" value="advanced" />
       </el-select>
 
-      <el-select v-model="filters.category" placeholder="选择分类" clearable @change="handleFilterChange">
+      <!-- <el-select v-model="filters.category" placeholder="选择分类" clearable @change="handleFilterChange">
         <el-option label="全部分类" value="" />
         <el-option label="单词记忆" value="vocabulary" />
         <el-option label="语法练习" value="grammar" />
         <el-option label="听力训练" value="listening" />
         <el-option label="口语练习" value="speaking" />
-      </el-select>
+      </el-select> -->
 
       <el-select v-model="filters.sortBy" placeholder="排序方式" @change="handleSortChange">
         <el-option label="默认排序" value="default" />
-        <el-option label="按评分排序" value="rating" />
+        <!-- <el-option label="按评分排序" value="rating" /> -->
         <el-option label="按学习人数排序" value="students" />
         <el-option label="按课时数排序" value="lessons" />
       </el-select>

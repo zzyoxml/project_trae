@@ -22,6 +22,8 @@
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
+        <result property="userName" column="userName"/>
+        <result property="userAvatar" column="userAvatar"/>
     </resultMap>
 
     <sql id="selectEduPostVo">
@@ -56,32 +58,40 @@
         order by create_time desc
     </select>
 
-    <select id="selectEduPostByLanguage" resultType="com.ruoyi.edu.domain.EduPost">
-        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
-               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
-               create_by, create_time, update_by, update_time
-        from edu_post
-        where (language = #{language} or language = 'all')
-        order by like_count desc, view_count desc
+    <select id="selectEduPostByLanguage" resultMap="EduPostResult">
+        select p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, p.view_count,
+               p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, p.status,
+               p.create_by, p.create_time, p.update_by, p.update_time,
+               u.nick_name as userName, u.avatar as userAvatar
+        from edu_post p
+        left join sys_user u on p.user_id = u.user_id
+        where (p.language = #{language} or p.language = 'all') and p.is_deleted = 0
+        order by p.like_count desc, p.view_count desc
         limit #{limit}
     </select>
 
-    <select id="selectEduPostByUserId" parameterType="Long" resultType="com.ruoyi.edu.domain.EduPost">
-        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
-               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
-               create_by, create_time, update_by, update_time
-        from edu_post
-        where user_id = #{userId}
-        order by create_time desc
+    <select id="selectEduPostByUserId" parameterType="Long" resultMap="EduPostResult">
+        select p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, p.view_count,
+               p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, p.status,
+               p.create_by, p.create_time, p.update_by, p.update_time,
+               u.nick_name as userName, u.avatar as userAvatar
+        from edu_post p
+        left join sys_user u on p.user_id = u.user_id
+        where p.user_id = #{userId} and p.is_deleted = 0
+        order by p.create_time desc
     </select>
 
-    <select id="selectHotPosts" parameterType="Integer" resultType="com.ruoyi.edu.domain.EduPost">
-        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
-               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
-               create_by, create_time, update_by, update_time
-        from edu_post
-        where status = 'published'
-        order by (like_count * 2 + view_count) desc
+    <select id="selectHotPosts" parameterType="Integer" resultMap="EduPostResult">
+        select 
+            p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, 
+            p.view_count, p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, 
+            p.status, p.create_by, p.create_time, p.update_by, p.update_time,
+            u.nick_name as userName,
+            u.avatar as userAvatar
+        from edu_post p
+        left join sys_user u on p.user_id = u.user_id
+        where p.status = 'published' and p.is_deleted = 0
+        order by p.create_time desc
         limit #{limit}
     </select>
 

@@ -586,6 +586,44 @@ INSERT INTO edu_course_category (category_name, category_code, description, disp
 ('日语课程', 'ja', '日语学习相关课程', 2),
 ('汉语课程', 'zh', '汉语学习相关课程', 3);
 
+-- 插入示例课程数据
+INSERT INTO edu_course (course_name, language, level, description, cover_image, student_count, rating, is_featured, is_published, create_time) VALUES
+('英语基础入门', 'en', 1, '适合零基础学习者，从字母、发音开始，逐步建立英语基础', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=English%20beginner%20course%20cover%20with%20ABC%20and%20book&image_size=square', 1258, 4.9, 1, 1, NOW()),
+('英语日常会话', 'en', 2, '学习日常生活场景对话，提高口语表达能力', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=English%20conversation%20course%20cover%20with%20people%20talking&image_size=square', 986, 4.8, 1, 1, NOW()),
+('日语五十音与基础对话', 'ja', 1, '从零开始学习日语发音和基础会话', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Japanese%20hiragana%20katakana%20course%20cover%20with%20sushi%20and%20cherry%20blossom&image_size=square', 1542, 4.9, 1, 1, NOW()),
+('日语N3进阶课程', 'ja', 2, '系统学习日语N3级别语法和词汇', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Japanese%20N3%20course%20cover%20with%20Tokyo%20Tower&image_size=square', 623, 4.7, 1, 1, NOW()),
+('汉语初级课程', 'zh', 1, '适合外籍学习者，从拼音开始学习中文', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20beginner%20course%20cover%20with%20pinyin%20and%20Chinese%20characters&image_size=square', 854, 4.8, 1, 1, NOW()),
+('HSK三级备考课程', 'zh', 2, 'HSK三级考试针对性辅导课程', 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=HSK%20exam%20preparation%20course%20cover%20with%20certificate&image_size=square', 432, 4.6, 1, 1, NOW());
+
+-- 插入示例用户数据（与系统用户关联）
+INSERT INTO edu_user_profile (user_id, native_language, learning_languages, total_study_time, current_streak, total_points, level, experience_points, create_time) VALUES
+(1, 'zh', 'en,ja', 360, 15, 2500, 5, 4500, NOW()),
+(2, 'en', 'zh,ja', 180, 7, 1200, 3, 2200, NOW()),
+(3, 'ja', 'en,zh', 120, 3, 800, 2, 1500, NOW());
+
+-- 插入示例用户课程数据
+INSERT INTO edu_user_course (user_id, course_id, progress_percent, status, enrollment_date) VALUES
+(1, 1, 75, 'learning', DATE_SUB(NOW(), INTERVAL 30 DAY)),
+(1, 3, 40, 'learning', DATE_SUB(NOW(), INTERVAL 20 DAY)),
+(2, 5, 100, 'completed', DATE_SUB(NOW(), INTERVAL 60 DAY)),
+(2, 2, 60, 'learning', DATE_SUB(NOW(), INTERVAL 15 DAY)),
+(3, 1, 30, 'learning', DATE_SUB(NOW(), INTERVAL 10 DAY));
+
+-- 插入示例用户成就数据
+INSERT INTO edu_user_achievement (user_id, achievement_id, is_completed, completed_time) VALUES
+(1, 1, 1, DATE_SUB(NOW(), INTERVAL 10 DAY)),
+(1, 4, 1, DATE_SUB(NOW(), INTERVAL 8 DAY)),
+(1, 6, 1, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(2, 1, 1, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(3, 4, 1, DATE_SUB(NOW(), INTERVAL 2 DAY));
+
+-- 插入示例社区帖子数据
+INSERT INTO edu_post (user_id, post_type, language, title, content, view_count, like_count, comment_count, create_time) VALUES
+(1, 'share', 'en', '我的英语学习心得分享', '学习英语已经半年了，想和大家分享一下我的学习方法。首先，每天坚持背30个单词，然后利用碎片化时间听英语新闻...', 325, 45, 12, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+(2, 'question', 'zh', '请问中文的四声怎么练习？', '作为英语母语者，我觉得中文的四声很难掌握，有什么好的练习方法吗？求各位大佬指点！', 218, 32, 25, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+(3, 'share', 'ja', '日语N3备考经验', '刚刚通过了日语N3考试，分享一下我的备考经验。重点是语法和词汇的积累...', 412, 68, 18, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+(1, 'question', 'ja', '日语敬语太难了怎么办？', '敬语真的好复杂，有什么学习技巧吗？', 187, 25, 14, NOW());
+
 -- 插入示例成就数据
 INSERT INTO edu_achievement (achievement_code, achievement_name, achievement_type, description, tier, requirement_type, requirement_value, display_order) VALUES
 ('streak_7', '7天连续学习', 'streak', '连续学习7天', 'bronze', 'streak_days', 7, 1),

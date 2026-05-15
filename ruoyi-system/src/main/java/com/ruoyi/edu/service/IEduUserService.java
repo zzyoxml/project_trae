@@ -3,6 +3,7 @@ package com.ruoyi.edu.service;
 import com.ruoyi.edu.domain.EduUserProfile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户扩展信息Service接口
@@ -52,6 +53,14 @@ public interface IEduUserService {
     public int deleteEduUserProfileByUserId(Long userId);
 
     /**
+     * 删除用户
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    public int deleteUser(Long userId);
+
+    /**
      * 注册新用户
      *
      * @param username         用户名
@@ -80,6 +89,16 @@ public interface IEduUserService {
      * @return 用户完整信息
      */
     public EduUserProfile getUserFullInfo(Long userId);
+
+    /**
+     * 获取用户列表（包含详细信息）
+     *
+     * @param username 用户名
+     * @param email 邮箱
+     * @param learningLanguage 学习语言
+     * @return 用户列表
+     */
+    public List<Map<String, Object>> selectUserListWithDetails(String username, String email, String learningLanguage);
 
     /**
      * 更新学习时间
@@ -112,4 +131,12 @@ public interface IEduUserService {
      * @param points 积分数量
      */
     public void addUserPoints(Long userId, Integer points);
+
+    /**
+     * 获取用户学习统计数据
+     *
+     * @param userId 用户ID
+     * @return 学习统计数据Map
+     */
+    public Map<String, Object> getLearningStats(Long userId);
 }

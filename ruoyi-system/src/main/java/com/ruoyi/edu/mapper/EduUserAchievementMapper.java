@@ -57,4 +57,12 @@ public interface EduUserAchievementMapper {
     public int deleteUserAchievement(
             @Param("userId") Long userId,
             @Param("achievementId") Long achievementId);
+
+    /**
+     * 统计用户已获得的成就数量
+     *
+     * @param userId 用户ID
+     * @return 已获得成就数
+     */
+    public Integer countAchievements(@Param("userId") Long userId);
 }

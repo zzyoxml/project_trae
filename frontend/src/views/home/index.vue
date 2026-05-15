@@ -45,8 +45,11 @@
 
     <!-- 热门课程 -->
     <section class="courses-section">
-      <h2>热门课程</h2>
-      <div class="courses-grid" v-loading="loading">
+      <div class="section-header">
+        <h2>热门课程</h2>
+        <el-button text @click="$router.push('/course')">查看全部 →</el-button>
+      </div>
+      <div class="courses-grid" v-loading="coursesLoading">
         <div
           v-for="course in courses"
           :key="course.courseId"
@@ -54,7 +57,7 @@
           @click="goToCourse(course.courseId)"
         >
           <div class="course-cover">
-            <img :src="course.coverImage || '/default-course.jpg'" :alt="course.courseName">
+            <img :src="course.coverImage || '/default-course.jpg'" :alt="course.courseName" />
             <span class="course-level" :class="'level-' + course.level">{{ getLevelText(course.level) }}</span>
           </div>
           <div class="course-info">
@@ -66,31 +69,45 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="more-courses">
-        <el-button @click="$router.push('/course')">查看更多课程</el-button>
+        <div v-if="courses.length === 0 && !coursesLoading" class="empty-state">
+          <el-empty description="暂无课程数据" />
+        </div>
       </div>
     </section>
 
-    <!-- 学习统计 -->
-    <section class="stats-section" v-if="userStore.isLoggedIn">
-      <h2>我的学习数据</h2>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value">{{ stats.totalLearningMinutes || 0 }}</div>
-          <div class="stat-label">学习时长(分钟)</div>
+    <!-- 社区动态 -->
+    <section class="community-section">
+      <div class="section-header">
+        <h2>社区动态</h2>
+        <el-button text @click="$router.push('/community')">查看全部 →</el-button>
+      </div>
+      <div class="community-grid" v-loading="postsLoading">
+        <div
+          v-for="post in hotPosts"
+          :key="post.postId"
+          class="post-card"
+          @click="goToPost(post.postId)"
+        >
+          <div class="post-header">
+            <div class="user-avatar">{{ post.userName ? post.userName.charAt(0).toUpperCase() : 'U' }}</div>
+            <div class="user-info">
+              <div class="user-name">{{ post.userName || '匿名用户' }}</div>
+              <div class="post-time">{{ formatTime(post.createTime) }}</div>
+            </div>
+          </div>
+          <h3 class="post-title">{{ post.title }}</h3>
+          <p class="post-content">{{ truncateText(post.content, 100) }}</p>
+          <div class="post-footer">
+            <span class="post-tag" v-if="post.language">{{ getLanguageName(post.language) }}</span>
+            <div class="post-stats">
+              <span><el-icon><View /></el-icon> {{ post.viewCount || 0 }}</span>
+              <span><el-icon><ChatDotRound /></el-icon> {{ post.commentCount || 0 }}</span>
+              <span><el-icon><Star /></el-icon> {{ post.likeCount || 0 }}</span>
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value">{{ stats.streakDays || 0 }}</div>
-          <div class="stat-label">连续学习天数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">{{ stats.completedCourses || 0 }}</div>
-          <div class="stat-label">已完成课程</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">{{ stats.achievements || 0 }}</div>
-          <div class="stat-label">获得成就</div>
+        <div v-if="hotPosts.length === 0 && !postsLoading" class="empty-state">
+          <el-empty description="暂无社区动态" />
         </div>
       </div>
     </section>
@@ -101,42 +118,46 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getCourseList, getFeaturedCourses } from '@/api/course'
+import { getFeaturedCourses } from '@/api/course'
+import { getHotPosts } from '@/api/community'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userStore = useUserStore()
 
-const loading = ref(false)
+const coursesLoading = ref(false)
+const postsLoading = ref(false)
 const courses = ref([])
-const stats = ref({})
+const hotPosts = ref([])
 
 onMounted(async () => {
-  await loadCourses()
-  if (userStore.isLoggedIn) {
-    await loadStats()
-  }
+  await Promise.all([
+    loadCourses(),
+    loadHotPosts()
+  ])
 })
 
 const loadCourses = async () => {
-  loading.value = true
+  coursesLoading.value = true
   try {
     const res = await getFeaturedCourses(6)
     courses.value = res || []
   } catch (error) {
     console.error('加载热门课程失败:', error)
-    ElMessage.error('加载热门课程失败')
   } finally {
-    loading.value = false
+    coursesLoading.value = false
   }
 }
 
-const loadStats = async () => {
-  stats.value = {
-    totalLearningMinutes: 120,
-    streakDays: 7,
-    completedCourses: 3,
-    achievements: 5
+const loadHotPosts = async () => {
+  postsLoading.value = true
+  try {
+    const res = await getHotPosts(3)
+    hotPosts.value = res || []
+  } catch (error) {
+    console.error('加载社区动态失败:', error)
+  } finally {
+    postsLoading.value = false
   }
 }
 
@@ -144,14 +165,48 @@ const goToCourse = (courseId) => {
   router.push(`/course/${courseId}`)
 }
 
+const goToPost = (postId) => {
+  router.push(`/community/${postId}`)
+}
+
 const getLevelText = (level) => {
   const levelMap = { 1: '初级', 2: '中级', 3: '高级' }
   return levelMap[level] || '初级'
+}
+
+const getLanguageName = (lang) => {
+  const langMap = { 'en': '英语', 'ja': '日语', 'zh': '汉语' }
+  return langMap[lang] || lang
+}
+
+const formatTime = (time) => {
+  if (!time) return ''
+  const date = new Date(time)
+  const now = new Date()
+  const diff = now - date
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
+  
+  if (diff < minute) return '刚刚'
+  if (diff < hour) return `${Math.floor(diff / minute)}分钟前`
+  if (diff < day) return `${Math.floor(diff / hour)}小时前`
+  return `${Math.floor(diff / day)}天前`
+}
+
+const truncateText = (text, max) => {
+  if (!text) return ''
+  if (text.length <= max) return text
+  return text.substring(0, max) + '...'
 }
 </script>
 
 <style lang="scss" scoped>
 .home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
   .hero-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -178,153 +233,250 @@ const getLevelText = (level) => {
     }
   }
 
-  .features-section, .courses-section, .stats-section {
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 28px;
+      margin: 0;
+    }
+  }
+
+  .features-section {
     margin-bottom: 40px;
 
     h2 {
-      font-size: 32px;
+      font-size: 28px;
       margin-bottom: 24px;
       text-align: center;
     }
-  }
 
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 24px;
-
-    .feature-card {
-      background: var(--el-bg-color, white);
-      padding: 32px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      .feature-icon {
-        font-size: 48px;
-        margin-bottom: 16px;
-      }
-
-      h3 {
-        font-size: 24px;
-        margin-bottom: 8px;
-      }
-
-      p {
-        color: #909399;
-      }
-    }
-  }
-
-  .courses-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-
-    .course-card {
-      background: var(--el-bg-color, white);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      transition: transform 0.3s;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      .course-cover {
-        position: relative;
-        height: 160px;
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .course-level {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          padding: 4px 12px;
-          border-radius: 12px;
-          font-size: 12px;
-          color: white;
-
-          &.level-1 { background: #67c23a; }
-          &.level-2 { background: #e6a23c; }
-          &.level-3 { background: #f56c6c; }
-        }
-      }
-
-      .course-info {
-        padding: 16px;
-
-        h3 {
-          font-size: 18px;
-          margin-bottom: 8px;
-        }
-
-        .course-desc {
-          color: #909399;
-          font-size: 14px;
-          margin-bottom: 12px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .course-meta {
-          display: flex;
-          gap: 16px;
-          color: #909399;
-          font-size: 14px;
-
-          span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-          }
-        }
-      }
-    }
-  }
-
-  .more-courses {
-    text-align: center;
-    margin-top: 24px;
-  }
-
-  .stats-section {
-    .stats-grid {
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 24px;
 
-      .stat-card {
+      .feature-card {
         background: var(--el-bg-color, white);
         padding: 32px;
         border-radius: 12px;
         text-align: center;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
 
-        .stat-value {
+        &:hover {
+          transform: translateY(-5px);
+        }
+
+        .feature-icon {
           font-size: 48px;
-          font-weight: bold;
-          color: #409eff;
+          margin-bottom: 16px;
+        }
+
+        h3 {
+          font-size: 24px;
           margin-bottom: 8px;
         }
 
-        .stat-label {
+        p {
           color: #909399;
-          font-size: 16px;
         }
+      }
+    }
+  }
+
+  .courses-section {
+    margin-bottom: 40px;
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+
+      .course-card {
+        background: var(--el-bg-color, white);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s;
+
+        &:hover {
+          transform: translateY(-5px);
+        }
+
+        .course-cover {
+          position: relative;
+          height: 160px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .course-level {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: white;
+
+            &.level-1 { background: #67c23a; }
+            &.level-2 { background: #e6a23c; }
+            &.level-3 { background: #f56c6c; }
+          }
+        }
+
+        .course-info {
+          padding: 16px;
+
+          h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+          }
+
+          .course-desc {
+            color: #909399;
+            font-size: 14px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .course-meta {
+            display: flex;
+            gap: 16px;
+            color: #909399;
+            font-size: 14px;
+
+            span {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            }
+          }
+        }
+      }
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 40px;
+    }
+  }
+
+  .community-section {
+    margin-bottom: 40px;
+
+    .community-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+
+      .post-card {
+        background: var(--el-bg-color, white);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s;
+
+        &:hover {
+          transform: translateY(-3px);
+        }
+
+        .post-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+
+          .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+          }
+
+          .user-info {
+            flex: 1;
+
+            .user-name {
+              font-weight: 600;
+              font-size: 14px;
+            }
+
+            .post-time {
+              color: #909399;
+              font-size: 12px;
+            }
+          }
+        }
+
+        .post-title {
+          font-size: 16px;
+          margin-bottom: 8px;
+          font-weight: 600;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .post-content {
+          color: #606266;
+          font-size: 14px;
+          margin-bottom: 16px;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .post-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .post-tag {
+            font-size: 12px;
+            color: #409eff;
+            background: rgba(64, 158, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+          }
+
+          .post-stats {
+            display: flex;
+            gap: 16px;
+            color: #909399;
+            font-size: 14px;
+
+            span {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            }
+          }
+        }
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        padding: 40px;
       }
     }
   }

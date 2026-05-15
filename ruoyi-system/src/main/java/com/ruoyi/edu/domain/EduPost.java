@@ -91,6 +91,11 @@ public class EduPost extends BaseEntity {
     private String username;
 
     /**
+     * 用户名（别名，用于前端兼容）
+     */
+    private String userName;
+
+    /**
      * 用户头像（非数据库字段）
      */
     private String userAvatar;
@@ -226,6 +231,15 @@ public class EduPost extends BaseEntity {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getUserName() {
+        return userName != null ? userName : username;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+        this.username = userName;
     }
 
     public String getUserAvatar() {

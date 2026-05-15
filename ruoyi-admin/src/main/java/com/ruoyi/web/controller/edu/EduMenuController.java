@@ -98,6 +98,13 @@ public class EduMenuController extends BaseController
         vocabularyManage.setMeta(new MetaVo("词汇管理", "language", false, ""));
         courseChildren.add(vocabularyManage);
         
+        RouterVo studentManage = new RouterVo();
+        studentManage.setPath("user");
+        studentManage.setComponent("edu/user/index");
+        studentManage.setName("StudentManage");
+        studentManage.setMeta(new MetaVo("学员管理", "peoples", false, ""));
+        courseChildren.add(studentManage);
+        
         RouterVo importExportManage = new RouterVo();
         importExportManage.setPath("import-export");
         importExportManage.setComponent("edu/import-export/index");

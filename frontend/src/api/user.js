@@ -23,3 +23,31 @@ export function logout() {
 export function updateUserInfo(userInfo) {
   return put('/user/profile', userInfo)
 }
+
+export function getLearningStats() {
+  return get('/edu/user/stats')
+}
+
+export function getAllUsers(params) {
+  return get('/edu/user/list', params)
+}
+
+export function getUserDetail(userId) {
+  return get(`/edu/user/profile/${userId}`)
+}
+
+export function addUser(data) {
+  return post('/edu/user/register', data)
+}
+
+export function editUser(data) {
+  return put('/edu/user/profile', data)
+}
+
+export function deleteUserById(userId) {
+  return post(`/edu/user/delete/${userId}`)
+}
+
+export function updateUserStatus(userId, status) {
+  return put('/edu/user/status', { userId, status })
+}

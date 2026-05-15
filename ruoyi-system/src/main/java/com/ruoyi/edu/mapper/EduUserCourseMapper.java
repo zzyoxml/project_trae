@@ -54,4 +54,20 @@ public interface EduUserCourseMapper {
      * @return 课程ID列表
      */
     public List<Long> selectUserCourseIds(@Param("userId") Long userId);
+
+    /**
+     * 统计用户已完成的课程数量
+     *
+     * @param userId 用户ID
+     * @return 已完成课程数
+     */
+    public Integer countCompletedCourses(@Param("userId") Long userId);
+
+    /**
+     * 统计用户正在学习的课程数量
+     *
+     * @param userId 用户ID
+     * @return 学习中课程数
+     */
+    public Integer countLearningCourses(@Param("userId") Long userId);
 }

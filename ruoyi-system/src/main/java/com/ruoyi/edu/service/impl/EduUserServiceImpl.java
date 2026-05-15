@@ -2,19 +2,26 @@ package com.ruoyi.edu.service.impl;
 
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.edu.domain.EduUserProfile;
 import com.ruoyi.edu.mapper.EduUserProfileMapper;
+import com.ruoyi.edu.mapper.EduUserCourseMapper;
+import com.ruoyi.edu.mapper.EduUserAchievementMapper;
 import com.ruoyi.edu.service.IEduUserService;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.system.service.ISysUserService;
+import org.springframework.beans.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户扩展信息Service实现
@@ -28,6 +35,12 @@ public class EduUserServiceImpl implements IEduUserService {
 
     @Autowired
     private EduUserProfileMapper eduUserProfileMapper;
+
+    @Autowired
+    private EduUserCourseMapper eduUserCourseMapper;
+
+    @Autowired
+    private EduUserAchievementMapper eduUserAchievementMapper;
 
     @Autowired
     private SysUserMapper sysUserMapper;
@@ -91,6 +104,26 @@ public class EduUserServiceImpl implements IEduUserService {
     }
 
     /**
+     * 删除用户（包括系统用户和教育扩展信息）
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @Override
+    @Transactional
+    public int deleteUser(Long userId) {
+        deleteEduUserProfileByUserId(userId);
+
+        SysUser sysUser = sysUserMapper.selectUserById(userId);
+        if (sysUser != null) {
+            sysUserMapper.deleteUserById(userId);
+        }
+
+        log.info("删除用户: userId={}", userId);
+        return 1;
+    }
+
+    /**
      * 注册新用户
      *
      * @param username         用户名
@@ -122,8 +155,7 @@ public class EduUserServiceImpl implements IEduUserService {
         user.setNickName(username);
         user.setEmail(email);
         user.setPhonenumber("");
-        user.setPassword(com.ruoyi.common.utils.SecurityUtils.encryptPassword(password));
-        // 设置默认角色
+        user.setPassword(SecurityUtils.encryptPassword(password));
         user.setRoles(null);
 
         // 注册用户（使用框架的用户服务）
@@ -165,20 +197,15 @@ public class EduUserServiceImpl implements IEduUserService {
      */
     @Override
     public String login(String username, String password) {
-        // 这里应该使用框架的登录机制
-        // 由于若依框架有自己的登录流程，我们可以直接返回成功标志
-        // 实际的token生成和验证由Spring Security处理
         SysUser user = sysUserMapper.selectUserByUserName(username);
         if (StringUtils.isNull(user)) {
             throw new ServiceException("用户不存在");
         }
 
-        // 验证密码
-        if (!com.ruoyi.common.utils.SecurityUtils.matchesPassword(password, user.getPassword())) {
+        if (!SecurityUtils.matchesPassword(password, user.getPassword())) {
             throw new ServiceException("密码错误");
         }
 
-        // 检查用户状态
         if (user.getStatus().equals("1")) {
             throw new ServiceException("用户已被停用");
         }
@@ -197,7 +224,6 @@ public class EduUserServiceImpl implements IEduUserService {
     public EduUserProfile getUserFullInfo(Long userId) {
         EduUserProfile profile = selectEduUserProfileByUserId(userId);
         if (profile == null) {
-            // 如果没有扩展信息，创建默认的
             profile = new EduUserProfile();
             profile.setUserId(userId);
             profile.setNativeLanguage("zh");
@@ -217,6 +243,77 @@ public class EduUserServiceImpl implements IEduUserService {
     }
 
     /**
+     * 获取用户列表（包含详细信息）
+     *
+     * @param username 用户名
+     * @param email 邮箱
+     * @param learningLanguage 学习语言
+     * @return 用户列表
+     */
+    @Override
+    public List<Map<String, Object>> selectUserListWithDetails(String username, String email, String learningLanguage) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        // 获取所有系统用户
+        SysUser queryUser = new SysUser();
+        if (StringUtils.isNotEmpty(username)) {
+            queryUser.setUserName(username);
+        }
+        if (StringUtils.isNotEmpty(email)) {
+            queryUser.setEmail(email);
+        }
+        
+        // 这里简化处理，直接从系统用户表查询
+        List<SysUser> sysUsers = sysUserMapper.selectUserList(queryUser);
+        
+        for (SysUser sysUser : sysUsers) {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("userId", sysUser.getUserId());
+            userMap.put("username", sysUser.getUserName());
+            userMap.put("nickName", sysUser.getNickName());
+            userMap.put("email", sysUser.getEmail());
+            userMap.put("phonenumber", sysUser.getPhonenumber());
+            userMap.put("status", sysUser.getStatus());
+            userMap.put("createTime", sysUser.getCreateTime());
+            
+            // 获取教育扩展信息
+            EduUserProfile profile = selectEduUserProfileByUserId(sysUser.getUserId());
+            if (profile != null) {
+                userMap.put("nativeLanguage", profile.getNativeLanguage());
+                userMap.put("learningLanguages", profile.getLearningLanguages());
+                userMap.put("totalStudyTime", profile.getTotalStudyTime());
+                userMap.put("currentStreak", profile.getCurrentStreak());
+                userMap.put("longestStreak", profile.getLongestStreak());
+                userMap.put("totalPoints", profile.getTotalPoints());
+                userMap.put("level", profile.getLevel());
+                userMap.put("experiencePoints", profile.getExperiencePoints());
+                userMap.put("bio", profile.getBio());
+            } else {
+                userMap.put("nativeLanguage", "zh");
+                userMap.put("learningLanguages", "en");
+                userMap.put("totalStudyTime", 0);
+                userMap.put("currentStreak", 0);
+                userMap.put("longestStreak", 0);
+                userMap.put("totalPoints", 0);
+                userMap.put("level", 1);
+                userMap.put("experiencePoints", 0);
+            }
+            
+            // 如果指定了学习语言筛选
+            if (StringUtils.isNotEmpty(learningLanguage) && profile != null) {
+                String userLangs = profile.getLearningLanguages();
+                if (userLangs == null || !userLangs.contains(learningLanguage)) {
+                    continue; // 跳过不匹配的用户
+                }
+            }
+            
+            result.add(userMap);
+        }
+        
+        return result;
+    }
+
+    /**
      * 更新学习时间
      *
      * @param userId   用户ID
@@ -228,13 +325,12 @@ public class EduUserServiceImpl implements IEduUserService {
         EduUserProfile profile = eduUserProfileMapper.selectEduUserProfileByUserId(userId);
         
         if (profile == null) {
-            // 如果用户没有扩展信息，创建默认的
             profile = new EduUserProfile();
             profile.setUserId(userId);
             profile.setNativeLanguage("zh");
             profile.setLearningLanguages("en");
             profile.setProficiencyLevel("beginner");
-            profile.setTotalStudyTime((long) duration); // 直接设置学习时长
+            profile.setTotalStudyTime((long) duration);
             profile.setCurrentStreak(0);
             profile.setLongestStreak(0);
             profile.setDailyGoal(30);
@@ -263,14 +359,13 @@ public class EduUserServiceImpl implements IEduUserService {
         EduUserProfile profile = eduUserProfileMapper.selectEduUserProfileByUserId(userId);
         
         if (profile == null) {
-            // 如果用户没有扩展信息，创建默认的
             profile = new EduUserProfile();
             profile.setUserId(userId);
             profile.setNativeLanguage("zh");
             profile.setLearningLanguages("en");
             profile.setProficiencyLevel("beginner");
             profile.setTotalStudyTime(0L);
-            profile.setCurrentStreak(1); // 设置为1天
+            profile.setCurrentStreak(1);
             profile.setLongestStreak(1);
             profile.setDailyGoal(30);
             profile.setPreferredLearningTime("morning");
@@ -298,7 +393,6 @@ public class EduUserServiceImpl implements IEduUserService {
     public void rewardUser(Long userId, Integer points, Integer experience) {
         eduUserProfileMapper.updatePointsAndExperience(userId, points, experience);
 
-        // 检查是否需要升级
         EduUserProfile profile = selectEduUserProfileByUserId(userId);
         if (profile != null) {
             checkLevelUp(profile);
@@ -313,7 +407,6 @@ public class EduUserServiceImpl implements IEduUserService {
      * @param profile 用户扩展信息
      */
     private void checkLevelUp(EduUserProfile profile) {
-        // 经验值升级规则：每1000点经验升一级
         int newLevel = (profile.getExperiencePoints() / 1000) + 1;
         if (newLevel > profile.getLevel()) {
             profile.setLevel(newLevel);
@@ -334,7 +427,6 @@ public class EduUserServiceImpl implements IEduUserService {
         EduUserProfile profile = eduUserProfileMapper.selectEduUserProfileByUserId(userId);
         
         if (profile == null) {
-            // 如果用户没有扩展信息，创建默认的
             profile = new EduUserProfile();
             profile.setUserId(userId);
             profile.setNativeLanguage("zh");
@@ -346,7 +438,7 @@ public class EduUserServiceImpl implements IEduUserService {
             profile.setDailyGoal(30);
             profile.setPreferredLearningTime("morning");
             profile.setVoiceEnabled(true);
-            profile.setTotalPoints(points); // 直接设置为新积分
+            profile.setTotalPoints(points);
             profile.setLevel(1);
             profile.setExperiencePoints(0);
             
@@ -356,5 +448,43 @@ public class EduUserServiceImpl implements IEduUserService {
             eduUserProfileMapper.addUserPoints(userId, points);
             log.debug("添加用户积分: userId={}, points={}", userId, points);
         }
+    }
+
+    /**
+     * 获取用户学习统计数据
+     *
+     * @param userId 用户ID
+     * @return 学习统计数据Map
+     */
+    @Override
+    public Map<String, Object> getLearningStats(Long userId) {
+        Map<String, Object> stats = new HashMap<>();
+        
+        EduUserProfile profile = getUserFullInfo(userId);
+        if (profile != null) {
+            stats.put("totalLearningMinutes", profile.getTotalStudyTime() != null ? profile.getTotalStudyTime() : 0);
+            stats.put("streakDays", profile.getCurrentStreak() != null ? profile.getCurrentStreak() : 0);
+            stats.put("totalPoints", profile.getTotalPoints() != null ? profile.getTotalPoints() : 0);
+            stats.put("level", profile.getLevel() != null ? profile.getLevel() : 1);
+            stats.put("experiencePoints", profile.getExperiencePoints() != null ? profile.getExperiencePoints() : 0);
+        } else {
+            stats.put("totalLearningMinutes", 0);
+            stats.put("streakDays", 0);
+            stats.put("totalPoints", 0);
+            stats.put("level", 1);
+            stats.put("experiencePoints", 0);
+        }
+        
+        Integer completedCourses = eduUserCourseMapper.countCompletedCourses(userId);
+        stats.put("completedCourses", completedCourses != null ? completedCourses : 0);
+        
+        Integer learningCourses = eduUserCourseMapper.countLearningCourses(userId);
+        stats.put("learningCourses", learningCourses != null ? learningCourses : 0);
+        
+        Integer achievements = eduUserAchievementMapper.countAchievements(userId);
+        stats.put("achievements", achievements != null ? achievements : 0);
+        
+        log.debug("获取学习统计: userId={}, stats={}", userId, stats);
+        return stats;
     }
 }
