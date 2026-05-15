@@ -79,6 +79,7 @@
             <if test="attemptCount != null">attempt_count,</if>
             <if test="timeSpent != null">time_spent,</if>
             <if test="lastStudyTime != null">last_study_time,</if>
+            <if test="completedTime != null">completed_time,</if>
             <if test="masteryLevel != null">mastery_level,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -92,6 +93,7 @@
             <if test="attemptCount != null">#{attemptCount},</if>
             <if test="timeSpent != null">#{timeSpent},</if>
             <if test="lastStudyTime != null">#{lastStudyTime},</if>
+            <if test="completedTime != null">#{completedTime},</if>
             <if test="masteryLevel != null">#{masteryLevel},</if>
         </trim>
     </insert>
@@ -145,6 +147,12 @@
         select current_streak
         from edu_user_profile
         where user_id = #{userId}
+    </select>
+
+    <select id="selectEduLearningProgressByUser" resultMap="EduLearningProgressResult">
+        <include refid="selectEduLearningProgressVo"/>
+        where user_id = #{userId}
+        order by last_study_time desc
     </select>
 
 </mapper>

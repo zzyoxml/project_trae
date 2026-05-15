@@ -121,4 +121,12 @@ public interface EduCourseMapper {
      * @return 结果
      */
     public int incrementStudentCount(Long courseId);
+
+    /**
+     * 减少课程学习人数
+     *
+     * @param courseId 课程ID
+     * @return 结果
+     */
+    public int decrementStudentCount(Long courseId);
 }

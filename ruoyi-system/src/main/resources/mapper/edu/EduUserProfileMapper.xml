@@ -143,4 +143,10 @@
         where user_id = #{userId}
     </update>
 
+    <update id="addUserPoints">
+        update edu_user_profile
+        set total_points = total_points + #{points}
+        where user_id = #{userId}
+    </update>
+
 </mapper>

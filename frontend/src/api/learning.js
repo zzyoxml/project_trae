@@ -52,11 +52,11 @@ export function getRecentRecords(days = 7) {
   })
 }
 
-export function completeLesson(lessonId, courseId, data) {
+export function completeLesson(data) {
   return request({
     url: '/edu/learning/complete',
     method: 'post',
-    data: { lessonId, courseId, ...data }
+    data
   })
 }
 

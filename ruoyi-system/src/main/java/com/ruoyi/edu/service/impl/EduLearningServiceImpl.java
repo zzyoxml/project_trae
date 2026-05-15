@@ -3,12 +3,20 @@ package com.ruoyi.edu.service.impl;
 import com.ruoyi.edu.domain.EduLearningProgress;
 import com.ruoyi.edu.domain.EduLearningRecord;
 import com.ruoyi.edu.domain.EduCourseLesson;
+import com.ruoyi.edu.domain.EduCourseUnit;
+import com.ruoyi.edu.domain.EduUserProfile;
+import com.ruoyi.edu.domain.EduCourse;
 import com.ruoyi.edu.mapper.EduLearningProgressMapper;
 import com.ruoyi.edu.mapper.EduLearningRecordMapper;
 import com.ruoyi.edu.mapper.EduCourseLessonMapper;
+import com.ruoyi.edu.mapper.EduCourseUnitMapper;
+import com.ruoyi.edu.mapper.EduUserProfileMapper;
+import com.ruoyi.edu.mapper.EduCourseMapper;
 import com.ruoyi.edu.service.IEduLearningService;
 import com.ruoyi.edu.service.IEduUserService;
 import com.ruoyi.edu.service.IEduAchievementService;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +47,22 @@ public class EduLearningServiceImpl implements IEduLearningService {
     private EduCourseLessonMapper lessonMapper;
 
     @Autowired
+    private EduCourseUnitMapper unitMapper;
+
+    @Autowired
     private IEduUserService userService;
 
     @Autowired
     private IEduAchievementService achievementService;
+
+    @Autowired
+    private EduUserProfileMapper userProfileMapper;
+
+    @Autowired
+    private EduCourseMapper courseMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     /**
      * 查询学习进度
@@ -382,9 +402,20 @@ public class EduLearningServiceImpl implements IEduLearningService {
             throw new RuntimeException("课时不存在");
         }
 
+        if (courseId == null && lesson.getUnitId() != null) {
+            EduCourseUnit unit = unitMapper.selectEduCourseUnitById(lesson.getUnitId());
+            if (unit != null) {
+                courseId = unit.getCourseId();
+            }
+        }
+
         EduLearningProgress progress = learningProgressMapper.selectEduLearningProgressByUserAndLesson(userId, lessonId);
 
+        boolean isFirstCompletion = false;
+        int pointsAdded = 0;
+
         if (progress == null) {
+            isFirstCompletion = true;
             progress = new EduLearningProgress();
             progress.setUserId(userId);
             progress.setCourseId(courseId);
@@ -399,6 +430,9 @@ public class EduLearningServiceImpl implements IEduLearningService {
             progress.setMasteryLevel(score);
             learningProgressMapper.insertEduLearningProgress(progress);
         } else {
+            if ("completed".equals(progress.getStatus())) {
+                throw new RuntimeException("该课时已完成，不可重复获取积分");
+            }
             progress.setProgressPercent(100);
             progress.setBestScore(Math.max(progress.getBestScore() != null ? progress.getBestScore() : 0, score));
             progress.setAttemptCount((progress.getAttemptCount() != null ? progress.getAttemptCount() : 0) + 1);
@@ -409,19 +443,243 @@ public class EduLearningServiceImpl implements IEduLearningService {
             learningProgressMapper.updateEduLearningProgress(progress);
         }
 
-        int xpReward = lesson.getExperienceReward() != null ? lesson.getExperienceReward() : 10;
-        int coinReward = lesson.getCoinReward() != null ? lesson.getCoinReward() : 5;
-
         userService.updateStudyTime(userId, duration != null ? duration : 0);
         userService.updateStreak(userId);
-        userService.rewardUser(userId, coinReward, xpReward);
 
-        result.put("xpEarned", xpReward);
-        result.put("coinsEarned", coinReward);
+        if (isFirstCompletion) {
+            pointsAdded = 5;
+            userService.addUserPoints(userId, pointsAdded);
+            log.info("用户完成课时获得积分: userId={}, lessonId={}, points={}", userId, lessonId, pointsAdded);
+        }
+
+        result.put("pointsAdded", pointsAdded);
         result.put("passed", true);
-        result.put("message", "课时完成");
+        result.put("message", isFirstCompletion ? "课时完成，获得积分" : "课时完成");
 
-        log.info("完成课时: userId={}, lessonId={}, score={}", userId, lessonId, score);
+        log.info("完成课时: userId={}, lessonId={}, score={}, firstCompletion={}", userId, lessonId, score, isFirstCompletion);
         return result;
+    }
+
+    @Override
+    public Map<String, Object> getLearningStats() {
+        Map<String, Object> stats = new HashMap<>();
+
+        // 获取所有用户学习进度
+        List<EduLearningProgress> allProgress = learningProgressMapper.selectEduLearningProgressList(new EduLearningProgress());
+        
+        // 计算总学习时长（转换为小时）
+        int totalMinutes = 0;
+        int activeUsers = 0;
+        int totalEnrollments = 0;
+        int totalCompleted = 0;
+        
+        Map<Long, Integer> userMinutesMap = new HashMap<>();
+        
+        for (EduLearningProgress progress : allProgress) {
+            if (progress.getTimeSpent() != null) {
+                totalMinutes += progress.getTimeSpent();
+                userMinutesMap.merge(progress.getUserId(), progress.getTimeSpent(), Integer::sum);
+            }
+            if ("completed".equals(progress.getStatus())) {
+                totalCompleted++;
+            }
+        }
+        
+        // 活跃用户数（学习时长>0的用户）
+        activeUsers = (int) userMinutesMap.entrySet().stream().filter(e -> e.getValue() > 0).count();
+        
+        // 统计报名人次（每个用户每门课程算一次）
+        Set<String> enrollments = new HashSet<>();
+        for (EduLearningProgress progress : allProgress) {
+            if (progress.getUserId() != null && progress.getCourseId() != null) {
+                enrollments.add(progress.getUserId() + "_" + progress.getCourseId());
+            }
+        }
+        totalEnrollments = enrollments.size();
+        
+        // 平均进度
+        int avgProgress = 0;
+        if (!allProgress.isEmpty()) {
+            int totalProgress = allProgress.stream()
+                    .mapToInt(p -> p.getProgressPercent() != null ? p.getProgressPercent() : 0)
+                    .sum();
+            avgProgress = totalProgress / allProgress.size();
+        }
+        
+        stats.put("totalLearningTime", totalMinutes / 60); // 转换为小时
+        stats.put("activeUsers", activeUsers);
+        stats.put("totalEnrollments", totalEnrollments);
+        stats.put("avgProgress", avgProgress);
+        
+        return stats;
+    }
+
+    @Override
+    public Map<String, Object> getUserLearningList(String userName, String language, Integer pageNum, Integer pageSize) {
+        Map<String, Object> result = new HashMap<>();
+        
+        if (pageNum == null || pageNum < 1) {
+            pageNum = 1;
+        }
+        if (pageSize == null || pageSize < 1) {
+            pageSize = 10;
+        }
+        
+        // 获取所有用户
+        List<SysUser> sysUsers = sysUserMapper.selectUserList(new SysUser());
+        
+        // 过滤用户名
+        if (userName != null && !userName.trim().isEmpty()) {
+            sysUsers = sysUsers.stream()
+                    .filter(u -> u.getUserName().toLowerCase().contains(userName.toLowerCase()) ||
+                                (u.getNickName() != null && u.getNickName().toLowerCase().contains(userName.toLowerCase())))
+                    .toList();
+        }
+        
+        // 获取用户学习数据
+        List<Map<String, Object>> userList = new ArrayList<>();
+        
+        for (SysUser sysUser : sysUsers) {
+            Long userId = sysUser.getUserId();
+            EduUserProfile profile = userProfileMapper.selectEduUserProfileByUserId(userId);
+            
+            // 获取用户学习进度列表
+            List<EduLearningProgress> progresses = learningProgressMapper.selectEduLearningProgressByUser(userId);
+            
+            // 按语言过滤
+            if (language != null && !language.trim().isEmpty() && !"all".equals(language)) {
+                progresses = progresses.stream()
+                        .filter(p -> {
+                            if (p.getCourseId() != null) {
+                                EduCourse course = courseMapper.selectEduCourseById(p.getCourseId());
+                                return course != null && language.equals(course.getLanguage());
+                            }
+                            return false;
+                        })
+                        .toList();
+                
+                if (progresses.isEmpty()) {
+                    continue;
+                }
+            }
+            
+            // 计算统计数据
+            int learningTime = progresses.stream()
+                    .mapToInt(p -> p.getTimeSpent() != null ? p.getTimeSpent() : 0)
+                    .sum() / 60; // 转换为小时
+            
+            int completedCourses = (int) progresses.stream()
+                    .filter(p -> "completed".equals(p.getStatus()))
+                    .map(EduLearningProgress::getCourseId)
+                    .distinct()
+                    .count();
+            
+            int totalProgress = progresses.isEmpty() ? 0 : 
+                    progresses.stream()
+                            .mapToInt(p -> p.getProgressPercent() != null ? p.getProgressPercent() : 0)
+                            .sum() / progresses.size();
+            
+            // 获取最近学习时间
+            String lastLearningTime = progresses.stream()
+                    .filter(p -> p.getLastStudyTime() != null)
+                    .map(EduLearningProgress::getLastStudyTime)
+                    .max(String::compareTo)
+                    .orElse(null);
+            
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("userId", userId);
+            userData.put("nickName", sysUser.getNickName() != null ? sysUser.getNickName() : sysUser.getUserName());
+            userData.put("language", language != null && !"all".equals(language) ? language : "");
+            userData.put("learningTime", learningTime);
+            userData.put("progress", totalProgress);
+            userData.put("completedCourses", completedCourses);
+            userData.put("points", profile != null && profile.getTotalPoints() != null ? profile.getTotalPoints() : 0);
+            userData.put("achievementCount", 0); // 需要从成就表查询
+            userData.put("lastLearningTime", lastLearningTime);
+            
+            userList.add(userData);
+        }
+        
+        // 按学习时长排序
+        userList.sort((a, b) -> {
+            int aTime = (Integer) a.get("learningTime");
+            int bTime = (Integer) b.get("learningTime");
+            return bTime - aTime;
+        });
+        
+        // 分页
+        int start = (pageNum - 1) * pageSize;
+        int end = Math.min(start + pageSize, userList.size());
+        List<Map<String, Object>> pageUsers = start < userList.size() ? userList.subList(start, end) : new ArrayList<>();
+        
+        result.put("rows", pageUsers);
+        result.put("total", userList.size());
+        result.put("pageNum", pageNum);
+        result.put("pageSize", pageSize);
+        
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getUserLearningDetail(Long userId) {
+        Map<String, Object> detail = new HashMap<>();
+        
+        SysUser sysUser = sysUserMapper.selectUserById(userId);
+        EduUserProfile profile = userProfileMapper.selectEduUserProfileByUserId(userId);
+        
+        if (sysUser != null) {
+            detail.put("userId", userId);
+            detail.put("nickName", sysUser.getNickName() != null ? sysUser.getNickName() : sysUser.getUserName());
+        }
+        
+        if (profile != null) {
+            detail.put("learningTime", profile.getTotalStudyTime() != null ? profile.getTotalStudyTime() / 60 : 0);
+            detail.put("points", profile.getTotalPoints() != null ? profile.getTotalPoints() : 0);
+            detail.put("achievementCount", 0); // 需要从成就表查询
+        }
+        
+        // 获取学习历史
+        List<EduLearningProgress> progresses = learningProgressMapper.selectEduLearningProgressByUser(userId);
+        
+        List<Map<String, Object>> learningHistory = new ArrayList<>();
+        Map<Long, Map<String, Object>> courseProgressMap = new HashMap<>();
+        
+        for (EduLearningProgress progress : progresses) {
+            Long courseId = progress.getCourseId();
+            if (courseId == null) continue;
+            
+            courseProgressMap.computeIfAbsent(courseId, k -> {
+                Map<String, Object> courseData = new HashMap<>();
+                EduCourse course = courseMapper.selectEduCourseById(courseId);
+                courseData.put("courseName", course != null ? course.getCourseName() : "未知课程");
+                courseData.put("progress", 0);
+                courseData.put("duration", 0);
+                courseData.put("startTime", null);
+                return courseData;
+            });
+            
+            Map<String, Object> courseData = courseProgressMap.get(courseId);
+            courseData.put("progress", Math.max((Integer) courseData.get("progress"), 
+                    progress.getProgressPercent() != null ? progress.getProgressPercent() : 0));
+            courseData.put("duration", (Integer) courseData.get("duration") + 
+                    (progress.getTimeSpent() != null ? progress.getTimeSpent() : 0));
+            
+            String lastStudyTime = progress.getLastStudyTime();
+            if (lastStudyTime != null) {
+                String currentStartTime = (String) courseData.get("startTime");
+                if (currentStartTime == null || lastStudyTime.compareTo(currentStartTime) < 0) {
+                    courseData.put("startTime", lastStudyTime.split(" ")[0]);
+                }
+            }
+        }
+        
+        for (Map<String, Object> courseData : courseProgressMap.values()) {
+            courseData.put("duration", (Integer) courseData.get("duration") / 60); // 转换为小时
+            learningHistory.add(courseData);
+        }
+        
+        detail.put("learningHistory", learningHistory);
+        
+        return detail;
     }
 }

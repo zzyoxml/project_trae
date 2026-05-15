@@ -133,8 +133,14 @@
             >
               立即报名
             </el-button>
-            <el-button type="success" size="large" class="enroll-btn" disabled v-else>
-              已报名 - 开始学习
+            <el-button
+              type="warning"
+              size="large"
+              class="enroll-btn"
+              @click="handleCancelEnroll"
+              v-else
+            >
+              取消报名
             </el-button>
           </el-card>
         </div>
@@ -149,7 +155,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { getCourseDetail, enrollCourse } from '@/api/course'
+import { getCourseDetail, enrollCourse, cancelEnroll } from '@/api/course'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -206,6 +212,22 @@ const handleEnroll = async () => {
       ElMessage.warning('您已报名该课程')
     } else {
       ElMessage.error('报名失败')
+    }
+  }
+}
+
+const handleCancelEnroll = async () => {
+  try {
+    await cancelEnroll(course.value.courseId)
+    ElMessage.success('取消报名成功！')
+    isEnrolled.value = false
+  } catch (error) {
+    console.error('取消报名失败:', error)
+    if (error.message && error.message.includes('尚未报名')) {
+      isEnrolled.value = false
+      ElMessage.warning('您尚未报名该课程')
+    } else {
+      ElMessage.error('取消报名失败')
     }
   }
 }

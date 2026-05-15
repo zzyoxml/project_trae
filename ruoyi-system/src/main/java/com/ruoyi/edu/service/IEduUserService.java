@@ -104,4 +104,12 @@ public interface IEduUserService {
      * @param experience 经验
      */
     public void rewardUser(Long userId, Integer points, Integer experience);
+
+    /**
+     * 添加用户积分
+     *
+     * @param userId 用户ID
+     * @param points 积分数量
+     */
+    public void addUserPoints(Long userId, Integer points);
 }

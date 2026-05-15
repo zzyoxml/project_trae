@@ -1,12 +1,16 @@
 package com.ruoyi.edu.service.impl;
 
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.edu.domain.EduAchievement;
 import com.ruoyi.edu.domain.EduUserAchievement;
 import com.ruoyi.edu.domain.EduUserProfile;
+import com.ruoyi.edu.domain.EduLearningProgress;
 import com.ruoyi.edu.mapper.EduAchievementMapper;
 import com.ruoyi.edu.mapper.EduUserAchievementMapper;
 import com.ruoyi.edu.mapper.EduUserProfileMapper;
+import com.ruoyi.edu.mapper.EduLearningProgressMapper;
+import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.edu.service.IEduAchievementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +39,12 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
 
     @Autowired
     private EduUserProfileMapper userProfileMapper;
+
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
+    @Autowired
+    private EduLearningProgressMapper learningProgressMapper;
 
     /**
      * 查询成就
@@ -253,14 +263,77 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
             pageSize = 20;
         }
 
-        // 获取用户列表并排序
+        // 获取用户列表
         List<EduUserProfile> users = userProfileMapper.selectEduUserProfileList(new EduUserProfile());
+        
+        // 过滤掉在sys_user中不存在的用户
+        List<EduUserProfile> validUsers = new ArrayList<>();
+        for (EduUserProfile profile : users) {
+            SysUser sysUser = sysUserMapper.selectUserById(profile.getUserId());
+            if (sysUser != null) {
+                validUsers.add(profile);
+            }
+        }
+        users = validUsers;
+
+        // 计算今日或本周积分（每个课时5积分）
+        Map<Long, Integer> dailyPointsMap = new HashMap<>();
+        Map<Long, Integer> weeklyPointsMap = new HashMap<>();
+        
+        if ("daily".equals(type) || "weekly".equals(type)) {
+            List<EduLearningProgress> allProgress = learningProgressMapper.selectEduLearningProgressList(new EduLearningProgress());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            
+            Calendar today = Calendar.getInstance();
+            today.set(Calendar.HOUR_OF_DAY, 0);
+            today.set(Calendar.MINUTE, 0);
+            today.set(Calendar.SECOND, 0);
+            today.set(Calendar.MILLISECOND, 0);
+            
+            Calendar weekStart = Calendar.getInstance();
+            weekStart.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            weekStart.set(Calendar.HOUR_OF_DAY, 0);
+            weekStart.set(Calendar.MINUTE, 0);
+            weekStart.set(Calendar.SECOND, 0);
+            weekStart.set(Calendar.MILLISECOND, 0);
+            
+            for (EduLearningProgress progress : allProgress) {
+                if ("completed".equals(progress.getStatus()) && progress.getCompletedTime() != null) {
+                    try {
+                        Date completedDate = sdf.parse(progress.getCompletedTime());
+                        Long userId = progress.getUserId();
+                        
+                        if (completedDate.after(today.getTime())) {
+                            dailyPointsMap.put(userId, dailyPointsMap.getOrDefault(userId, 0) + 5);
+                        }
+                        
+                        if (completedDate.after(weekStart.getTime())) {
+                            weeklyPointsMap.put(userId, weeklyPointsMap.getOrDefault(userId, 0) + 5);
+                        }
+                    } catch (Exception e) {
+                        log.error("解析完成时间失败: {}", progress.getCompletedTime(), e);
+                    }
+                }
+            }
+        }
 
         // 按类型排序
         if ("total".equals(type) || type == null) {
             users.sort((a, b) -> {
                 int aPoints = a.getTotalPoints() != null ? a.getTotalPoints() : 0;
                 int bPoints = b.getTotalPoints() != null ? b.getTotalPoints() : 0;
+                return bPoints - aPoints;
+            });
+        } else if ("daily".equals(type)) {
+            users.sort((a, b) -> {
+                int aPoints = dailyPointsMap.getOrDefault(a.getUserId(), 0);
+                int bPoints = dailyPointsMap.getOrDefault(b.getUserId(), 0);
+                return bPoints - aPoints;
+            });
+        } else if ("weekly".equals(type)) {
+            users.sort((a, b) -> {
+                int aPoints = weeklyPointsMap.getOrDefault(a.getUserId(), 0);
+                int bPoints = weeklyPointsMap.getOrDefault(b.getUserId(), 0);
                 return bPoints - aPoints;
             });
         } else if ("streak".equals(type)) {
@@ -277,13 +350,43 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
             });
         }
 
+        // 转换为前端期望的格式
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (EduUserProfile profile : users) {
+            Map<String, Object> userData = new HashMap<>();
+            
+            // 获取系统用户信息
+            SysUser sysUser = sysUserMapper.selectUserById(profile.getUserId());
+            
+            userData.put("userId", profile.getUserId());
+            userData.put("username", sysUser != null ? sysUser.getUserName() : "未知用户");
+            userData.put("avatar", profile.getAvatarUrl());
+            
+            // 根据类型设置分数
+            if ("daily".equals(type)) {
+                userData.put("score", dailyPointsMap.getOrDefault(profile.getUserId(), 0));
+            } else if ("weekly".equals(type)) {
+                userData.put("score", weeklyPointsMap.getOrDefault(profile.getUserId(), 0));
+            } else {
+                userData.put("score", profile.getTotalPoints() != null ? profile.getTotalPoints() : 0);
+            }
+            
+            userData.put("level", profile.getLevel() != null ? profile.getLevel() : 1);
+            userData.put("levelName", "Lv." + (profile.getLevel() != null ? profile.getLevel() : 1));
+            userData.put("achievements", 0);
+            userData.put("totalMinutes", profile.getTotalStudyTime() != null ? profile.getTotalStudyTime() : 0);
+            userData.put("streakDays", profile.getCurrentStreak() != null ? profile.getCurrentStreak() : 0);
+            
+            rows.add(userData);
+        }
+
         // 分页
         int start = (pageNum - 1) * pageSize;
-        int end = Math.min(start + pageSize, users.size());
-        List<EduUserProfile> pageUsers = users.subList(start, end);
+        int end = Math.min(start + pageSize, rows.size());
+        List<Map<String, Object>> pageUsers = rows.subList(start, end);
 
-        result.put("rankings", pageUsers);
-        result.put("total", users.size());
+        result.put("rows", pageUsers);
+        result.put("total", rows.size());
         result.put("pageNum", pageNum);
         result.put("pageSize", pageSize);
 
@@ -301,12 +404,13 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
     @Override
     public Integer getUserRank(Long userId, String type, String language) {
         Map<String, Object> leaderboard = getLeaderboard(type, language, 1, 1000);
-        List<?> rankings = (List<?>) leaderboard.get("rankings");
+        List<?> rows = (List<?>) leaderboard.get("rows");
 
-        for (int i = 0; i < rankings.size(); i++) {
-            Object item = rankings.get(i);
-            if (item instanceof EduUserProfile) {
-                if (((EduUserProfile) item).getUserId().equals(userId)) {
+        for (int i = 0; i < rows.size(); i++) {
+            Object item = rows.get(i);
+            if (item instanceof Map) {
+                Long itemUserId = (Long) ((Map<?, ?>) item).get("userId");
+                if (itemUserId != null && itemUserId.equals(userId)) {
                     return i + 1;
                 }
             }

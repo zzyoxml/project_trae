@@ -282,4 +282,32 @@ public class EduCourseServiceImpl implements IEduCourseService {
 
         return false;
     }
+
+    /**
+     * 用户取消报名课程
+     *
+     * @param userId   用户ID
+     * @param courseId 课程ID
+     * @return 是否成功
+     */
+    @Override
+    @Transactional
+    public boolean cancelEnrollCourse(Long userId, Long courseId) {
+        // 检查是否已报名
+        EduUserCourse existCourse = eduUserCourseMapper.selectUserCourse(userId, courseId);
+        if (existCourse == null) {
+            throw new ServiceException("您尚未报名该课程");
+        }
+
+        // 删除报名记录
+        int result = eduUserCourseMapper.deleteUserCourse(userId, courseId);
+        if (result > 0) {
+            // 减少课程学习人数
+            eduCourseMapper.decrementStudentCount(courseId);
+            log.info("用户取消报名课程: userId={}, courseId={}", userId, courseId);
+            return true;
+        }
+
+        return false;
+    }
 }

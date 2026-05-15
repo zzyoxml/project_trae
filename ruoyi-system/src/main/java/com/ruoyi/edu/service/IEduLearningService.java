@@ -128,4 +128,30 @@ public interface IEduLearningService {
     public List<EduLearningRecord> selectUserRecentRecords(Long userId, Integer days);
 
     public Map<String, Object> completeLesson(Long userId, Long lessonId, Long courseId, Integer score, Integer duration);
+
+    /**
+     * 获取学习统计数据（后台管理）
+     *
+     * @return 统计数据
+     */
+    public Map<String, Object> getLearningStats();
+
+    /**
+     * 获取用户学习列表（后台管理）
+     *
+     * @param userName 用户名
+     * @param language 学习语言
+     * @param pageNum  页码
+     * @param pageSize 每页大小
+     * @return 用户学习列表
+     */
+    public Map<String, Object> getUserLearningList(String userName, String language, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取用户学习详情（后台管理）
+     *
+     * @param userId 用户ID
+     * @return 用户学习详情
+     */
+    public Map<String, Object> getUserLearningDetail(Long userId);
 }

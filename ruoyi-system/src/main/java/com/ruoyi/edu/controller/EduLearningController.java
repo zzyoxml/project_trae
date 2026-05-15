@@ -219,4 +219,35 @@ public class EduLearningController extends BaseController {
         Map<String, Object> result = eduLearningService.completeLesson(userId, lessonId, courseId, score, duration);
         return success(result);
     }
+
+    /**
+     * 获取学习统计数据（后台管理）
+     */
+    @GetMapping("/stats/all")
+    public AjaxResult getAllLearningStats() {
+        Map<String, Object> stats = eduLearningService.getLearningStats();
+        return success(stats);
+    }
+
+    /**
+     * 获取用户学习列表（后台管理）
+     */
+    @GetMapping("/users")
+    public AjaxResult getUserLearningList(
+            @RequestParam(required = false) String userName,
+            @RequestParam(required = false) String language,
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        Map<String, Object> result = eduLearningService.getUserLearningList(userName, language, pageNum, pageSize);
+        return success(result);
+    }
+
+    /**
+     * 获取用户学习详情（后台管理）
+     */
+    @GetMapping("/users/{userId}")
+    public AjaxResult getUserLearningDetail(@PathVariable Long userId) {
+        Map<String, Object> detail = eduLearningService.getUserLearningDetail(userId);
+        return success(detail);
+    }
 }

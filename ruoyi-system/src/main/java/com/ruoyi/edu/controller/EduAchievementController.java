@@ -9,14 +9,18 @@ import com.ruoyi.edu.domain.EduAchievement;
 import com.ruoyi.edu.domain.EduBadge;
 import com.ruoyi.edu.domain.EduUserAchievement;
 import com.ruoyi.edu.domain.EduUserBadge;
+import com.ruoyi.edu.domain.EduUserProfile;
+import com.ruoyi.edu.domain.EduLearningProgress;
 import com.ruoyi.edu.mapper.EduBadgeMapper;
 import com.ruoyi.edu.mapper.EduUserBadgeMapper;
+import com.ruoyi.edu.mapper.EduUserProfileMapper;
+import com.ruoyi.edu.mapper.EduLearningProgressMapper;
 import com.ruoyi.edu.service.IEduAchievementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/edu")
@@ -29,7 +33,13 @@ public class EduAchievementController extends BaseController {
     private EduBadgeMapper badgeMapper;
 
     @Autowired
+    private EduUserProfileMapper userProfileMapper;
+
+    @Autowired
     private EduUserBadgeMapper userBadgeMapper;
+
+    @Autowired
+    private EduLearningProgressMapper learningProgressMapper;
 
     @GetMapping("/achievement/list")
     public TableDataInfo achievementList(EduAchievement eduAchievement) {
@@ -78,11 +88,59 @@ public class EduAchievementController extends BaseController {
             @RequestParam(defaultValue = "total") String type,
             @RequestParam(defaultValue = "all") String language) {
         Long userId = SecurityUtils.getUserId();
-        Integer rank = achievementService.getUserRank(userId, type, language);
-        if (rank != null) {
-            return success().put("rank", rank).put("type", type);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("type", type);
+        
+        if (userId == null) {
+            // 用户未登录，返回默认值
+            result.put("rank", 0);
+            result.put("score", 0);
+            result.put("streakDays", 0);
+            return success(result);
         }
-        return success().put("rank", 0).put("type", type);
+        
+        Integer rank = achievementService.getUserRank(userId, type, language);
+        
+        // 获取用户详细信息
+        EduUserProfile profile = userProfileMapper.selectEduUserProfileByUserId(userId);
+        
+        result.put("rank", rank != null ? rank : 0);
+        
+        if (profile != null) {
+            // 根据类型返回正确的分数
+            if ("daily".equals(type)) {
+                // 计算今日积分
+                int todayPoints = 0;
+                List<EduLearningProgress> progressList = learningProgressMapper.selectEduLearningProgressList(new EduLearningProgress());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                
+                Calendar today = Calendar.getInstance();
+                today.set(Calendar.HOUR_OF_DAY, 0);
+                today.set(Calendar.MINUTE, 0);
+                today.set(Calendar.SECOND, 0);
+                today.set(Calendar.MILLISECOND, 0);
+                
+                for (EduLearningProgress progress : progressList) {
+                    if ("completed".equals(progress.getStatus()) && progress.getCompletedTime() != null && userId.equals(progress.getUserId())) {
+                        try {
+                            Date completedDate = sdf.parse(progress.getCompletedTime());
+                            if (completedDate.after(today.getTime())) {
+                                todayPoints += 5;
+                            }
+                        } catch (Exception e) {
+                            // 忽略解析错误
+                        }
+                    }
+                }
+                result.put("score", todayPoints);
+            } else {
+                result.put("score", profile.getTotalPoints() != null ? profile.getTotalPoints() : 0);
+            }
+            result.put("streakDays", profile.getCurrentStreak() != null ? profile.getCurrentStreak() : 0);
+        }
+        
+        return success(result);
     }
 
     @PostMapping("/achievement/init/{userId}")

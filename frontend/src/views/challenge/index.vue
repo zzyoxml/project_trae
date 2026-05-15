@@ -7,18 +7,6 @@
       <el-radio-group v-model="currentMode" @change="handleModeChange">
         <el-radio-button label="total">总榜</el-radio-button>
         <el-radio-button label="daily">日榜</el-radio-button>
-        <el-radio-button label="weekly">周榜</el-radio-button>
-        <el-radio-button label="streak">连胜榜</el-radio-button>
-      </el-radio-group>
-    </div>
-
-    <!-- 语言筛选 -->
-    <div class="language-filter">
-      <el-radio-group v-model="language" @change="loadLeaderboard">
-        <el-radio-button label="all">全部语言</el-radio-button>
-        <el-radio-button label="en">英语</el-radio-button>
-        <el-radio-button label="ja">日语</el-radio-button>
-        <el-radio-button label="zh">汉语</el-radio-button>
       </el-radio-group>
     </div>
 
@@ -27,8 +15,7 @@
       <el-card class="leaderboard-card">
         <template #header>
           <div class="card-header">
-            <span>{{ getModeTitle }}</span>
-            <el-tag type="success">{{ currentModeText }}</el-tag>
+            <span>{{ currentModeText }}</span>
           </div>
         </template>
 
@@ -180,7 +167,6 @@ import { getLeaderboard, getMyRank } from '@/api/achievement'
 
 const loading = ref(false)
 const currentMode = ref('total')
-const language = ref('all')
 const leaderboard = ref([])
 const myRank = ref(null)
 
@@ -211,16 +197,9 @@ const rankList = computed(() => leaderboard.value.slice(3))
 const currentModeText = computed(() => {
   const modes = {
     total: '按总积分排名',
-    daily: '按今日积分排名',
-    weekly: '按本周积分排名',
-    streak: '按连胜天数排名'
+    daily: '按今日积分排名'
   }
   return modes[currentMode.value] || ''
-})
-
-const getModeTitle = computed(() => {
-  const lang = { all: '全部语言', en: '英语', ja: '日语', zh: '汉语' }
-  return lang[language.value] + ' - ' + currentModeText.value
 })
 
 onMounted(async () => {
@@ -231,14 +210,14 @@ onMounted(async () => {
 const loadLeaderboard = async () => {
   loading.value = true
   try {
-    const res = await getLeaderboard(currentMode.value, language.value)
-    if (res.data?.rows) {
-      leaderboard.value = res.data.rows.map((user, index) => ({
+    const res = await getLeaderboard(currentMode.value)
+    if (res?.rows) {
+      leaderboard.value = res.rows.map((user, index) => ({
         ...user,
         isMe: index === 5
       }))
-    } else if (Array.isArray(res.data)) {
-      leaderboard.value = res.data.map((user, index) => ({
+    } else if (Array.isArray(res)) {
+      leaderboard.value = res.map((user, index) => ({
         ...user,
         isMe: index === 5
       }))
@@ -252,9 +231,9 @@ const loadLeaderboard = async () => {
 
 const loadMyRank = async () => {
   try {
-    const res = await getMyRank(currentMode.value, language.value)
-    if (res.data) {
-      myRank.value = res.data
+    const res = await getMyRank(currentMode.value)
+    if (res && res.rank !== undefined) {
+      myRank.value = res
     }
   } catch (error) {
     console.error('加载我的排名失败:', error)
@@ -281,10 +260,6 @@ const getLevelType = (level) => {
   }
 
   .mode-tabs {
-    margin-bottom: 16px;
-  }
-
-  .language-filter {
     margin-bottom: 24px;
   }
 

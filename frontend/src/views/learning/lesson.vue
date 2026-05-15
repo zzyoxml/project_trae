@@ -195,12 +195,20 @@ const startRecording = () => {
 const completeLesson = async () => {
   try {
     const lessonId = route.params.id
-    await completeLessonApi({ lessonId })
-    ElMessage.success('课时完成！')
+    const res = await completeLessonApi({ lessonId })
+    if (res && res.pointsAdded !== undefined) {
+      ElMessage.success(`课时完成！获得 ${res.pointsAdded} 积分`)
+    } else {
+      ElMessage.success('课时完成！')
+    }
     router.back()
   } catch (error) {
     console.error('完成课时失败:', error)
-    ElMessage.error('完成失败')
+    if (error.message && error.message.includes('已完成')) {
+      ElMessage.warning('该课时已完成，不可重复获取积分')
+    } else {
+      ElMessage.error('完成失败')
+    }
   }
 }
 

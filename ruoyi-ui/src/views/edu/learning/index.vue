@@ -176,6 +176,7 @@
 
 <script>
 import * as echarts from 'echarts'
+import { getUserLearningList, getLearningStats, getUserLearningDetail } from '@/api/edu/learning'
 
 export default {
   name: 'EduUserLearning',
@@ -203,6 +204,7 @@ export default {
   },
   created() {
     this.getList()
+    this.getStats()
   },
   mounted() {
     this.loadCharts()
@@ -210,73 +212,27 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      setTimeout(() => {
-        this.userList = [
-          {
-            userId: 1,
-            nickName: '张小明',
-            language: '英语',
-            learningTime: 45,
-            progress: 75,
-            completedCourses: 3,
-            points: 850,
-            achievementCount: 12,
-            lastLearningTime: '2024-01-15 10:30:00'
-          },
-          {
-            userId: 2,
-            nickName: '李华',
-            language: '日语',
-            learningTime: 38,
-            progress: 60,
-            completedCourses: 2,
-            points: 680,
-            achievementCount: 8,
-            lastLearningTime: '2024-01-14 15:20:00'
-          },
-          {
-            userId: 3,
-            nickName: '王芳',
-            language: '汉语',
-            learningTime: 52,
-            progress: 85,
-            completedCourses: 4,
-            points: 920,
-            achievementCount: 15,
-            lastLearningTime: '2024-01-15 09:15:00'
-          },
-          {
-            userId: 4,
-            nickName: 'John',
-            language: '英语',
-            learningTime: 30,
-            progress: 50,
-            completedCourses: 2,
-            points: 520,
-            achievementCount: 6,
-            lastLearningTime: '2024-01-13 14:00:00'
-          },
-          {
-            userId: 5,
-            nickName: '田中',
-            language: '日语',
-            learningTime: 28,
-            progress: 45,
-            completedCourses: 1,
-            points: 450,
-            achievementCount: 5,
-            lastLearningTime: '2024-01-12 11:30:00'
-          }
-        ]
-        this.total = this.userList.length
-        this.stats = {
-          totalLearningTime: 193,
-          activeUsers: 156,
-          totalEnrollments: 423,
-          avgProgress: 63
+      getUserLearningList(this.queryParams).then(res => {
+        if (res.code === 200 && res.data) {
+          this.userList = res.data.rows || []
+          this.total = res.data.total || 0
         }
         this.loading = false
-      }, 500)
+      }).catch(() => {
+        this.loading = false
+      })
+    },
+    getStats() {
+      getLearningStats().then(res => {
+        if (res.code === 200 && res.data) {
+          this.stats = {
+            totalLearningTime: res.data.totalLearningTime || 0,
+            activeUsers: res.data.activeUsers || 0,
+            totalEnrollments: res.data.totalEnrollments || 0,
+            avgProgress: res.data.avgProgress || 0
+          }
+        }
+      })
     },
     handleQuery() {
       this.queryParams.pageNum = 1
@@ -287,15 +243,12 @@ export default {
       this.handleQuery()
     },
     handleDetail(row) {
-      this.detailData = {
-        ...row,
-        learningHistory: [
-          { courseName: '英语口语入门', progress: 100, duration: 12, startTime: '2024-01-01' },
-          { courseName: '英语语法精讲', progress: 80, duration: 20, startTime: '2024-01-10' },
-          { courseName: '英语听力训练', progress: 45, duration: 13, startTime: '2024-01-14' }
-        ]
-      }
-      this.detailOpen = true
+      getUserLearningDetail(row.userId).then(res => {
+        if (res.code === 200 && res.data) {
+          this.detailData = res.data
+          this.detailOpen = true
+        }
+      })
     },
     handleResetProgress(row) {
       this.$confirm(`是否重置用户"${row.nickName}"的学习进度?`, '警告', {

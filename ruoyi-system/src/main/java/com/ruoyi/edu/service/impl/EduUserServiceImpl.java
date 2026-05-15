@@ -223,9 +223,33 @@ public class EduUserServiceImpl implements IEduUserService {
      * @param duration 学习时长（分钟）
      */
     @Override
+    @Transactional
     public void updateStudyTime(Long userId, Integer duration) {
-        eduUserProfileMapper.updateStudyTime(userId, duration);
-        log.debug("更新学习时间: userId={}, duration={}", userId, duration);
+        EduUserProfile profile = eduUserProfileMapper.selectEduUserProfileByUserId(userId);
+        
+        if (profile == null) {
+            // 如果用户没有扩展信息，创建默认的
+            profile = new EduUserProfile();
+            profile.setUserId(userId);
+            profile.setNativeLanguage("zh");
+            profile.setLearningLanguages("en");
+            profile.setProficiencyLevel("beginner");
+            profile.setTotalStudyTime((long) duration); // 直接设置学习时长
+            profile.setCurrentStreak(0);
+            profile.setLongestStreak(0);
+            profile.setDailyGoal(30);
+            profile.setPreferredLearningTime("morning");
+            profile.setVoiceEnabled(true);
+            profile.setTotalPoints(0);
+            profile.setLevel(1);
+            profile.setExperiencePoints(0);
+            
+            eduUserProfileMapper.insertEduUserProfile(profile);
+            log.info("创建用户扩展信息并更新学习时间: userId={}, duration={}", userId, duration);
+        } else {
+            eduUserProfileMapper.updateStudyTime(userId, duration);
+            log.debug("更新学习时间: userId={}, duration={}", userId, duration);
+        }
     }
 
     /**
@@ -234,9 +258,33 @@ public class EduUserServiceImpl implements IEduUserService {
      * @param userId 用户ID
      */
     @Override
+    @Transactional
     public void updateStreak(Long userId) {
-        eduUserProfileMapper.updateStreak(userId);
-        log.debug("更新连续学习天数: userId={}", userId);
+        EduUserProfile profile = eduUserProfileMapper.selectEduUserProfileByUserId(userId);
+        
+        if (profile == null) {
+            // 如果用户没有扩展信息，创建默认的
+            profile = new EduUserProfile();
+            profile.setUserId(userId);
+            profile.setNativeLanguage("zh");
+            profile.setLearningLanguages("en");
+            profile.setProficiencyLevel("beginner");
+            profile.setTotalStudyTime(0L);
+            profile.setCurrentStreak(1); // 设置为1天
+            profile.setLongestStreak(1);
+            profile.setDailyGoal(30);
+            profile.setPreferredLearningTime("morning");
+            profile.setVoiceEnabled(true);
+            profile.setTotalPoints(0);
+            profile.setLevel(1);
+            profile.setExperiencePoints(0);
+            
+            eduUserProfileMapper.insertEduUserProfile(profile);
+            log.info("创建用户扩展信息并更新连续学习天数: userId={}", userId);
+        } else {
+            eduUserProfileMapper.updateStreak(userId);
+            log.debug("更新连续学习天数: userId={}", userId);
+        }
     }
 
     /**
@@ -271,6 +319,42 @@ public class EduUserServiceImpl implements IEduUserService {
             profile.setLevel(newLevel);
             updateEduUserProfile(profile);
             log.info("用户升级: userId={}, newLevel={}", profile.getUserId(), newLevel);
+        }
+    }
+
+    /**
+     * 添加用户积分
+     *
+     * @param userId 用户ID
+     * @param points 积分数量
+     */
+    @Override
+    @Transactional
+    public void addUserPoints(Long userId, Integer points) {
+        EduUserProfile profile = eduUserProfileMapper.selectEduUserProfileByUserId(userId);
+        
+        if (profile == null) {
+            // 如果用户没有扩展信息，创建默认的
+            profile = new EduUserProfile();
+            profile.setUserId(userId);
+            profile.setNativeLanguage("zh");
+            profile.setLearningLanguages("en");
+            profile.setProficiencyLevel("beginner");
+            profile.setTotalStudyTime(0L);
+            profile.setCurrentStreak(0);
+            profile.setLongestStreak(0);
+            profile.setDailyGoal(30);
+            profile.setPreferredLearningTime("morning");
+            profile.setVoiceEnabled(true);
+            profile.setTotalPoints(points); // 直接设置为新积分
+            profile.setLevel(1);
+            profile.setExperiencePoints(0);
+            
+            eduUserProfileMapper.insertEduUserProfile(profile);
+            log.info("创建用户扩展信息并添加积分: userId={}, points={}", userId, points);
+        } else {
+            eduUserProfileMapper.addUserPoints(userId, points);
+            log.debug("添加用户积分: userId={}, points={}", userId, points);
         }
     }
 }

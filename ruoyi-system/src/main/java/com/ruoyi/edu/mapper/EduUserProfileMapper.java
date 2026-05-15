@@ -82,4 +82,13 @@ public interface EduUserProfileMapper {
     public int updatePointsAndExperience(@Param("userId") Long userId,
                                          @Param("points") Integer points,
                                          @Param("experience") Integer experience);
+
+    /**
+     * 增加用户积分
+     *
+     * @param userId 用户ID
+     * @param points 增加的积分数量
+     * @return 结果
+     */
+    public int addUserPoints(@Param("userId") Long userId, @Param("points") Integer points);
 }

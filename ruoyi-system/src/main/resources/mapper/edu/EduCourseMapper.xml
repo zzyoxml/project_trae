@@ -216,4 +216,10 @@
         where course_id = #{courseId}
     </update>
 
+    <update id="decrementStudentCount" parameterType="Long">
+        update edu_course
+        set total_students = CASE WHEN total_students > 0 THEN total_students - 1 ELSE 0 END
+        where course_id = #{courseId}
+    </update>
+
 </mapper>

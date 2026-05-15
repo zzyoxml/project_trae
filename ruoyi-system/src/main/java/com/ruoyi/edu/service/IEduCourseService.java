@@ -125,4 +125,13 @@ public interface IEduCourseService {
      * @return 是否成功
      */
     public boolean enrollCourse(Long userId, Long courseId);
+
+    /**
+     * 用户取消报名课程
+     *
+     * @param userId   用户ID
+     * @param courseId 课程ID
+     * @return 是否成功
+     */
+    public boolean cancelEnrollCourse(Long userId, Long courseId);
 }

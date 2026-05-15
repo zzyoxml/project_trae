@@ -102,6 +102,16 @@ public class EduCourseController extends BaseController {
     }
 
     /**
+     * 用户取消报名课程
+     */
+    @DeleteMapping("/enroll/{courseId}")
+    public AjaxResult cancelEnrollCourse(@PathVariable Long courseId) {
+        Long userId = SecurityUtils.getUserId();
+        boolean result = eduCourseService.cancelEnrollCourse(userId, courseId);
+        return success(result);
+    }
+
+    /**
      * 获取我的课程
      */
     @GetMapping("/my")

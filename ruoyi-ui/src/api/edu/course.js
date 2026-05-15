@@ -45,3 +45,24 @@ export function getFeaturedCourses(limit) {
     params: { limit: limit || 10 }
   })
 }
+
+export function enrollCourse(courseId) {
+  return request({
+    url: '/edu/course/enroll/' + courseId,
+    method: 'post'
+  })
+}
+
+export function cancelEnroll(courseId) {
+  return request({
+    url: '/edu/course/enroll/' + courseId,
+    method: 'delete'
+  })
+}
+
+export function getMyCourses() {
+  return request({
+    url: '/edu/course/my',
+    method: 'get'
+  })
+}

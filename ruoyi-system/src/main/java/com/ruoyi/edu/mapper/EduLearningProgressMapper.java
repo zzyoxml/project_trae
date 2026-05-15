@@ -110,4 +110,12 @@ public interface EduLearningProgressMapper {
      * @return 连续学习天数
      */
     public int getUserStreak(Long userId);
+
+    /**
+     * 查询用户的所有学习进度
+     *
+     * @param userId 用户ID
+     * @return 学习进度列表
+     */
+    public List<EduLearningProgress> selectEduLearningProgressByUser(@Param("userId") Long userId);
 }
