@@ -61,31 +61,6 @@
       </div>
     </el-card>
 
-    <!-- 学习模式选择 -->
-    <el-card class="modes-card">
-      <template #header>
-        <div class="card-header">
-          <span>学习模式</span>
-        </div>
-      </template>
-
-      <div class="learning-modes">
-        <div 
-          v-for="mode in learningModes" 
-          :key="mode.id"
-          class="mode-item"
-          @click="selectMode(mode)"
-        >
-          <div class="mode-icon">{{ mode.icon }}</div>
-          <div class="mode-info">
-            <div class="mode-name">{{ mode.name }}</div>
-            <div class="mode-desc">{{ mode.description }}</div>
-          </div>
-          <el-tag size="small" type="info">{{ mode.count || 0 }} 技能评分</el-tag>
-        </div>
-      </div>
-    </el-card>
-
     <!-- 继续学习 -->
     <el-card class="continue-card">
       <template #header>
@@ -214,7 +189,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getMyCourses, getFeaturedCourses } from '@/api/course'
-import { getLearningStats, getSkillScores, claimTaskReward } from '@/api/learning'
+import { getLearningStats, claimTaskReward } from '@/api/learning'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -233,37 +208,6 @@ const dailyTasks = ref([])
 const completedTasks = ref(0)
 const totalTasks = ref(0)
 
-const learningModes = ref([
-  { 
-    id: 1, 
-    icon: '📝', 
-    name: '单词记忆', 
-    description: '使用联想记忆法高效背单词',
-    skill: 'vocabulary'
-  },
-  { 
-    id: 2, 
-    icon: '📖', 
-    name: '语法学习', 
-    description: '系统学习语言语法规则',
-    skill: 'grammar'
-  },
-  { 
-    id: 3, 
-    icon: '🎧', 
-    name: '听力训练', 
-    description: '提升听力理解能力',
-    skill: 'listening'
-  },
-  { 
-    id: 4, 
-    icon: '🗣️', 
-    name: '口语练习', 
-    description: '跟读练习提升口语',
-    skill: 'speaking'
-  }
-])
-
 const dailyProgress = computed(() => {
   const goal = 30
   return Math.min(100, Math.round((todayMinutes.value / goal) * 100))
@@ -273,8 +217,7 @@ onMounted(async () => {
   await Promise.all([
     loadLearningStats(),
     loadInProgressCourses(),
-    loadRecommendedCourses(),
-    loadSkillScores()
+    loadRecommendedCourses()
   ])
 })
 
@@ -352,25 +295,6 @@ const loadRecommendedCourses = async () => {
     console.error('加载推荐课程失败:', error)
     recommendedCourses.value = []
   }
-}
-
-const loadSkillScores = async () => {
-  try {
-    const res = await getSkillScores()
-    const data = res && res.data ? res.data : res
-    if (data) {
-      learningModes.value = learningModes.value.map(mode => ({
-        ...mode,
-        count: data[mode.skill] || 0
-      }))
-    }
-  } catch (error) {
-    console.error('加载技能评分失败:', error)
-  }
-}
-
-const selectMode = (mode) => {
-  ElMessage.info(`即将进入${mode.name}模式`)
 }
 
 const continueLearning = (course) => {
@@ -473,50 +397,6 @@ const handleImageError = (e) => {
               font-size: 12px;
               color: #909399;
             }
-          }
-        }
-      }
-    }
-  }
-
-  .modes-card {
-    margin-bottom: 20px;
-
-    .learning-modes {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 16px;
-
-      .mode-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px;
-        background: var(--el-bg-color-page, #f5f7fa);
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s;
-
-        &:hover {
-          background: #ecf5ff;
-          transform: translateX(5px);
-        }
-
-        .mode-icon {
-          font-size: 32px;
-        }
-
-        .mode-info {
-          flex: 1;
-
-          .mode-name {
-            font-weight: bold;
-            margin-bottom: 4px;
-          }
-
-          .mode-desc {
-            font-size: 12px;
-            color: #909399;
           }
         }
       }

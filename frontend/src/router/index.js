@@ -31,19 +31,19 @@ const routes = [
         path: 'course/:id',
         name: 'CourseDetail',
         component: () => import('@/views/course/detail.vue'),
-        meta: { title: '课程详情', requiresAuth: false }
+        meta: { title: '课程详情', requiresAuth: true }
       },
       {
         path: 'learning',
         name: 'Learning',
         component: () => import('@/views/learning/index.vue'),
-        meta: { title: '学习中心', icon: 'Monitor', requiresAuth: false }
+        meta: { title: '学习中心', icon: 'Monitor', requiresAuth: true }
       },
       {
         path: 'learning/lesson/:id',
         name: 'LessonDetail',
         component: () => import('@/views/learning/lesson.vue'),
-        meta: { title: '课时学习', requiresAuth: false }
+        meta: { title: '课时学习', requiresAuth: true }
       },
       {
         path: 'challenge',
@@ -133,7 +133,18 @@ router.beforeEach((to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title ? `${to.meta.title} - LinguaLearn` : 'LinguaLearn'
   
-  next()
+  // 检查是否需要登录
+  const token = getToken()
+  
+  if (to.meta.requiresAuth && !token) {
+    // 需要登录但未登录，跳转到登录页
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
+  } else {
+    next()
+  }
 })
 
 // 路由后置守卫

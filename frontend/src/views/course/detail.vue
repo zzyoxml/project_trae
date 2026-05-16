@@ -173,6 +173,13 @@ const getTotalLessons = computed(() => {
 })
 
 onMounted(async () => {
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录后再查看课程详情')
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+  
   await loadCourseDetail()
 })
 

@@ -109,11 +109,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import { getLessonDetail, completeLesson as completeLessonApi } from '@/api/learning'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const lesson = ref({})
@@ -124,6 +126,13 @@ const isRecording = ref(false)
 const score = ref(null)
 
 onMounted(async () => {
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    ElMessage.warning('请先登录后再学习')
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
+    return
+  }
+  
   await loadLesson()
 })
 
