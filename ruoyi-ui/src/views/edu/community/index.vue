@@ -10,20 +10,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="语言" prop="language">
-        <el-select v-model="queryParams.language" placeholder="请选择语言" clearable size="small">
-          <el-option label="英语" value="en" />
-          <el-option label="日语" value="ja" />
-          <el-option label="汉语" value="zh" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
-          <el-option label="正常" value="published" />
-          <el-option label="待审核" value="pending" />
-          <el-option label="已拒绝" value="rejected" />
-        </el-select>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -31,16 +17,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-check"
-          size="mini"
-          :disabled="multiple"
-          @click="handleBatchAudit"
-        >批量审核</el-button>
-      </el-col>
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -87,7 +63,7 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -95,13 +71,6 @@
             icon="el-icon-view"
             @click="handleDetail(scope.row)"
           >查看</el-button>
-          <el-button
-            v-if="scope.row.status === 'pending'"
-            size="mini"
-            type="text"
-            icon="el-icon-check"
-            @click="handleAudit(scope.row)"
-          >审核</el-button>
           <el-button
             size="mini"
             type="text"
@@ -150,7 +119,7 @@
 </template>
 
 <script>
-import { listPost, getPost, delPost, auditPost, batchAuditPost } from '@/api/edu/post'
+import { listPost, getPost, delPost } from '@/api/edu/post'
 
 export default {
   name: 'EduCommunity',
@@ -167,9 +136,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        title: null,
-        language: null,
-        status: null
+        title: null
       }
     }
   },
@@ -204,33 +171,6 @@ export default {
         this.detailData = response.data
         this.detailOpen = true
       })
-    },
-    handleAudit(row) {
-      this.$confirm(`是否审核通过帖子"${row.title}"?`, '审核', {
-        confirmButtonText: '通过',
-        cancelButtonText: '拒绝',
-        type: 'info'
-      }).then(() => {
-        const post = { ...row, status: 'published' }
-        return auditPost(row.postId, 'published')
-      }).then(() => {
-        this.$message.success('审核成功')
-        this.getList()
-      }).catch(() => {
-        this.$message.info('已取消')
-      })
-    },
-    handleBatchAudit() {
-      this.$confirm(`是否审核通过选中的${this.ids.length}个帖子?`, '批量审核', {
-        confirmButtonText: '通过',
-        cancelButtonText: '取消',
-        type: 'info'
-      }).then(() => {
-        return batchAuditPost(this.ids)
-      }).then(() => {
-        this.$message.success('批量审核成功')
-        this.getList()
-      }).catch(() => {})
     },
     handleDelete(row) {
       const postIds = row.postId || this.ids

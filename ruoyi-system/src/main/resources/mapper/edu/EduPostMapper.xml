@@ -45,6 +45,9 @@
         <include refid="selectEduPostVo"/>
         <where>
             is_deleted = 0
+            <if test="title != null and title != ''">
+                AND title like concat('%', #{title}, '%')
+            </if>
             <if test="postType != null and postType != ''">
                 AND post_type = #{postType}
             </if>

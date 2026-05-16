@@ -87,7 +87,6 @@
         </template>
       </el-table-column>
       <el-table-column label="经验" align="center" prop="experienceReward" width="70" />
-      <el-table-column label="金币" align="center" prop="coinReward" width="70" />
       <el-table-column label="及格分" align="center" prop="passingScore" width="70" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="150">
         <template slot-scope="scope">
@@ -145,11 +144,6 @@
           <el-col :span="8">
             <el-form-item label="经验奖励" prop="experienceReward">
               <el-input-number v-model="form.experienceReward" :min="0" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="金币奖励" prop="coinReward">
-              <el-input-number v-model="form.coinReward" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -426,7 +420,6 @@ export default {
         isFree: '1',
         isPreview: '0',
         experienceReward: 10,
-        coinReward: 5,
         passingScore: 60,
         maxAttempts: 3,
         resources: null
