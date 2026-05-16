@@ -4,7 +4,7 @@
     <header class="header">
       <div class="header-content">
         <div class="logo" @click="$router.push('/')">
-          <h1>📚 LinguaLearn</h1>
+          <h1>🍰 LinguaLearn</h1>
           <span class="logo-text" v-if="!isMobile">多语种学习平台</span>
         </div>
 
@@ -80,7 +80,7 @@
     </main>
 
     <footer class="footer">
-      <p>&copy; 2026 LinguaLearn - 多语种在线教育平台</p>
+      <p>🍰 2026 LinguaLearn - 多语种在线教育平台</p>
     </footer>
     <div class="safe-area-bottom"></div>
   </div>
@@ -136,76 +136,72 @@ const handleUserCommand = (command) => {
   flex-direction: column;
   
   &.dark-mode {
-    background-color: #141414;
+    background-color: #2a2a2a;
     color: #e0e0e0;
     
     .header {
-      background-color: #1e1e1e;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      background-color: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       
       .logo h1, .logo-text {
-        color: #409eff;
+        color: #FF69B4;
       }
       
       .nav .nav-item {
-        color: #b0b0b0;
+        color: #606266;
         
         &:hover {
-          color: #409eff;
-          background-color: #2a2a2a;
+          color: #FF69B4;
+          background-color: rgba(255, 182, 193, 0.1);
         }
         
         &.router-link-active {
-          color: #409eff;
-          background-color: #2a2a2a;
+          color: #FF69B4;
+          background-color: rgba(255, 182, 193, 0.1);
         }
       }
       
       .user-area .user-info {
-        .username {
-          color: #b0b0b0;
-        }
-        
         &:hover {
-          background-color: #2a2a2a;
+          background-color: rgba(255, 182, 193, 0.1);
         }
       }
     }
     
     .main-content {
-      background-color: #141414;
+      background-color: #2a2a2a;
     }
     
     .footer {
-      background-color: #141414;
-      border-top: 1px solid #3a3a3a;
-      color: #909399;
+      background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
+      color: #5D5D5D;
     }
     
     .safe-area-top, .safe-area-bottom {
-      background-color: #141414;
+      background-color: #2a2a2a;
     }
   }
 }
 
 .safe-area-top {
   height: env(safe-area-inset-top);
-  background-color: #fff;
+  background-color: #FFF8F0;
   flex-shrink: 0;
 }
 
 .safe-area-bottom {
   height: env(safe-area-inset-bottom);
-  background-color: #303133;
+  background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
   flex-shrink: 0;
 }
 
 .header {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
   position: sticky;
   top: env(safe-area-inset-top);
   z-index: 100;
+  backdrop-filter: blur(10px);
 
   .header-content {
     max-width: 1200px;
@@ -225,13 +221,20 @@ const handleUserCommand = (command) => {
     
     h1 {
       font-size: 20px;
-      color: #409eff;
+      background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin: 0;
     }
     
     .logo-text {
       font-size: 12px;
-      color: #999;
+      color: #909090;
+      background: linear-gradient(135deg, #98D8C8 0%, #E6E6FA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
   }
 
@@ -245,19 +248,22 @@ const handleUserCommand = (command) => {
       gap: 4px;
       text-decoration: none;
       color: #606266;
-      padding: 6px 12px;
-      border-radius: 4px;
+      padding: 8px 16px;
+      border-radius: 20px;
       font-size: 14px;
-      transition: all 0.3s;
+      font-weight: 500;
+      transition: all 0.3s ease;
 
       &:hover {
-        color: #409eff;
-        background: #ecf5ff;
+        color: #FF69B4;
+        background: rgba(255, 182, 193, 0.15);
+        transform: translateY(-2px);
       }
 
       &.router-link-active {
-        color: #409eff;
-        background: #ecf5ff;
+        color: #FF69B4;
+        background: rgba(255, 182, 193, 0.2);
+        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
       }
     }
   }
@@ -268,7 +274,15 @@ const handleUserCommand = (command) => {
     gap: 8px;
 
     .theme-btn {
+      background: rgba(255, 182, 193, 0.2) !important;
+      color: #FF69B4 !important;
+      border: none !important;
       padding: 4px;
+      
+      &:hover {
+        background: rgba(255, 182, 193, 0.3) !important;
+        transform: rotate(15deg);
+      }
     }
 
     .user-info {
@@ -276,27 +290,45 @@ const handleUserCommand = (command) => {
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
 
       &:hover {
-        background: #f5f7fa;
+        background: rgba(255, 182, 193, 0.15);
       }
 
       .username {
         color: #606266;
         font-size: 14px;
+        font-weight: 500;
       }
     }
     
     .login-btn {
-      padding: 6px 12px;
-      font-size: 14px;
+      background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%) !important;
+      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+      border: none !important;
+      color: white !important;
+      font-weight: 500;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 105, 180, 0.4);
+      }
     }
     
     .register-btn {
-      padding: 6px 12px;
-      font-size: 14px;
+      background: white !important;
+      color: #FF69B4 !important;
+      border: 2px solid #FFB6C1 !important;
+      font-weight: 500;
+      
+      &:hover {
+        background: rgba(255, 182, 193, 0.1) !important;
+        border-color: #FF69B4 !important;
+        transform: translateY(-2px);
+      }
     }
   }
 }
@@ -307,15 +339,18 @@ const handleUserCommand = (command) => {
   width: 100%;
   margin: 0 auto;
   padding: 16px;
+  background: #FFF8F0;
 }
 
 .footer {
-  background: #303133;
-  color: white;
+  background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
+  color: #5D5D5D;
   text-align: center;
   padding: 16px;
   margin-top: auto;
   font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 -4px 16px rgba(255, 182, 193, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -339,8 +374,9 @@ const handleUserCommand = (command) => {
       gap: 2px;
       
       .nav-item {
-        padding: 4px 8px;
+        padding: 6px 10px;
         font-size: 12px;
+        border-radius: 16px;
         
         :deep(.el-icon) {
           width: 16px;
@@ -391,7 +427,7 @@ const handleUserCommand = (command) => {
       }
       
       .nav-item {
-        padding: 4px 8px;
+        padding: 6px 8px;
       }
     }
 

@@ -1,9 +1,15 @@
 <template>
   <div class="login-page">
     <div class="login-container">
+      <div class="login-decoration">
+        <div class="decoration-circle circle-1"></div>
+        <div class="decoration-circle circle-2"></div>
+        <div class="decoration-circle circle-3"></div>
+      </div>
+
       <div class="login-header">
-        <h1>🎓 LinguaLearn</h1>
-        <p>多语种在线教育平台</p>
+        <h1>🍰 LinguaLearn</h1>
+        <p>✨ 多语种在线教育平台</p>
       </div>
 
       <el-form
@@ -48,7 +54,7 @@
             @click="handleLogin"
             class="login-button"
           >
-            登 录
+            🍰 登 录
           </el-button>
         </el-form-item>
       </el-form>
@@ -96,7 +102,7 @@ const handleLogin = async () => {
       loading.value = true
       try {
         await userStore.login(loginForm.value)
-        ElMessage.success('登录成功')
+        ElMessage.success('🎉 登录成功')
         const redirect = route.query.redirect || '/home'
         router.push(redirect)
       } catch (error) {
@@ -120,46 +126,173 @@ const handleForgot = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #FFF8F0 0%, #FDF5F6 50%, #E6E6FA 100%);
+  position: relative;
+  overflow: hidden;
 }
 
 .login-container {
-  background: var(--el-bg-color, white);
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  width: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 48px;
+  border-radius: 32px;
+  box-shadow: 0 20px 60px rgba(255, 182, 193, 0.3);
+  width: 420px;
+  max-width: 90%;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 182, 193, 0.2);
+}
+
+.login-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  .decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+
+    &.circle-1 {
+      width: 200px;
+      height: 200px;
+      background: #FFB6C1;
+      top: -100px;
+      right: -100px;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    &.circle-2 {
+      width: 150px;
+      height: 150px;
+      background: #E6E6FA;
+      bottom: -75px;
+      left: -75px;
+      animation: float 8s ease-in-out infinite reverse;
+    }
+
+    &.circle-3 {
+      width: 100px;
+      height: 100px;
+      background: #98D8C8;
+      top: 50%;
+      right: -50px;
+      animation: float 7s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
+  position: relative;
 
   h1 {
-    font-size: 32px;
-    color: #409eff;
-    margin-bottom: 8px;
+    font-size: 36px;
+    background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 50%, #E6E6FA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    font-weight: 700;
   }
 
   p {
-    color: #909399;
+    color: #909090;
     font-size: 14px;
+    margin: 0;
   }
 }
 
 .login-form {
+  position: relative;
+
+  :deep(.el-form-item) {
+    margin-bottom: 24px;
+  }
+
+  :deep(.el-input) {
+    .el-input__wrapper {
+      padding: 12px 16px;
+      border-radius: 16px;
+      box-shadow: 0 0 0 2px rgba(255, 182, 193, 0.2);
+      transition: all 0.3s ease;
+      background: white;
+
+      &:hover {
+        box-shadow: 0 0 0 2px rgba(255, 182, 193, 0.4);
+      }
+
+      &.is-focus {
+        box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.5);
+      }
+    }
+
+    .el-input__inner {
+      font-size: 15px;
+      color: #5D5D5D;
+
+      &::placeholder {
+        color: #b0b0b0;
+      }
+    }
+
+    .el-input__prefix {
+      color: #FF69B4;
+      font-size: 18px;
+    }
+  }
+
   .form-options {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
+    :deep(.el-checkbox) {
+      .el-checkbox__input {
+        .el-checkbox__inner {
+          border-radius: 6px;
+          border-color: #FFB6C1;
+
+          &::after {
+            border-color: #FF69B4;
+          }
+        }
+
+        &.is-checked {
+          .el-checkbox__inner {
+            background-color: #FF69B4;
+            border-color: #FF69B4;
+          }
+        }
+      }
+
+      .el-checkbox__label {
+        color: #909090;
+        font-size: 14px;
+      }
+    }
+
     a {
-      color: #409eff;
+      color: #FF69B4;
       text-decoration: none;
       font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
 
       &:hover {
+        color: #FFB6C1;
         text-decoration: underline;
       }
     }
@@ -167,22 +300,100 @@ const handleForgot = () => {
 
   .login-button {
     width: 100%;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+    border: none;
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+    transition: all 0.3s ease;
+    color: white;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(255, 105, 180, 0.5);
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
+
+    &.is-loading {
+      background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+    }
   }
 }
 
 .login-footer {
   text-align: center;
-  margin-top: 24px;
-  color: #909399;
+  margin-top: 32px;
+  color: #909090;
+  font-size: 14px;
+  position: relative;
 
   a {
-    color: #409eff;
+    color: #FF69B4;
     text-decoration: none;
     margin-left: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 
     &:hover {
+      color: #FFB6C1;
       text-decoration: underline;
     }
+  }
+}
+
+// 响应式设计
+@media (max-width: 480px) {
+  .login-container {
+    padding: 32px 24px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 100%;
+    margin: 16px;
+  }
+
+  .login-header {
+    margin-bottom: 28px;
+
+    h1 {
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .login-form {
+    :deep(.el-form-item) {
+      margin-bottom: 20px;
+    }
+
+    :deep(.el-input) {
+      .el-input__wrapper {
+        padding: 10px 14px;
+        border-radius: 14px;
+      }
+
+      .el-input__inner {
+        font-size: 14px;
+      }
+    }
+
+    .login-button {
+      height: 44px;
+      font-size: 15px;
+      border-radius: 14px;
+    }
+  }
+
+  .login-footer {
+    margin-top: 24px;
+    font-size: 13px;
   }
 }
 </style>

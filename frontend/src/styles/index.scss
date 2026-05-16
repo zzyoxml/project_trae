@@ -1,25 +1,54 @@
 /**
- * 全局样式文件
+ * 全局样式文件 - 马卡龙风格
  *
- * @description 全局样式、变量定义
+ * @description 马卡龙风格配色和全局样式
  * @author LingLearn Team
  */
 
-// 变量定义
-$primary-color: #409eff;
-$success-color: #67c23a;
-$warning-color: #e6a23c;
-$danger-color: #f56c6c;
-$info-color: #909399;
+// ========================================
+// 马卡龙风格配色方案
+// ========================================
 
-$bg-color: #f5f7fa;
-$text-color: #303133;
-$text-color-secondary: #909399;
+// 主要色彩 - 柔和的糖果色
+$macaron-pink: #FFB6C1;           // 浅粉红
+$macaron-rose: #FF69B4;            // 亮粉红
+$macaron-mint: #98D8C8;            // 薄荷绿
+$macaron-lavender: #E6E6FA;        // 薰衣草紫
+$macaron-lemon: #FFFACD;           // 柠檬黄
+$macaron-peach: #FFDAB9;           // 桃子色
+$macaron-blue: #87CEEB;            // 天蓝色
+$macaron-orange: #FFB347;           // 淡橙色
 
-$border-radius: 4px;
+// 功能色彩映射
+$primary-color: $macaron-pink;
+$success-color: $macaron-mint;
+$warning-color: $macaron-lemon;
+$danger-color: $macaron-rose;
+$info-color: $macaron-lavender;
+
+// 背景和文本
+$bg-color: #FFF8F0;                // 奶油白
+$bg-secondary: #FDF5F6;            // 淡粉白
+$text-color: #5D5D5D;              // 柔和深灰
+$text-color-secondary: #909090;     // 次要文本
+
+// 圆角 - 马卡龙风格需要更圆润
+$border-radius: 20px;              // 大圆角
+$border-radius-sm: 12px;           // 小圆角
+$border-radius-lg: 28px;           // 超大圆角
+
+// 字体
 $font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
 
+// 阴影 - 柔和的彩色阴影
+$shadow-color: rgba(255, 182, 193, 0.3);
+$shadow-light: 0 4px 12px rgba(255, 182, 193, 0.2);
+$shadow-medium: 0 8px 24px rgba(255, 182, 193, 0.25);
+$shadow-heavy: 0 12px 36px rgba(255, 182, 193, 0.3);
+
+// ========================================
 // 重置样式
+// ========================================
 * {
   margin: 0;
   padding: 0;
@@ -37,7 +66,9 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+// ========================================
 // 全局样式
+// ========================================
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -56,9 +87,16 @@ html, body {
   background: white;
   border-radius: $border-radius;
   padding: 20px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-light;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: $shadow-medium;
+    transform: translateY(-2px);
+  }
 }
 
+// 文本颜色
 .text-primary {
   color: $primary-color;
 }
@@ -76,253 +114,340 @@ html, body {
 }
 
 // ========================================
-// Dark Mode - Global Overrides
+// Element Plus 马卡龙风格覆盖
+// ========================================
+
+// 按钮样式
+.el-button {
+  border-radius: $border-radius-sm !important;
+  border: none !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &--primary {
+    background: linear-gradient(135deg, $macaron-pink 0%, $macaron-rose 100%) !important;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3) !important;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 105, 180, 0.4) !important;
+    }
+  }
+
+  &--success {
+    background: linear-gradient(135deg, $macaron-mint 0%, darken($macaron-mint, 10%) 100%) !important;
+    box-shadow: 0 4px 12px rgba(152, 216, 200, 0.3) !important;
+  }
+
+  &--warning {
+    background: linear-gradient(135deg, $macaron-lemon 0%, darken($macaron-lemon, 10%) 100%) !important;
+    box-shadow: 0 4px 12px rgba(255, 250, 205, 0.3) !important;
+  }
+
+  &--danger {
+    background: linear-gradient(135deg, $macaron-rose 0%, darken($macaron-rose, 10%) 100%) !important;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3) !important;
+  }
+
+  &--info {
+    background: linear-gradient(135deg, $macaron-lavender 0%, darken($macaron-lavender, 10%) 100%) !important;
+    box-shadow: 0 4px 12px rgba(230, 230, 250, 0.3) !important;
+  }
+
+  &--default {
+    background: white !important;
+    color: $text-color !important;
+    border: 2px solid $macaron-pink !important;
+
+    &:hover {
+      background: rgba($macaron-pink, 0.1) !important;
+      border-color: $macaron-rose !important;
+    }
+  }
+}
+
+// 输入框样式
+.el-input {
+  .el-input__wrapper {
+    border-radius: $border-radius-sm !important;
+    box-shadow: 0 0 0 2px rgba($macaron-pink, 0.2) !important;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0 0 2px rgba($macaron-pink, 0.4) !important;
+    }
+
+    &.is-focus {
+      box-shadow: 0 0 0 3px rgba($macaron-pink, 0.5) !important;
+    }
+  }
+}
+
+// 卡片样式
+.el-card {
+  border-radius: $border-radius !important;
+  border: none !important;
+  box-shadow: $shadow-light !important;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: $shadow-medium !important;
+    transform: translateY(-2px);
+  }
+
+  &__header {
+    border-bottom: none !important;
+    padding: 20px 20px 10px !important;
+  }
+
+  &__body {
+    padding: 10px 20px 20px !important;
+  }
+}
+
+// 标签样式
+.el-tag {
+  border-radius: $border-radius-lg !important;
+  border: none !important;
+  padding: 4px 12px !important;
+  font-weight: 500;
+
+  &--primary {
+    background: rgba($macaron-pink, 0.2) !important;
+    color: darken($macaron-rose, 15%) !important;
+  }
+
+  &--success {
+    background: rgba($macaron-mint, 0.2) !important;
+    color: darken($macaron-mint, 25%) !important;
+  }
+
+  &--warning {
+    background: rgba($macaron-lemon, 0.3) !important;
+    color: darken($macaron-lemon, 30%) !important;
+  }
+
+  &--danger {
+    background: rgba($macaron-rose, 0.2) !important;
+    color: darken($macaron-rose, 15%) !important;
+  }
+
+  &--info {
+    background: rgba($macaron-lavender, 0.3) !important;
+    color: darken($macaron-lavender, 30%) !important;
+  }
+}
+
+// 表单样式
+.el-form-item__label {
+  color: $text-color !important;
+  font-weight: 500;
+}
+
+// 下拉框样式
+.el-select {
+  .el-input__wrapper {
+    border-radius: $border-radius-sm !important;
+  }
+}
+
+.el-select-dropdown {
+  border-radius: $border-radius-sm !important;
+  border: none !important;
+  box-shadow: $shadow-medium !important;
+
+  &__item {
+    border-radius: $border-radius-sm !important;
+    margin: 4px 8px !important;
+
+    &.selected {
+      color: $macaron-rose !important;
+      font-weight: 600 !important;
+      background: rgba($macaron-pink, 0.1) !important;
+    }
+
+    &:hover {
+      background: rgba($macaron-pink, 0.1) !important;
+    }
+  }
+}
+
+// 消息提示样式
+.el-message {
+  border-radius: $border-radius-sm !important;
+  border: none !important;
+  box-shadow: $shadow-medium !important;
+}
+
+// 对话框样式
+.el-dialog {
+  border-radius: $border-radius !important;
+  border: none !important;
+  box-shadow: $shadow-heavy !important;
+
+  &__header {
+    border-bottom: 2px solid rgba($macaron-pink, 0.2) !important;
+    padding: 20px !important;
+  }
+
+  &__title {
+    color: $macaron-rose !important;
+    font-weight: 600 !important;
+  }
+
+  &__body {
+    padding: 24px !important;
+  }
+
+  &__footer {
+    border-top: 2px solid rgba($macaron-pink, 0.2) !important;
+    padding: 16px 24px !important;
+  }
+}
+
+// 分页样式
+.el-pagination {
+  .el-pager li {
+    border-radius: $border-radius-sm !important;
+    margin: 0 4px !important;
+
+    &.is-active {
+      background: linear-gradient(135deg, $macaron-pink 0%, $macaron-rose 100%) !important;
+      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3) !important;
+    }
+
+    &:hover {
+      color: $macaron-rose !important;
+    }
+  }
+
+  button {
+    border-radius: $border-radius-sm !important;
+  }
+}
+
+// 下拉菜单样式
+.el-dropdown-menu {
+  border-radius: $border-radius-sm !important;
+  border: none !important;
+  box-shadow: $shadow-medium !important;
+  padding: 8px !important;
+
+  &__item {
+    border-radius: $border-radius-sm !important;
+    margin: 2px 0 !important;
+    padding: 8px 16px !important;
+
+    &:hover {
+      background: rgba($macaron-pink, 0.1) !important;
+      color: $macaron-rose !important;
+    }
+  }
+}
+
+// 头像样式
+.el-avatar {
+  border: 3px solid rgba($macaron-pink, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.2) !important;
+}
+
+// 空状态样式
+.el-empty {
+  &__description {
+    color: $text-color-secondary !important;
+  }
+}
+
+// 加载动画
+.el-loading-mask {
+  background-color: rgba(255, 248, 240, 0.9) !important;
+}
+
+.el-loading-spinner {
+  .el-loading-text {
+    color: $macaron-rose !important;
+  }
+
+  .path {
+    stroke: $macaron-pink !important;
+  }
+}
+
+// ========================================
+// 滚动条样式
+// ========================================
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba($macaron-pink, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba($macaron-pink, 0.4);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba($macaron-pink, 0.6);
+  }
+}
+
+// ========================================
+// Dark Mode - 马卡龙暗色风格
 // ========================================
 html.dark {
   color-scheme: dark;
 
+  body,
+  #app {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+  }
+
   // Element Plus CSS variables for dark mode
-  --el-bg-color: #1e1e1e;
-  --el-bg-color-page: #2a2a2a;
+  --el-bg-color: #2a2a2a;
+  --el-bg-color-page: #252525;
   --el-bg-color-overlay: #2a2a2a;
   --el-text-color-primary: #e0e0e0;
   --el-text-color-regular: #c0c0c0;
-  --el-text-color-secondary: #909399;
-  --el-text-color-placeholder: #6a6a6a;
+  --el-text-color-secondary: #a0a0a0;
   --el-border-color: #4a4a4a;
-  --el-border-color-light: #3a3a3a;
-  --el-border-color-lighter: #333333;
-  --el-border-color-extra-light: #2e2e2e;
-  --el-fill-color: #2a2a2a;
-  --el-fill-color-light: #262626;
-  --el-fill-color-lighter: #222222;
-  --el-fill-color-extra-light: #1e1e1e;
-  --el-fill-color-blank: #1e1e1e;
-  --el-mask-color: rgba(0, 0, 0, 0.6);
-  --el-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.4);
-  --el-box-shadow-light: 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+  --el-fill-color: #3a3a3a;
 
-  body,
-  #app {
-    background-color: #141414;
-    color: #e0e0e0;
-  }
-
-  // Element Plus component overrides
-  .el-card {
-    --el-card-bg-color: #1e1e1e;
-    --el-card-border-color: #3a3a3a;
-    background-color: #1e1e1e;
-    border-color: #3a3a3a;
-    color: #e0e0e0;
-  }
-
-  .el-select {
-    --el-select-border-color-hover: #5a5a5a;
-    --el-select-input-focus-border-color: #409eff;
-
-    .el-input__wrapper {
-      background-color: #2a2a2a;
-      box-shadow: 0 0 0 1px #4a4a4a inset;
-    }
-
-    .el-input__inner {
-      color: #e0e0e0;
-    }
-  }
-
-  .el-select-dropdown {
-    background-color: #2a2a2a;
-    border-color: #3a3a3a;
-
-    .el-select-dropdown__item {
-      color: #c0c0c0;
-
-      &.hover,
-      &:hover {
-        background-color: #3a3a3a;
-      }
-
-      &.selected {
-        color: #409eff;
-      }
-    }
-  }
-
-  .el-input {
-    .el-input__wrapper {
-      background-color: #2a2a2a;
-      box-shadow: 0 0 0 1px #4a4a4a inset;
-    }
-
-    .el-input__inner {
-      color: #e0e0e0;
-    }
-  }
-
-  .el-textarea {
-    .el-textarea__inner {
-      background-color: #2a2a2a;
-      border-color: #4a4a4a;
-      color: #e0e0e0;
-    }
-  }
-
-  .el-button--default {
-    --el-button-bg-color: #2a2a2a;
-    --el-button-border-color: #4a4a4a;
-    --el-button-text-color: #c0c0c0;
-    --el-button-hover-bg-color: #3a3a3a;
-    --el-button-hover-border-color: #5a5a5a;
-    --el-button-hover-text-color: #e0e0e0;
-  }
-
-  .el-pagination {
-    --el-pagination-bg-color: #2a2a2a;
-    --el-pagination-text-color: #c0c0c0;
-    --el-pagination-button-bg-color: #2a2a2a;
-    --el-pagination-hover-color: #409eff;
-
-    .el-pager li {
-      background-color: #2a2a2a;
-      color: #c0c0c0;
-
-      &.is-active {
-        color: #409eff;
-      }
-
-      &:hover {
-        color: #409eff;
-      }
-    }
-
-    button {
-      background-color: #2a2a2a;
-      color: #c0c0c0;
-    }
-  }
-
-  .el-tag {
-    --el-tag-bg-color: #2a2a2a;
-    --el-tag-border-color: #4a4a4a;
-  }
-
-  .el-collapse {
-    --el-collapse-header-bg-color: #1e1e1e;
-    --el-collapse-content-bg-color: #1e1e1e;
-    --el-collapse-border-color: #3a3a3a;
-
-    .el-collapse-item__header {
-      background-color: #1e1e1e;
-      color: #e0e0e0;
-      border-bottom-color: #3a3a3a;
-    }
-
-    .el-collapse-item__wrap {
-      background-color: #1e1e1e;
-      border-bottom-color: #3a3a3a;
-    }
-
-    .el-collapse-item__content {
-      color: #c0c0c0;
-    }
-  }
-
-  .el-page-header {
-    .el-page-header__left {
-      .el-page-header__back {
-        .el-icon {
-          color: #c0c0c0;
-        }
-      }
-
-      .el-page-header__title {
-        color: #c0c0c0;
-      }
-    }
-
-    .el-page-header__content {
-      color: #e0e0e0;
-    }
-  }
-
-  .el-dropdown-menu {
-    background-color: #2a2a2a;
-    border-color: #3a3a3a;
-
-    .el-dropdown-menu__item {
-      color: #c0c0c0;
-
-      &:hover {
-        background-color: #3a3a3a;
-        color: #e0e0e0;
-      }
-    }
-  }
-
-  .el-tooltip__trigger {
-    .el-button.is-circle {
-      background-color: #2a2a2a;
-      border-color: #4a4a4a;
-      color: #c0c0c0;
-    }
-  }
-
-  .el-empty {
-    .el-empty__description p {
-      color: #909399;
-    }
-  }
-
-  .el-loading-mask {
-    background-color: rgba(20, 20, 20, 0.7);
-  }
-
-  .el-message-box {
-    background-color: #2a2a2a;
-    border-color: #3a3a3a;
-
-    .el-message-box__title {
-      color: #e0e0e0;
-    }
-
-    .el-message-box__message {
-      color: #c0c0c0;
-    }
-  }
-
-  // Card and container backgrounds
+  // 暗色模式下的卡片
   .card {
-    background: #1e1e1e;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.4);
-    color: #e0e0e0;
+    background: #2a2a2a;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
-  // Text colors
+  // 暗色模式下的输入框
+  .el-input__wrapper {
+    background-color: #3a3a3a !important;
+  }
+
+  // 暗色模式下的按钮
+  .el-button--primary {
+    background: linear-gradient(135deg, lighten($macaron-pink, 10%) 0%, lighten($macaron-rose, 10%) 100%) !important;
+  }
+
+  // 暗色模式下的标题
   h1, h2, h3, h4, h5, h6 {
     color: #e0e0e0;
   }
 
-  p {
-    color: #c0c0c0;
-  }
-
-  // Scrollbar
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
+  // 暗色模式滚动条
   ::-webkit-scrollbar-track {
-    background: #1a1a1a;
+    background: rgba($macaron-pink, 0.05);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #4a4a4a;
-    border-radius: 4px;
+    background: rgba($macaron-pink, 0.3);
 
     &:hover {
-      background: #5a5a5a;
+      background: rgba($macaron-pink, 0.5);
     }
   }
 }

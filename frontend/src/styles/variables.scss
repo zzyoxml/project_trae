@@ -1,19 +1,43 @@
-// 颜色变量
-$primary-color: #409eff;
-$success-color: #67c23a;
-$warning-color: #e6a23c;
-$danger-color: #f56c6c;
-$info-color: #909399;
+/**
+ * 变量定义 - 马卡龙风格
+ *
+ * @description 马卡龙风格配色变量
+ * @author LingLearn Team
+ */
+
+// ========================================
+// 马卡龙风格色彩系统
+// ========================================
+
+// 主要糖果色
+$macaron-pink: #FFB6C1;           // 浅粉红
+$macaron-rose: #FF69B4;            // 亮粉红
+$macaron-mint: #98D8C8;            // 薄荷绿
+$macaron-lavender: #E6E6FA;        // 薰衣草紫
+$macaron-lemon: #FFFACD;           // 柠檬黄
+$macaron-peach: #FFDAB9;           // 桃子色
+$macaron-blue: #87CEEB;            // 天蓝色
+$macaron-orange: #FFB347;          // 淡橙色
+
+// 功能色彩
+$primary-color: $macaron-pink;
+$success-color: $macaron-mint;
+$warning-color: $macaron-lemon;
+$danger-color: $macaron-rose;
+$info-color: $macaron-lavender;
 
 // 背景颜色
-$bg-color: #f5f7fa;
+$bg-color: #FFF8F0;                // 奶油白
+$bg-secondary: #FDF5F6;            // 淡粉白
 
 // 文本颜色
-$text-color: #303133;
-$text-color-secondary: #909399;
+$text-color: #5D5D5D;              // 柔和深灰
+$text-color-secondary: #909090;     // 次要文本
 
-// 圆角
-$border-radius: 4px;
+// 圆角 - 马卡龙风格更圆润
+$border-radius: 20px;              // 大圆角
+$border-radius-sm: 12px;           // 小圆角
+$border-radius-lg: 28px;           // 超大圆角
 
 // 字体
 $font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;

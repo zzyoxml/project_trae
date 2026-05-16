@@ -3,7 +3,7 @@
     <!-- 轮播图区域 -->
     <section class="hero-section">
       <div class="hero-content">
-        <h1>🎓 开始您的语言学习之旅</h1>
+        <h1>🍰 开始您的语言学习之旅</h1>
         <p>支持英语、日语、汉语等多语种学习，沉浸式语言学习体验</p>
         <div class="hero-buttons">
           <el-button type="primary" size="large" @click="$router.push('/course')">
@@ -18,7 +18,7 @@
 
     <!-- 特色功能 -->
     <section class="features-section">
-      <h2>为什么选择 LinguaLearn？</h2>
+      <h2>✨ 为什么选择 LinguaLearn？</h2>
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon">📚</div>
@@ -46,7 +46,7 @@
     <!-- 热门课程 -->
     <section class="courses-section">
       <div class="section-header">
-        <h2>热门课程</h2>
+        <h2>🌟 热门课程</h2>
         <el-button text @click="$router.push('/course')">查看全部 →</el-button>
       </div>
       <div class="courses-grid" v-loading="coursesLoading">
@@ -78,7 +78,7 @@
     <!-- 社区动态 -->
     <section class="community-section">
       <div class="section-header">
-        <h2>社区动态</h2>
+        <h2>💬 社区动态</h2>
         <el-button text @click="$router.push('/community')">查看全部 →</el-button>
       </div>
       <div class="community-grid" v-loading="postsLoading">
@@ -207,32 +207,93 @@ const truncateText = (text, max) => {
   margin: 0 auto;
   padding: 20px;
 
+  // ========================================
+  // 轮播图区域 - 马卡龙渐变
+  // ========================================
   .hero-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 50%, #98D8C8 100%);
     color: white;
     padding: 60px 20px;
     text-align: center;
-    border-radius: 12px;
+    border-radius: 28px;
     margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.3);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+    }
 
     h1 {
       font-size: 48px;
       margin-bottom: 16px;
+      position: relative;
+      text-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
     }
 
     p {
       font-size: 20px;
       margin-bottom: 32px;
-      opacity: 0.9;
+      opacity: 0.95;
+      position: relative;
     }
 
     .hero-buttons {
       display: flex;
       gap: 16px;
       justify-content: center;
+      position: relative;
+
+      .el-button {
+        padding: 12px 32px;
+        font-size: 16px;
+        border-radius: 24px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        
+        &:first-child {
+          background: white;
+          color: #FF69B4;
+          border: none;
+          box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3);
+          
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.4);
+          }
+        }
+        
+        &:last-child {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.5);
+          backdrop-filter: blur(10px);
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+          }
+        }
+      }
     }
   }
 
+  // ========================================
+  // 章节标题
+  // ========================================
   .section-header {
     display: flex;
     justify-content: space-between;
@@ -242,9 +303,25 @@ const truncateText = (text, max) => {
     h2 {
       font-size: 28px;
       margin: 0;
+      background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .el-button {
+      color: #FF69B4;
+      font-weight: 500;
+      
+      &:hover {
+        color: #FFB6C1;
+      }
     }
   }
 
+  // ========================================
+  // 特色功能 - 马卡龙卡片
+  // ========================================
   .features-section {
     margin-bottom: 40px;
 
@@ -252,6 +329,10 @@ const truncateText = (text, max) => {
       font-size: 28px;
       margin-bottom: 24px;
       text-align: center;
+      background: linear-gradient(135deg, #FF69B4 0%, #98D8C8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .features-grid {
@@ -260,34 +341,59 @@ const truncateText = (text, max) => {
       gap: 24px;
 
       .feature-card {
-        background: var(--el-bg-color, white);
+        background: white;
         padding: 32px;
-        border-radius: 12px;
+        border-radius: 24px;
         text-align: center;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
+        box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #FFB6C1, #E6E6FA, #98D8C8);
+        }
 
         &:hover {
-          transform: translateY(-5px);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 32px rgba(255, 182, 193, 0.3);
         }
 
         .feature-icon {
-          font-size: 48px;
+          font-size: 56px;
           margin-bottom: 16px;
+          animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
 
         h3 {
           font-size: 24px;
           margin-bottom: 8px;
+          color: #5D5D5D;
         }
 
         p {
-          color: #909399;
+          color: #909090;
+          font-size: 14px;
+          line-height: 1.6;
         }
       }
     }
   }
 
+  // ========================================
+  // 热门课程 - 马卡龙课程卡片
+  // ========================================
   .courses-section {
     margin-bottom: 40px;
 
@@ -297,52 +403,68 @@ const truncateText = (text, max) => {
       gap: 24px;
 
       .course-card {
-        background: var(--el-bg-color, white);
-        border-radius: 12px;
+        background: white;
+        border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
         cursor: pointer;
-        transition: transform 0.3s;
+        transition: all 0.3s ease;
 
         &:hover {
-          transform: translateY(-5px);
+          transform: translateY(-8px);
+          box-shadow: 0 12px 32px rgba(255, 182, 193, 0.3);
+
+          .course-cover img {
+            transform: scale(1.1);
+          }
         }
 
         .course-cover {
           position: relative;
           height: 160px;
+          overflow: hidden;
 
           img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
           }
 
           .course-level {
             position: absolute;
             top: 12px;
             right: 12px;
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 12px;
             color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
-            &.level-1 { background: #67c23a; }
-            &.level-2 { background: #e6a23c; }
-            &.level-3 { background: #f56c6c; }
+            &.level-1 { 
+              background: linear-gradient(135deg, #98D8C8 0%, #7BC5B8 100%);
+            }
+            &.level-2 { 
+              background: linear-gradient(135deg, #FFB347 0%, #FFA500 100%);
+            }
+            &.level-3 { 
+              background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+            }
           }
         }
 
         .course-info {
-          padding: 16px;
+          padding: 20px;
 
           h3 {
             font-size: 18px;
             margin-bottom: 8px;
+            color: #5D5D5D;
           }
 
           .course-desc {
-            color: #909399;
+            color: #909090;
             font-size: 14px;
             margin-bottom: 12px;
             overflow: hidden;
@@ -353,7 +475,7 @@ const truncateText = (text, max) => {
           .course-meta {
             display: flex;
             gap: 16px;
-            color: #909399;
+            color: #909090;
             font-size: 14px;
 
             span {
@@ -372,6 +494,9 @@ const truncateText = (text, max) => {
     }
   }
 
+  // ========================================
+  // 社区动态 - 马卡龙帖子卡片
+  // ========================================
   .community-section {
     margin-bottom: 40px;
 
@@ -381,15 +506,16 @@ const truncateText = (text, max) => {
       gap: 24px;
 
       .post-card {
-        background: var(--el-bg-color, white);
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        background: white;
+        padding: 24px;
+        border-radius: 24px;
+        box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
         cursor: pointer;
-        transition: transform 0.3s;
+        transition: all 0.3s ease;
 
         &:hover {
-          transform: translateY(-3px);
+          transform: translateY(-5px);
+          box-shadow: 0 12px 32px rgba(255, 182, 193, 0.3);
         }
 
         .post-header {
@@ -399,16 +525,17 @@ const truncateText = (text, max) => {
           margin-bottom: 16px;
 
           .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
           }
 
           .user-info {
@@ -417,10 +544,11 @@ const truncateText = (text, max) => {
             .user-name {
               font-weight: 600;
               font-size: 14px;
+              color: #5D5D5D;
             }
 
             .post-time {
-              color: #909399;
+              color: #909090;
               font-size: 12px;
             }
           }
@@ -430,20 +558,23 @@ const truncateText = (text, max) => {
           font-size: 16px;
           margin-bottom: 8px;
           font-weight: 600;
+          color: #5D5D5D;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          line-height: 1.5;
         }
 
         .post-content {
-          color: #606266;
+          color: #909090;
           font-size: 14px;
           margin-bottom: 16px;
           display: -webkit-box;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          line-height: 1.6;
         }
 
         .post-footer {
@@ -453,16 +584,17 @@ const truncateText = (text, max) => {
 
           .post-tag {
             font-size: 12px;
-            color: #409eff;
-            background: rgba(64, 158, 255, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
+            color: #FF69B4;
+            background: rgba(255, 105, 180, 0.1);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-weight: 500;
           }
 
           .post-stats {
             display: flex;
             gap: 16px;
-            color: #909399;
+            color: #909090;
             font-size: 14px;
 
             span {
@@ -477,6 +609,85 @@ const truncateText = (text, max) => {
       .empty-state {
         grid-column: 1 / -1;
         padding: 40px;
+      }
+    }
+  }
+}
+
+// ========================================
+// 响应式设计
+// ========================================
+@media (max-width: 768px) {
+  .home-page {
+    padding: 16px;
+
+    .hero-section {
+      padding: 40px 20px;
+      border-radius: 20px;
+      margin-bottom: 32px;
+
+      h1 {
+        font-size: 32px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+
+        .el-button {
+          width: 100%;
+          max-width: 300px;
+        }
+      }
+    }
+
+    .section-header {
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+    .features-section {
+      h2 {
+        font-size: 24px;
+      }
+
+      .features-grid {
+        gap: 16px;
+
+        .feature-card {
+          padding: 24px;
+
+          .feature-icon {
+            font-size: 40px;
+          }
+
+          h3 {
+            font-size: 20px;
+          }
+        }
+      }
+    }
+
+    .courses-section, .community-section {
+      .courses-grid, .community-grid {
+        gap: 16px;
+
+        .course-card, .post-card {
+          border-radius: 20px;
+
+          .course-cover {
+            height: 140px;
+          }
+
+          .course-info, .post-card {
+            padding: 16px;
+          }
+        }
       }
     }
   }
