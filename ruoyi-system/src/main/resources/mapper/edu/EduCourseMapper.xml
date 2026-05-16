@@ -71,20 +71,44 @@
         order by create_time desc
     </select>
 
+    <select id="selectPublishedCourseList" parameterType="com.ruoyi.edu.domain.EduCourse" resultMap="EduCourseResult">
+        <include refid="selectEduCourseVo"/>
+        and is_published = 1
+        <if test="courseName != null and courseName != ''">
+            AND course_name like concat('%', #{courseName}, '%')
+        </if>
+        <if test="language != null and language != ''">
+            AND language = #{language}
+        </if>
+        <if test="level != null and level != ''">
+            AND level = #{level}
+        </if>
+        <if test="courseType != null and courseType != ''">
+            AND course_type = #{courseType}
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+        order by create_time desc
+    </select>
+
     <select id="selectEduCourseByLanguage" parameterType="String" resultMap="EduCourseResult">
         <include refid="selectEduCourseVo"/>
+        and is_published = 1
         and language = #{language}
         order by popularity_score desc
     </select>
 
     <select id="selectEduCourseByLevel" parameterType="String" resultMap="EduCourseResult">
         <include refid="selectEduCourseVo"/>
+        and is_published = 1
         and level = #{level}
         order by rating desc
     </select>
 
     <select id="selectFeaturedCourses" parameterType="Integer" resultMap="EduCourseResult">
         <include refid="selectEduCourseVo"/>
+        and is_published = 1
         and is_featured = 1
         order by rating desc
         limit #{limit}
@@ -92,12 +116,14 @@
 
     <select id="selectPopularCourses" parameterType="Integer" resultMap="EduCourseResult">
         <include refid="selectEduCourseVo"/>
+        and is_published = 1
         order by total_students desc
         limit #{limit}
     </select>
 
     <select id="selectMyCourses" resultMap="EduCourseResult">
         <include refid="selectEduCourseVo"/>
+        and is_published = 1
         and course_id in
         <foreach collection="courseIds" item="id" open="(" separator="," close=")">
             #{id}

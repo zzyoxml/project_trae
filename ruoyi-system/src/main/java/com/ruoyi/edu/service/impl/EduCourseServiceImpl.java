@@ -57,7 +57,7 @@ public class EduCourseServiceImpl implements IEduCourseService {
     }
 
     /**
-     * 查询课程列表
+     * 查询课程列表（后台管理，不过滤发布状态）
      *
      * @param eduCourse 课程
      * @return 课程列表
@@ -65,6 +65,17 @@ public class EduCourseServiceImpl implements IEduCourseService {
     @Override
     public List<EduCourse> selectEduCourseList(EduCourse eduCourse) {
         return eduCourseMapper.selectEduCourseList(eduCourse);
+    }
+
+    /**
+     * 查询已发布课程列表（前端用户页面）
+     *
+     * @param eduCourse 课程
+     * @return 课程列表
+     */
+    @Override
+    public List<EduCourse> selectPublishedCourseList(EduCourse eduCourse) {
+        return eduCourseMapper.selectPublishedCourseList(eduCourse);
     }
 
     /**

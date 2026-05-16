@@ -23,12 +23,20 @@ public interface EduCourseMapper {
     public EduCourse selectEduCourseById(Long courseId);
 
     /**
-     * 查询课程列表
+     * 查询课程列表（后台管理，不过滤发布状态）
      *
      * @param eduCourse 课程
      * @return 课程集合
      */
     public List<EduCourse> selectEduCourseList(EduCourse eduCourse);
+
+    /**
+     * 查询已发布课程列表（前端用户页面）
+     *
+     * @param eduCourse 课程
+     * @return 课程集合
+     */
+    public List<EduCourse> selectPublishedCourseList(EduCourse eduCourse);
 
     /**
      * 根据语言查询课程列表

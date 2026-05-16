@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getCourseList(params = {}) {
   return request({
-    url: '/edu/course/list',
+    url: '/edu/course/public/list',
     method: 'get',
     params
   })

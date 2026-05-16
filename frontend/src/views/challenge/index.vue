@@ -124,39 +124,6 @@
         <el-empty v-else description="暂无排名信息" />
       </el-card>
 
-      <!-- 挑战记录 -->
-      <el-card class="history-card">
-        <template #header>
-          <div class="card-header">
-            <span>最近挑战</span>
-            <el-button link>查看全部</el-button>
-          </div>
-        </template>
-
-        <div class="history-list">
-          <div 
-            v-for="(record, index) in challengeHistory" 
-            :key="index"
-            class="history-item"
-          >
-            <div class="history-icon" :class="record.result">
-              {{ record.result === 'win' ? '✓' : '✗' }}
-            </div>
-            <div class="history-content">
-              <div class="history-title">{{ record.title }}</div>
-              <div class="history-time">{{ record.time }}</div>
-            </div>
-            <div class="history-reward">
-              <span class="reward-value" :class="record.result">
-                +{{ record.reward }}
-              </span>
-              <span class="reward-label">积分</span>
-            </div>
-          </div>
-
-          <el-empty v-if="challengeHistory.length === 0" description="暂无挑战记录" />
-        </div>
-      </el-card>
     </div>
   </div>
 </template>
@@ -169,27 +136,6 @@ const loading = ref(false)
 const currentMode = ref('total')
 const leaderboard = ref([])
 const myRank = ref(null)
-
-const challengeHistory = ref([
-  { 
-    title: '英语词汇大挑战', 
-    time: '2小时前', 
-    result: 'win', 
-    reward: 50 
-  },
-  { 
-    title: '日语听力挑战', 
-    time: '5小时前', 
-    result: 'win', 
-    reward: 80 
-  },
-  { 
-    title: '汉语拼音测试', 
-    time: '1天前', 
-    result: 'lose', 
-    reward: 20 
-  }
-])
 
 const topThree = computed(() => leaderboard.value.slice(0, 3))
 const rankList = computed(() => leaderboard.value.slice(3))
@@ -463,79 +409,6 @@ const getLevelType = (level) => {
             .value {
               font-weight: bold;
               color: #303133;
-            }
-          }
-        }
-      }
-    }
-
-    .history-card {
-      .history-list {
-        .history-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 0;
-          border-bottom: 1px solid #ebeef5;
-
-          &:last-child {
-            border-bottom: none;
-          }
-
-          .history-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-
-            &.win {
-              background: #67c23a;
-              color: white;
-            }
-
-            &.lose {
-              background: #f56c6c;
-              color: white;
-            }
-          }
-
-          .history-content {
-            flex: 1;
-
-            .history-title {
-              font-size: 14px;
-              margin-bottom: 4px;
-            }
-
-            .history-time {
-              font-size: 12px;
-              color: #909399;
-            }
-          }
-
-          .history-reward {
-            text-align: right;
-
-            .reward-value {
-              display: block;
-              font-size: 16px;
-              font-weight: bold;
-
-              &.win {
-                color: #67c23a;
-              }
-
-              &.lose {
-                color: #f56c6c;
-              }
-            }
-
-            .reward-label {
-              font-size: 12px;
-              color: #909399;
             }
           }
         }

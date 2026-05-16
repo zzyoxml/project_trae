@@ -25,13 +25,23 @@ public class EduCourseController extends BaseController {
     private IEduCourseService eduCourseService;
 
     /**
-     * 查询课程列表
+     * 查询课程列表（后台管理，不过滤发布状态）
      */
-    @Anonymous
     @GetMapping("/list")
     public TableDataInfo list(EduCourse eduCourse) {
         startPage();
         List<EduCourse> list = eduCourseService.selectEduCourseList(eduCourse);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询已发布课程列表（前端用户页面）
+     */
+    @Anonymous
+    @GetMapping("/public/list")
+    public TableDataInfo publicList(EduCourse eduCourse) {
+        startPage();
+        List<EduCourse> list = eduCourseService.selectPublishedCourseList(eduCourse);
         return getDataTable(list);
     }
 
