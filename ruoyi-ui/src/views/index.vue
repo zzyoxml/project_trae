@@ -48,91 +48,81 @@
     </el-row>
 
     <el-row :gutter="20" class="chart-row">
-      <el-col :xs="24" :lg="16">
+      <el-col :xs="24">
         <el-card class="chart-card">
           <div slot="header">
             <span>📊 学习数据趋势</span>
           </div>
-          <div ref="trendChart" style="width: 100%; height: 350px;"></div>
+          <div ref="trendChart" style="width: 100%; height: 400px;"></div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :lg="8">
+    </el-row>
+
+    <el-row :gutter="20" class="chart-row">
+      <el-col :xs="24">
         <el-card class="chart-card">
           <div slot="header">
             <span>🌐 课程语言分布</span>
           </div>
-          <div ref="languageChart" style="width: 100%; height: 350px;"></div>
+          <div ref="languageChart" style="width: 100%; height: 400px;"></div>
         </el-card>
       </el-col>
     </el-row>
 
     <el-row :gutter="20" class="table-row">
-      <el-col :xs="24" :lg="12">
+      <el-col :xs="24">
         <el-card class="recent-card">
           <div slot="header">
-            <span>👥 最新注册用户</span>
-            <el-button style="float: right; padding: 3px 10px" type="text" @click="$router.push('/system/user')">查看更多</el-button>
-          </div>
-          <el-table :data="recentUsers" style="width: 100%">
-            <el-table-column prop="nickName" label="用户名" width="120"></el-table-column>
-            <el-table-column prop="language" label="学习语言" width="100">
-              <template slot-scope="scope">
-                <el-tag :type="getLanguageType(scope.row.language)" size="small">
-                  {{ scope.row.language }}
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="joinTime" label="注册时间"></el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :lg="12">
-        <el-card class="recent-card">
-          <div slot="header">
-            <span>📚 热门课程</span>
+            <span> 热门课程</span>
             <el-button style="float: right; padding: 3px 10px" type="text" @click="$router.push('/edu/course')">查看更多</el-button>
           </div>
-          <el-table :data="popularCourses" style="width: 100%">
-            <el-table-column prop="courseName" label="课程名称" width="150"></el-table-column>
-            <el-table-column prop="language" label="语言" width="80">
+          <el-table :data="popularCourses" style="width: 100%" :header-cell-style="{fontSize: '15px', fontWeight: '600', textAlign: 'left'}" :cell-style="{fontSize: '14px', textAlign: 'left'}">
+            <el-table-column prop="courseName" label="课程名称" min-width="250">
               <template slot-scope="scope">
-                <el-tag :type="getLanguageType(scope.row.language)" size="small">
+                <span style="padding-left: 10px;">{{ scope.row.courseName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="language" label="语言" width="150">
+              <template slot-scope="scope">
+                <el-tag :type="getLanguageType(scope.row.language)" size="medium">
                   {{ getLanguageLabel(scope.row.language) }}
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="enrollCount" label="学习人数" width="100"></el-table-column>
+            <el-table-column prop="enrollCount" label="学习人数" width="150">
+              <template slot-scope="scope">
+                <el-tag type="success" size="medium">
+                  <i class="el-icon-user-solid"></i> {{ scope.row.enrollCount }}
+                </el-tag>
+              </template>
+            </el-table-column>
           </el-table>
         </el-card>
       </el-col>
     </el-row>
 
     <el-row :gutter="20" class="table-row">
-      <el-col :xs="24" :lg="12">
-        <el-card class="recent-card">
-          <div slot="header">
-            <span>🏆 学习排行榜 TOP 10</span>
-            <el-button style="float: right; padding: 3px 10px" type="text" @click="$router.push('/edu/achievement')">查看更多</el-button>
-          </div>
-          <el-table :data="topLearners" style="width: 100%">
-            <el-table-column type="index" label="排名" width="60"></el-table-column>
-            <el-table-column prop="nickName" label="用户名" width="120"></el-table-column>
-            <el-table-column prop="totalPoints" label="积分" width="80"></el-table-column>
-            <el-table-column prop="achievementCount" label="成就数" width="80"></el-table-column>
-          </el-table>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :lg="12">
+      <el-col :xs="24">
         <el-card class="recent-card">
           <div slot="header">
             <span>💬 最新社区帖子</span>
             <el-button style="float: right; padding: 3px 10px" type="text" @click="$router.push('/edu/community')">查看更多</el-button>
           </div>
-          <el-table :data="recentPosts" style="width: 100%">
-            <el-table-column prop="title" label="标题"></el-table-column>
-            <el-table-column prop="authorName" label="作者" width="100"></el-table-column>
-            <el-table-column prop="likeCount" label="点赞" width="60"></el-table-column>
-            <el-table-column prop="createTime" label="时间" width="120"></el-table-column>
+          <el-table :data="recentPosts" style="width: 100%" :header-cell-style="{fontSize: '15px', fontWeight: '600', textAlign: 'left'}" :cell-style="{fontSize: '14px', textAlign: 'left'}" v-loading="postsLoading">
+            <el-table-column prop="title" label="标题" min-width="250">
+              <template slot-scope="scope">
+                <span style="padding-left: 10px;">{{ scope.row.title }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="authorName" label="作者" width="150"></el-table-column>
+            <el-table-column prop="likeCount" label="点赞" width="120">
+              <template slot-scope="scope">
+                <el-tag type="danger" size="medium">
+                  <i class="el-icon-thumb"></i> {{ scope.row.likeCount }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="时间" width="180"></el-table-column>
           </el-table>
         </el-card>
       </el-col>
@@ -179,6 +169,7 @@
 <script>
 import * as echarts from 'echarts'
 import { getFeaturedCourses } from '@/api/edu/course'
+import { listPost } from '@/api/edu/post'
 
 export default {
   name: 'Dashboard',
@@ -192,13 +183,14 @@ export default {
       },
       recentUsers: [],
       popularCourses: [],
-      topLearners: [],
-      recentPosts: []
+      recentPosts: [],
+      postsLoading: false
     }
   },
   mounted() {
     this.loadStats()
     this.loadPopularCourses()
+    this.loadRecentPosts()
     this.loadCharts()
   },
   methods: {
@@ -209,35 +201,6 @@ export default {
         totalPosts: 328,
         totalAchievements: 28
       }
-
-      this.recentUsers = [
-        { nickName: '张小明', language: '英语', joinTime: '2024-01-15' },
-        { nickName: '李华', language: '日语', joinTime: '2024-01-14' },
-        { nickName: '小明', language: '汉语', joinTime: '2024-01-13' },
-        { nickName: 'John', language: '英语', joinTime: '2024-01-12' },
-        { nickName: '田中', language: '日语', joinTime: '2024-01-11' }
-      ]
-
-      this.topLearners = [
-        { nickName: '学习达人', totalPoints: 8500, achievementCount: 25 },
-        { nickName: '进步之星', totalPoints: 7200, achievementCount: 22 },
-        { nickName: '坚持不懈', totalPoints: 6800, achievementCount: 20 },
-        { nickName: '语言爱好者', totalPoints: 6500, achievementCount: 19 },
-        { nickName: '每日学习', totalPoints: 6200, achievementCount: 18 },
-        { nickName: '单词王', totalPoints: 5900, achievementCount: 17 },
-        { nickName: '语法专家', totalPoints: 5600, achievementCount: 16 },
-        { nickName: '口语达人', totalPoints: 5300, achievementCount: 15 },
-        { nickName: '听力高手', totalPoints: 5000, achievementCount: 14 },
-        { nickName: '阅读专家', totalPoints: 4700, achievementCount: 13 }
-      ]
-
-      this.recentPosts = [
-        { title: '英语学习方法分享', authorName: '小明', likeCount: 45, createTime: '2024-01-15' },
-        { title: '日语学习资源推荐', authorName: '太郎', likeCount: 38, createTime: '2024-01-14' },
-        { title: '汉语拼音技巧', authorName: '小红', likeCount: 32, createTime: '2024-01-13' },
-        { title: '学习打卡第二天', authorName: 'John', likeCount: 28, createTime: '2024-01-12' },
-        { title: '每日一句日语', authorName: '田中', likeCount: 25, createTime: '2024-01-11' }
-      ]
     },
 
     async loadPopularCourses() {
@@ -250,6 +213,26 @@ export default {
         }))
       } catch (e) {
         this.popularCourses = []
+      }
+    },
+
+    async loadRecentPosts() {
+      this.postsLoading = true
+      try {
+        const res = await listPost({ pageNum: 1, pageSize: 5, orderByColumn: 'createTime', isAsc: 'desc' })
+        if (res && res.rows) {
+          this.recentPosts = res.rows.map(post => ({
+            title: post.title,
+            authorName: post.userName || post.username || '未知用户',
+            likeCount: post.likeCount || 0,
+            createTime: post.createTime || ''
+          }))
+        }
+      } catch (error) {
+        console.error('加载社区帖子失败:', error)
+        this.recentPosts = []
+      } finally {
+        this.postsLoading = false
       }
     },
 
@@ -433,15 +416,23 @@ export default {
   padding: 20px;
   transition: all 0.3s;
   cursor: pointer;
+  border-radius: 8px;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   }
 
   .stat-icon {
     font-size: 48px;
     margin-right: 20px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background-color: rgba(64, 158, 255, 0.1);
   }
 
   .stat-content {
@@ -463,18 +454,22 @@ export default {
 
 .stat-users .stat-icon {
   color: #409EFF;
+  background-color: rgba(64, 158, 255, 0.1);
 }
 
 .stat-courses .stat-icon {
   color: #67C23A;
+  background-color: rgba(103, 194, 58, 0.1);
 }
 
 .stat-posts .stat-icon {
   color: #E6A23C;
+  background-color: rgba(230, 162, 60, 0.1);
 }
 
 .stat-achievements .stat-icon {
   color: #F56C6C;
+  background-color: rgba(245, 108, 108, 0.1);
 }
 
 .chart-row {
@@ -482,9 +477,13 @@ export default {
 }
 
 .chart-card {
+  border-radius: 8px;
+  
   .el-card__header {
     font-size: 16px;
     font-weight: bold;
+    background-color: #fafafa;
+    border-bottom: 1px solid #ebeef5;
   }
 }
 
@@ -493,12 +492,29 @@ export default {
 }
 
 .recent-card {
+  border-radius: 8px;
+  
   .el-card__header {
     font-size: 16px;
     font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #fafafa;
+    border-bottom: 1px solid #ebeef5;
+  }
+  
+  .el-table {
+    border-radius: 4px;
+    
+    ::v-deep .el-table__header-wrapper th {
+      background-color: #f5f7fa;
+      font-weight: 600;
+    }
+    
+    ::v-deep .el-table__row:hover {
+      background-color: #f5f7fa;
+    }
   }
 }
 
@@ -507,9 +523,13 @@ export default {
 }
 
 .info-card {
+  border-radius: 8px;
+  
   .el-card__header {
     font-size: 16px;
     font-weight: bold;
+    background-color: #fafafa;
+    border-bottom: 1px solid #ebeef5;
   }
 
   ol {

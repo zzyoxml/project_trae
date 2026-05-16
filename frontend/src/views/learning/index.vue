@@ -227,11 +227,13 @@ const getTodayStr = () => {
 }
 
 const isTaskClaimed = (taskId) => {
-  return localStorage.getItem(`task_claimed_${getTodayStr()}_${taskId}`) === 'true'
+  const userId = userStore.userId || 'guest'
+  return localStorage.getItem(`task_claimed_${userId}_${getTodayStr()}_${taskId}`) === 'true'
 }
 
 const setTaskClaimed = (taskId) => {
-  localStorage.setItem(`task_claimed_${getTodayStr()}_${taskId}`, 'true')
+  const userId = userStore.userId || 'guest'
+  localStorage.setItem(`task_claimed_${userId}_${getTodayStr()}_${taskId}`, 'true')
 }
 
 const loadLearningStats = async () => {
