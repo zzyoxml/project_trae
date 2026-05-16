@@ -129,7 +129,7 @@
         <template #header>
           <div class="card-header">
             <span>最近挑战</span>
-            <el-button type="text">查看全部</el-button>
+            <el-button link>查看全部</el-button>
           </div>
         </template>
 

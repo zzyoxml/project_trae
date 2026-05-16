@@ -205,7 +205,7 @@
         <template #header>
           <div class="card-header">
             <span>最近学习</span>
-            <el-button type="text" @click="$router.push('/learning')">查看全部</el-button>
+            <el-button link @click="$router.push('/learning')">查看全部</el-button>
           </div>
         </template>
 

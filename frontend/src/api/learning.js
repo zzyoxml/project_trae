@@ -66,3 +66,11 @@ export function getLessonDetail(lessonId) {
     method: 'get'
   })
 }
+
+export function claimTaskReward(taskName, reward) {
+  return request({
+    url: '/edu/learning/claim-task-reward',
+    method: 'post',
+    data: { taskName, reward }
+  })
+}

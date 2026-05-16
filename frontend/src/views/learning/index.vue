@@ -21,7 +21,7 @@
           />
           <div class="progress-info">
             <div class="progress-label">今日目标</div>
-            <div class="progress-value">{{ userStore.dailyGoal || 30 }} 分钟</div>
+            <div class="progress-value">30 分钟</div>
           </div>
         </div>
 
@@ -29,7 +29,7 @@
           <div class="stat-item">
             <span class="stat-icon">🔥</span>
             <div class="stat-content">
-              <div class="stat-value">{{ userStore.currentStreak || 0 }}</div>
+              <div class="stat-value">{{ currentStreak }}</div>
               <div class="stat-label">连续学习天数</div>
             </div>
           </div>
@@ -37,7 +37,7 @@
           <div class="stat-item">
             <span class="stat-icon">⏱️</span>
             <div class="stat-content">
-              <div class="stat-value">{{ userStore.totalStudyTime || 0 }}</div>
+              <div class="stat-value">{{ totalStudyTime }}</div>
               <div class="stat-label">总学习时间(分钟)</div>
             </div>
           </div>
@@ -53,7 +53,7 @@
           <div class="stat-item">
             <span class="stat-icon">⭐</span>
             <div class="stat-content">
-              <div class="stat-value">{{ userStore.totalPoints || 0 }}</div>
+              <div class="stat-value">{{ totalPoints }}</div>
               <div class="stat-label">总积分</div>
             </div>
           </div>
@@ -81,7 +81,7 @@
             <div class="mode-name">{{ mode.name }}</div>
             <div class="mode-desc">{{ mode.description }}</div>
           </div>
-          <el-tag size="small" type="info">{{ mode.count }} 个内容</el-tag>
+          <el-tag size="small" type="info">{{ mode.count || 0 }} 技能评分</el-tag>
         </div>
       </div>
     </el-card>
@@ -91,7 +91,7 @@
       <template #header>
         <div class="card-header">
           <span>继续学习</span>
-          <el-button type="text" @click="$router.push('/course')">查看全部课程</el-button>
+          <el-button link @click="$router.push('/course')">查看全部课程</el-button>
         </div>
       </template>
 
@@ -186,15 +186,23 @@
             <div class="task-name">{{ task.name }}</div>
             <div class="task-reward">+{{ task.reward }} 积分</div>
           </div>
+          <el-tag v-if="task.claimed" type="info" size="small">已领取</el-tag>
           <el-button 
-            v-if="!task.completed" 
+            v-else-if="task.completed" 
+            type="success" 
+            size="small"
+            @click="claimReward(task)"
+          >
+            领取 +{{ task.reward }}积分
+          </el-button>
+          <el-button 
+            v-else
             type="primary" 
             size="small"
-            @click="completeTask(task)"
+            @click="goToTask(task)"
           >
             去完成
           </el-button>
-          <el-tag v-else type="success" size="small">已完成</el-tag>
         </div>
       </div>
     </el-card>
@@ -206,6 +214,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getMyCourses, getFeaturedCourses } from '@/api/course'
+import { getLearningStats, getSkillScores, claimTaskReward } from '@/api/learning'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -215,8 +224,14 @@ const loading = ref(false)
 const inProgressCourses = ref([])
 const recommendedCourses = ref([])
 const todayMinutes = ref(0)
-
 const completedCourses = ref(0)
+const currentStreak = ref(0)
+const totalStudyTime = ref(0)
+const totalPoints = ref(0)
+
+const dailyTasks = ref([])
+const completedTasks = ref(0)
+const totalTasks = ref(0)
 
 const learningModes = ref([
   { 
@@ -224,50 +239,90 @@ const learningModes = ref([
     icon: '📝', 
     name: '单词记忆', 
     description: '使用联想记忆法高效背单词',
-    count: 156
+    skill: 'vocabulary'
   },
   { 
     id: 2, 
     icon: '📖', 
     name: '语法学习', 
     description: '系统学习语言语法规则',
-    count: 45
+    skill: 'grammar'
   },
   { 
     id: 3, 
     icon: '🎧', 
     name: '听力训练', 
     description: '提升听力理解能力',
-    count: 30
+    skill: 'listening'
   },
   { 
     id: 4, 
     icon: '🗣️', 
     name: '口语练习', 
     description: '跟读练习提升口语',
-    count: 25
+    skill: 'speaking'
   }
 ])
 
-const dailyTasks = ref([
-  { id: 1, icon: '📚', name: '完成1节课', reward: 10, completed: true },
-  { id: 2, icon: '⏱️', name: '学习30分钟', reward: 15, completed: true },
-  { id: 3, icon: '🔥', name: '连续签到', reward: 20, completed: false },
-  { id: 4, icon: '🏆', name: '完成每日挑战', reward: 25, completed: false }
-])
-
-const completedTasks = computed(() => dailyTasks.value.filter(t => t.completed).length)
-const totalTasks = computed(() => dailyTasks.value.length)
-
 const dailyProgress = computed(() => {
-  const goal = userStore.dailyGoal || 30
+  const goal = 30
   return Math.min(100, Math.round((todayMinutes.value / goal) * 100))
 })
 
 onMounted(async () => {
-  await loadInProgressCourses()
-  await loadRecommendedCourses()
+  await Promise.all([
+    loadLearningStats(),
+    loadInProgressCourses(),
+    loadRecommendedCourses(),
+    loadSkillScores()
+  ])
 })
+
+const getTodayStr = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+const isTaskClaimed = (taskId) => {
+  return localStorage.getItem(`task_claimed_${getTodayStr()}_${taskId}`) === 'true'
+}
+
+const setTaskClaimed = (taskId) => {
+  localStorage.setItem(`task_claimed_${getTodayStr()}_${taskId}`, 'true')
+}
+
+const loadLearningStats = async () => {
+  try {
+    const res = await getLearningStats()
+    const data = res && res.data ? res.data : res
+    if (data) {
+      todayMinutes.value = data.todayStudyTime || 0
+      currentStreak.value = data.currentStreak || 0
+      totalStudyTime.value = data.total_duration || data.totalStudyTime || 0
+      totalPoints.value = data.total_xp || data.totalPoints || 0
+      completedCourses.value = data.completedCourses || 0
+
+      const loginTime = parseInt(sessionStorage.getItem('loginTime') || '0')
+      const onlineMinutes = loginTime > 0 ? Math.floor((Date.now() - loginTime) / 60000) : 0
+      const tasks = [
+        { id: 1, icon: '📚', name: '完成1节课', reward: 5, completed: (data.today_records || 0) > 0, claimed: isTaskClaimed(1) },
+        { id: 2, icon: '⏱️', name: '学习5分钟', reward: 15, completed: onlineMinutes >= 5, claimed: isTaskClaimed(2) }
+      ]
+      dailyTasks.value = tasks
+      completedTasks.value = tasks.filter(t => t.completed).length
+      totalTasks.value = tasks.length
+    }
+  } catch (error) {
+    console.error('加载学习统计失败:', error)
+    const tasks = [
+      { id: 1, icon: '📚', name: '完成1节课', reward: 5, completed: false, claimed: isTaskClaimed(1) },
+      { id: 2, icon: '⏱️', name: '学习5分钟', reward: 15, completed: false, claimed: isTaskClaimed(2) }
+    ]
+    dailyTasks.value = tasks
+    completedTasks.value = 0
+    totalTasks.value = 2
+  }
+}
 
 const loadInProgressCourses = async () => {
   loading.value = true
@@ -280,8 +335,6 @@ const loadInProgressCourses = async () => {
         completedLessons: Math.floor((course.progressPercent || 0) / 100 * (course.totalLessons || 20)),
         totalLessons: course.totalLessons || 20
       }))
-      completedCourses.value = res.filter(c => c.status === 'completed').length || res.length
-      todayMinutes.value = res.reduce((sum, c) => sum + ((c.progressPercent || 0) * 0.5), 0)
     }
   } catch (error) {
     console.error('加载学习中课程失败:', error)
@@ -301,6 +354,21 @@ const loadRecommendedCourses = async () => {
   }
 }
 
+const loadSkillScores = async () => {
+  try {
+    const res = await getSkillScores()
+    const data = res && res.data ? res.data : res
+    if (data) {
+      learningModes.value = learningModes.value.map(mode => ({
+        ...mode,
+        count: data[mode.skill] || 0
+      }))
+    }
+  } catch (error) {
+    console.error('加载技能评分失败:', error)
+  }
+}
+
 const selectMode = (mode) => {
   ElMessage.info(`即将进入${mode.name}模式`)
 }
@@ -313,8 +381,25 @@ const goToCourse = (courseId) => {
   router.push(`/course/${courseId}`)
 }
 
-const completeTask = (task) => {
-  ElMessage.info(`即将前往完成：${task.name}`)
+const goToTask = (task) => {
+  if (task.id === 1) {
+    router.push('/course')
+  } else if (task.id === 2) {
+    ElMessage.info('保持在线5分钟即可自动完成')
+  }
+}
+
+const claimReward = async (task) => {
+  try {
+    await claimTaskReward(task.name, task.reward)
+    task.claimed = true
+    setTaskClaimed(task.id)
+    totalPoints.value += task.reward
+    ElMessage.success(`领取成功！+${task.reward} 积分`)
+  } catch (error) {
+    console.error('领取奖励失败:', error)
+    ElMessage.error('领取失败')
+  }
 }
 
 const getLanguageText = (language) => {

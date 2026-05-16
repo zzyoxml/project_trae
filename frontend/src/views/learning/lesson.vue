@@ -201,7 +201,7 @@ const completeLesson = async () => {
     } else {
       ElMessage.success('课时完成！')
     }
-    router.back()
+    router.push('/learning')
   } catch (error) {
     console.error('完成课时失败:', error)
     if (error.message && error.message.includes('已完成')) {

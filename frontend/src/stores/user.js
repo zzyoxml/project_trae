@@ -23,15 +23,15 @@ export const useUserStore = defineStore('user', {
     learningGoal: '',
     dailyGoal: 30,
     totalStudyTime: 0,
-    totalStudyMinutes: 360,
-    currentStreak: 5,
-    totalPoints: 2580,
+    totalStudyMinutes: 0,
+    currentStreak: 0,
+    totalPoints: 0,
     level: 1,
     experiencePoints: 0,
-    completedCourses: 2,
-    streakDays: 5,
-    achievementsCount: 8,
-    vocabularyCount: 156,
+    completedCourses: 0,
+    streakDays: 0,
+    achievementsCount: 0,
+    vocabularyCount: 0,
     roles: [],
     permissions: []
   }),
@@ -70,6 +70,7 @@ export const useUserStore = defineStore('user', {
         
         this.token = token
         setToken(token)
+        sessionStorage.setItem('loginTime', Date.now().toString())
         
         if (user) {
           this.setUserInfo(user)
@@ -120,15 +121,15 @@ export const useUserStore = defineStore('user', {
       this.learningGoal = user.learningGoal || ''
       this.dailyGoal = user.dailyGoal || 30
       this.totalStudyTime = user.totalStudyTime || 0
-      this.totalStudyMinutes = user.totalStudyMinutes || user.totalMinutes || 360
-      this.currentStreak = user.currentStreak || 5
-      this.totalPoints = user.totalPoints || 2580
+      this.totalStudyMinutes = user.totalStudyMinutes || user.totalMinutes || 0
+      this.currentStreak = user.currentStreak || 0
+      this.totalPoints = user.totalPoints || 0
       this.level = user.level || 1
       this.experiencePoints = user.experiencePoints || 0
-      this.completedCourses = user.completedCourses || 2
-      this.streakDays = user.streakDays || 5
-      this.achievementsCount = user.achievementsCount || 8
-      this.vocabularyCount = user.vocabularyCount || 156
+      this.completedCourses = user.completedCourses || 0
+      this.streakDays = user.streakDays || 0
+      this.achievementsCount = user.achievementsCount || 0
+      this.vocabularyCount = user.vocabularyCount || 0
     },
 
     async updateUserInfo(userInfo) {

@@ -116,12 +116,12 @@
                 <span class="label">学员数量：</span>
                 <span class="value">{{ course.studentCount }} 人</span>
               </div>
-              <div class="info-item">
+              <!-- <div class="info-item">
                 <span class="label">课程评分：</span>
                 <span class="value rating-value">
                   <el-icon><Star /></el-icon> {{ course.rating }}
                 </span>
-              </div>
+              </div> -->
             </div>
 
             <el-button

@@ -166,7 +166,7 @@ const goToCourse = (courseId) => {
 }
 
 const goToPost = (postId) => {
-  router.push(`/community/${postId}`)
+  router.push(`/community/post/${postId}`)
 }
 
 const getLevelText = (level) => {

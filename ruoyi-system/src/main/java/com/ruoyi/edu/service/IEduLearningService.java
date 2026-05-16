@@ -129,6 +129,8 @@ public interface IEduLearningService {
 
     public Map<String, Object> completeLesson(Long userId, Long lessonId, Long courseId, Integer score, Integer duration);
 
+    public void claimTaskReward(Long userId, String taskName, Integer reward);
+
     /**
      * 获取学习统计数据（后台管理）
      *

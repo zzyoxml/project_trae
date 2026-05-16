@@ -143,7 +143,7 @@ public class EduLearningServiceImpl implements IEduLearningService {
         record.setUserId(userId);
         record.setLessonId(lessonId);
         record.setCourseId(courseId);
-        record.setActivityType(lesson.getLessonType());
+        record.setActivityType(lesson.getLessonType() != null ? lesson.getLessonType() : "lesson");
         record.setLanguage(""); // 可以从课程信息中获取
         record.setDuration(0);
         record.setScore(0);
@@ -452,12 +452,32 @@ public class EduLearningServiceImpl implements IEduLearningService {
             log.info("用户完成课时获得积分: userId={}, lessonId={}, points={}", userId, lessonId, pointsAdded);
         }
 
+        EduLearningRecord record = new EduLearningRecord();
+        record.setUserId(userId);
+        record.setLessonId(lessonId);
+        record.setCourseId(courseId);
+        record.setActivityType(lesson.getLessonType() != null ? lesson.getLessonType() : "lesson");
+        record.setLanguage("");
+        record.setDuration(duration != null ? duration : 0);
+        record.setScore(score != null ? score : 0);
+        record.setCompleted(true);
+        record.setXpEarned(pointsAdded);
+        record.setCoinsEarned(0);
+        learningRecordMapper.insertEduLearningRecord(record);
+
         result.put("pointsAdded", pointsAdded);
         result.put("passed", true);
         result.put("message", isFirstCompletion ? "课时完成，获得积分" : "课时完成");
 
         log.info("完成课时: userId={}, lessonId={}, score={}, firstCompletion={}", userId, lessonId, score, isFirstCompletion);
         return result;
+    }
+
+    @Override
+    @Transactional
+    public void claimTaskReward(Long userId, String taskName, Integer reward) {
+        userService.addUserPoints(userId, reward);
+        log.info("领取任务奖励: userId={}, taskName={}, reward={}", userId, taskName, reward);
     }
 
     @Override

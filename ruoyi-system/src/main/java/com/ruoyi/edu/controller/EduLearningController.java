@@ -250,4 +250,16 @@ public class EduLearningController extends BaseController {
         Map<String, Object> detail = eduLearningService.getUserLearningDetail(userId);
         return success(detail);
     }
+
+    @PostMapping("/claim-task-reward")
+    public AjaxResult claimTaskReward(@RequestBody Map<String, Object> params) {
+        Long userId = SecurityUtils.getUserId();
+        String taskName = params.get("taskName") != null ? params.get("taskName").toString() : "";
+        Integer reward = params.get("reward") != null ? Integer.parseInt(params.get("reward").toString()) : 0;
+
+        if (reward > 0) {
+            eduLearningService.claimTaskReward(userId, taskName, reward);
+        }
+        return success("领取成功");
+    }
 }
