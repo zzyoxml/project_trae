@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduLearningRecordMapper">
+
+    <resultMap type="com.ruoyi.edu.domain.EduLearningRecord" id="EduLearningRecordResult">
+        <result property="recordId" column="record_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="lessonId" column="lesson_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="activityType" column="activity_type"/>
+        <result property="language" column="language"/>
+        <result property="duration" column="duration"/>
+        <result property="score" column="score"/>
+        <result property="maxScore" column="max_score"/>
+        <result property="accuracy" column="accuracy"/>
+        <result property="xpEarned" column="xp_earned"/>
+        <result property="coinsEarned" column="coins_earned"/>
+        <result property="completed" column="completed"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectEduLearningRecordVo">
+        select record_id, user_id, lesson_id, course_id, activity_type, language,
+               duration, score, max_score, accuracy, xp_earned, coins_earned,
+               completed, create_time, update_time
+        from edu_learning_record
+    </sql>
+
+    <select id="selectEduLearningRecordById" parameterType="Long" resultMap="EduLearningRecordResult">
+        <include refid="selectEduLearningRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <select id="selectEduLearningRecordList" parameterType="com.ruoyi.edu.domain.EduLearningRecord" resultMap="EduLearningRecordResult">
+        <include refid="selectEduLearningRecordVo"/>
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="courseId != null">
+                AND course_id = #{courseId}
+            </if>
+            <if test="lessonId != null">
+                AND lesson_id = #{lessonId}
+            </if>
+            <if test="activityType != null and activityType != ''">
+                AND activity_type = #{activityType}
+            </if>
+            <if test="language != null and language != ''">
+                AND language = #{language}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <insert id="insertEduLearningRecord" parameterType="com.ruoyi.edu.domain.EduLearningRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into edu_learning_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="lessonId != null">lesson_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="activityType != null and activityType != ''">activity_type,</if>
+            <if test="language != null and language != ''">language,</if>
+            <if test="duration != null">duration,</if>
+            <if test="score != null">score,</if>
+            <if test="maxScore != null">max_score,</if>
+            <if test="accuracy != null">accuracy,</if>
+            <if test="xpEarned != null">xp_earned,</if>
+            <if test="coinsEarned != null">coins_earned,</if>
+            <if test="completed != null">completed,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="lessonId != null">#{lessonId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="activityType != null and activityType != ''">#{activityType},</if>
+            <if test="language != null and language != ''">#{language},</if>
+            <if test="duration != null">#{duration},</if>
+            <if test="score != null">#{score},</if>
+            <if test="maxScore != null">#{maxScore},</if>
+            <if test="accuracy != null">#{accuracy},</if>
+            <if test="xpEarned != null">#{xpEarned},</if>
+            <if test="coinsEarned != null">#{coinsEarned},</if>
+            <if test="completed != null">#{completed},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEduLearningRecord" parameterType="com.ruoyi.edu.domain.EduLearningRecord">
+        update edu_learning_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lessonId != null">lesson_id = #{lessonId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="activityType != null and activityType != ''">activity_type = #{activityType},</if>
+            <if test="language != null and language != ''">language = #{language},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="maxScore != null">max_score = #{maxScore},</if>
+            <if test="accuracy != null">accuracy = #{accuracy},</if>
+            <if test="xpEarned != null">xp_earned = #{xpEarned},</if>
+            <if test="coinsEarned != null">coins_earned = #{coinsEarned},</if>
+            <if test="completed != null">completed = #{completed},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteEduLearningRecordById" parameterType="Long">
+        delete from edu_learning_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteEduLearningRecordByIds" parameterType="Long">
+        delete from edu_learning_record where record_id in
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+    <select id="selectUserRecentRecords" resultMap="EduLearningRecordResult">
+        <include refid="selectEduLearningRecordVo"/>
+        where user_id = #{userId}
+        and create_time >= DATE_SUB(CURDATE(), INTERVAL #{days} DAY)
+        order by create_time desc
+    </select>
+
+    <select id="getTodayStudyTime" resultType="int">
+        select ifnull(sum(duration), 0)
+        from edu_learning_record
+        where user_id = #{userId}
+        and date(create_time) = curdate()
+    </select>
+
+    <select id="getWeekStudyTime" resultType="int">
+        select ifnull(sum(duration), 0)
+        from edu_learning_record
+        where user_id = #{userId}
+        and create_time >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    </select>
+
+    <select id="getUserStudyStats" resultType="map">
+        select
+            count(*) as total_records,
+            ifnull(sum(duration), 0) as total_duration,
+            ifnull(avg(score), 0) as avg_score,
+            ifnull(sum(xp_earned), 0) as total_xp,
+            ifnull(sum(coins_earned), 0) as total_coins,
+            (select count(*) from edu_learning_record where user_id = #{userId} and date(create_time) = curdate()) as today_records
+        from edu_learning_record
+        where user_id = #{userId}
+    </select>
+
+    <select id="getUserSkillScore" resultType="Integer">
+        select ifnull(avg(score), 0)
+        from edu_learning_record
+        where user_id = #{userId}
+        and activity_type = #{skillType}
+    </select>
+
+</mapper>
