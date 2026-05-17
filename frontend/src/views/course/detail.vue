@@ -70,6 +70,7 @@
                     v-for="(lesson, lIndex) in unit.lessons"
                     :key="lesson.lessonId"
                     class="lesson-item"
+                    :class="{ 'lesson-completed': lesson.completed }"
                     @click="startLearning(lesson)"
                   >
                     <div class="lesson-number">{{ lIndex + 1 }}</div>
@@ -428,6 +429,24 @@ const handleImageError = (e) => {
                 font-size: 14px;
                 font-weight: bold;
                 flex-shrink: 0;
+              }
+
+              &.lesson-completed {
+                background: rgba(103, 194, 58, 0.12);
+                border-left: 4px solid #67c23a;
+                
+                .lesson-number {
+                  background: #67c23a;
+                }
+                
+                .lesson-name {
+                  color: #67c23a;
+                  font-weight: 500;
+                }
+                
+                &:hover {
+                  background: rgba(103, 194, 58, 0.2);
+                }
               }
 
               .lesson-info {

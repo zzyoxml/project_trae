@@ -96,6 +96,11 @@ public class EduCourseLesson extends BaseEntity {
     private Integer attemptCount;
 
     /**
+     * 课时是否已完成（非数据库字段）
+     */
+    private Boolean completed;
+
+    /**
      * 单元ID列表（逗号分隔，非数据库字段）
      */
     private String unitIds;
@@ -247,6 +252,14 @@ public class EduCourseLesson extends BaseEntity {
 
     public void setAttemptCount(Integer attemptCount) {
         this.attemptCount = attemptCount;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
     public String getDelFlag() {

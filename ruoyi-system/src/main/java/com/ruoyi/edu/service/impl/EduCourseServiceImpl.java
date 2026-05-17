@@ -6,11 +6,12 @@ import com.ruoyi.edu.domain.EduCourse;
 import com.ruoyi.edu.domain.EduCourseLesson;
 import com.ruoyi.edu.domain.EduCourseUnit;
 import com.ruoyi.edu.domain.EduUserCourse;
-import com.ruoyi.edu.mapper.EduCourseLessonMapper;
 import com.ruoyi.edu.mapper.EduCourseMapper;
+import com.ruoyi.edu.mapper.EduCourseLessonMapper;
 import com.ruoyi.edu.mapper.EduCourseUnitMapper;
 import com.ruoyi.edu.mapper.EduUserCourseMapper;
 import com.ruoyi.edu.mapper.EduVocabularyMapper;
+import com.ruoyi.edu.mapper.EduLearningProgressMapper;
 import com.ruoyi.edu.service.IEduCourseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,9 @@ public class EduCourseServiceImpl implements IEduCourseService {
 
     @Autowired
     private EduVocabularyMapper eduVocabularyMapper;
+
+    @Autowired
+    private EduLearningProgressMapper eduLearningProgressMapper;
 
     /**
      * 查询课程
@@ -234,6 +238,17 @@ public class EduCourseServiceImpl implements IEduCourseService {
             course.setIsEnrolled(userCourse != null);
             if (userCourse != null) {
                 course.setProgressPercent(userCourse.getProgressPercent());
+            }
+            
+            // 为每个课时设置completed属性
+            for (EduCourseUnit unit : units) {
+                if (unit.getLessons() != null) {
+                    for (EduCourseLesson lesson : unit.getLessons()) {
+                        com.ruoyi.edu.domain.EduLearningProgress progress = 
+                            eduLearningProgressMapper.selectEduLearningProgressByUserAndLesson(userId, lesson.getLessonId());
+                        lesson.setCompleted(progress != null && "completed".equals(progress.getStatus()));
+                    }
+                }
             }
         }
 
