@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.edu.mapper.EduAppUserMapper">
+
+    <resultMap type="EduAppUser" id="EduAppUserResult">
+        <id     property="userId"       column="user_id"      />
+        <result property="username"     column="username"     />
+        <result property="password"     column="password"     />
+        <result property="nickName"     column="nick_name"    />
+        <result property="email"        column="email"        />
+        <result property="phonenumber"  column="phonenumber"  />
+        <result property="avatar"       column="avatar"       />
+        <result property="status"       column="status"       />
+        <result property="delFlag"      column="del_flag"     />
+        <result property="createBy"     column="create_by"    />
+        <result property="createTime"   column="create_time"  />
+        <result property="updateBy"     column="update_by"    />
+        <result property="updateTime"   column="update_time"  />
+        <result property="remark"       column="remark"       />
+    </resultMap>
+
+    <sql id="selectEduAppUserVo">
+        select user_id, username, password, nick_name, email, phonenumber, avatar, status, del_flag, create_by, create_time, update_by, update_time, remark
+        from edu_app_user
+    </sql>
+
+    <select id="selectEduAppUserById" parameterType="Long" resultMap="EduAppUserResult">
+        <include refid="selectEduAppUserVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <select id="selectEduAppUserByUserName" parameterType="String" resultMap="EduAppUserResult">
+        <include refid="selectEduAppUserVo"/>
+        where username = #{username} and del_flag = '0'
+    </select>
+
+    <select id="checkEmailUnique" parameterType="String" resultMap="EduAppUserResult">
+        <include refid="selectEduAppUserVo"/>
+        where email = #{email} and del_flag = '0' limit 1
+    </select>
+
+    <select id="selectEduAppUserList" parameterType="EduAppUser" resultMap="EduAppUserResult">
+        <include refid="selectEduAppUserVo"/>
+        where del_flag = '0'
+        <if test="userId != null and userId != 0">
+            AND user_id = #{userId}
+        </if>
+        <if test="username != null and username != ''">
+            AND username like concat('%', #{username}, '%')
+        </if>
+        <if test="nickName != null and nickName != ''">
+            AND nick_name like concat('%', #{nickName}, '%')
+        </if>
+        <if test="email != null and email != ''">
+            AND email like concat('%', #{email}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            AND phonenumber like concat('%', #{phonenumber}, '%')
+        </if>
+        order by create_time desc
+    </select>
+
+    <insert id="insertEduAppUser" parameterType="EduAppUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into edu_app_user(
+            <if test="username != null and username != ''">username,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="nickName != null and nickName != ''">nick_name,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="phonenumber != null and phonenumber != ''">phonenumber,</if>
+            <if test="avatar != null and avatar != ''">avatar,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time
+        )values(
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="nickName != null and nickName != ''">#{nickName},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="phonenumber != null and phonenumber != ''">#{phonenumber},</if>
+            <if test="avatar != null and avatar != ''">#{avatar},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate()
+        )
+    </insert>
+
+    <update id="updateEduAppUser" parameterType="EduAppUser">
+        update edu_app_user
+        <set>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="phonenumber != null and phonenumber != ''">phonenumber = #{phonenumber},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteEduAppUserById" parameterType="Long">
+        update edu_app_user set del_flag = '2' where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteEduAppUserByIds" parameterType="Long">
+        update edu_app_user set del_flag = '2' where user_id in
+        <foreach item="userId" collection="array" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </delete>
+
+</mapper>
