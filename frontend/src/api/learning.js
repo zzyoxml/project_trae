@@ -74,3 +74,10 @@ export function claimTaskReward(taskName, reward) {
     data: { taskName, reward }
   })
 }
+
+export function getTodayCompletedLessons() {
+  return request({
+    url: '/edu/learning/today-completed',
+    method: 'get'
+  })
+}

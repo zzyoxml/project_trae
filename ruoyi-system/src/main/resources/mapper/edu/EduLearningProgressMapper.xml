@@ -144,9 +144,10 @@
     </select>
 
     <select id="getUserStreak" resultType="int">
-        select current_streak
-        from edu_user_profile
-        where user_id = #{userId}
+        select coalesce(
+            (select current_streak from edu_user_profile where user_id = #{userId}),
+            0
+        ) as streak
     </select>
 
     <select id="selectEduLearningProgressByUser" resultMap="EduLearningProgressResult">

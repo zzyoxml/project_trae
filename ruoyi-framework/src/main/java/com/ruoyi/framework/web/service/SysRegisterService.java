@@ -41,6 +41,10 @@ public class SysRegisterService
     public String register(RegisterBody registerBody)
     {
         String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
+        String nickName = registerBody.getNickName();
+        String email = registerBody.getEmail();
+        String phone = registerBody.getPhone();
+        
         SysUser sysUser = new SysUser();
         sysUser.setUserName(username);
 
@@ -75,7 +79,28 @@ public class SysRegisterService
         }
         else
         {
-            sysUser.setNickName(username);
+            // 使用用户输入的昵称，如果没有则使用用户名
+            if (StringUtils.isNotEmpty(nickName))
+            {
+                sysUser.setNickName(nickName);
+            }
+            else
+            {
+                sysUser.setNickName(username);
+            }
+            
+            // 设置邮箱
+            if (StringUtils.isNotEmpty(email))
+            {
+                sysUser.setEmail(email);
+            }
+            
+            // 设置手机号（SysUser中使用phonenumber字段）
+            if (StringUtils.isNotEmpty(phone))
+            {
+                sysUser.setPhonenumber(phone);
+            }
+            
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
             boolean regFlag = userService.registerUser(sysUser);
             if (!regFlag)

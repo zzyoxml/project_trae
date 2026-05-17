@@ -702,4 +702,15 @@ public class EduLearningServiceImpl implements IEduLearningService {
         
         return detail;
     }
+
+    /**
+     * 获取用户今日完成课时数
+     *
+     * @param userId 用户ID
+     * @return 今日完成课时数
+     */
+    @Override
+    public int getTodayCompletedLessons(Long userId) {
+        return learningRecordMapper.getTodayCompletedLessons(userId);
+    }
 }

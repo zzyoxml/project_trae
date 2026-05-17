@@ -155,4 +155,12 @@
         and activity_type = #{skillType}
     </select>
 
+    <select id="getTodayCompletedLessons" resultType="int">
+        select count(*)
+        from edu_learning_record
+        where user_id = #{userId}
+        and completed = 1
+        and date(create_time) = curdate()
+    </select>
+
 </mapper>

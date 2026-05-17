@@ -72,9 +72,8 @@ export const useUserStore = defineStore('user', {
         setToken(token)
         sessionStorage.setItem('loginTime', Date.now().toString())
         
-        if (user) {
-          this.setUserInfo(user)
-        }
+        // 登录成功后获取用户信息
+        await this.getUserInfo()
         
         return res
       } catch (error) {
@@ -110,12 +109,13 @@ export const useUserStore = defineStore('user', {
     setUserInfo(user) {
       if (!user) return
       
+      // 处理后端字段名（userName, nickName, phonenumber）
       this.userId = user.userId || user.id
-      this.username = user.username || user.userName
-      this.nickname = user.nickname || user.nickName
+      this.username = user.userName || user.username
+      this.nickname = user.nickName || user.nickname
       this.avatar = user.avatar || user.avatarUrl
       this.email = user.email || ''
-      this.phone = user.phone || ''
+      this.phone = user.phonenumber || user.phone || ''
       this.nativeLanguage = user.nativeLanguage || 'zh'
       this.learningLanguages = user.learningLanguages || ['英语']
       this.learningGoal = user.learningGoal || ''

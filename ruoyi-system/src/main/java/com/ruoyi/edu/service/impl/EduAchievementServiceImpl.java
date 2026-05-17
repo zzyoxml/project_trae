@@ -284,6 +284,9 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
             List<EduLearningProgress> allProgress = learningProgressMapper.selectEduLearningProgressList(new EduLearningProgress());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             
+            // 设置时区为系统默认时区
+            sdf.setTimeZone(TimeZone.getDefault());
+            
             Calendar today = Calendar.getInstance();
             today.set(Calendar.HOUR_OF_DAY, 0);
             today.set(Calendar.MINUTE, 0);
@@ -297,17 +300,22 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
             weekStart.set(Calendar.SECOND, 0);
             weekStart.set(Calendar.MILLISECOND, 0);
             
+            log.info("开始计算日榜/周榜积分, today={}, weekStart={}", 
+                sdf.format(today.getTime()), sdf.format(weekStart.getTime()));
+            
             for (EduLearningProgress progress : allProgress) {
                 if ("completed".equals(progress.getStatus()) && progress.getCompletedTime() != null) {
                     try {
                         Date completedDate = sdf.parse(progress.getCompletedTime());
                         Long userId = progress.getUserId();
                         
-                        if (completedDate.after(today.getTime())) {
+                        // 使用 !before 等同于 afterOrEqual, 确保今天的0点也算入
+                        if (!completedDate.before(today.getTime())) {
                             dailyPointsMap.put(userId, dailyPointsMap.getOrDefault(userId, 0) + 5);
+                            log.debug("用户 {} 完成课时获得5积分, completedTime={}", userId, progress.getCompletedTime());
                         }
                         
-                        if (completedDate.after(weekStart.getTime())) {
+                        if (!completedDate.before(weekStart.getTime())) {
                             weeklyPointsMap.put(userId, weeklyPointsMap.getOrDefault(userId, 0) + 5);
                         }
                     } catch (Exception e) {
@@ -315,6 +323,8 @@ public class EduAchievementServiceImpl implements IEduAchievementService {
                     }
                 }
             }
+            
+            log.info("日榜积分计算完成, 共有 {} 个用户获得积分", dailyPointsMap.size());
         }
 
         // 按类型排序

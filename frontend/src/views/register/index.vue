@@ -40,6 +40,15 @@
           />
         </el-form-item>
 
+        <el-form-item prop="phone">
+          <el-input
+            v-model="registerForm.phone"
+            placeholder="请输入手机号（选填）"
+            size="large"
+            prefix-icon="Phone"
+          />
+        </el-form-item>
+
         <el-form-item prop="password">
           <el-input
             v-model="registerForm.password"
@@ -97,6 +106,7 @@ const registerForm = ref({
   username: '',
   nickName: '',
   email: '',
+  phone: '',
   password: '',
   confirmPassword: ''
 })
@@ -120,6 +130,9 @@ const rules = {
   email: [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
     { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+  ],
+  phone: [
+    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },

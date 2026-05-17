@@ -104,4 +104,12 @@ public interface EduLearningRecordMapper {
     public Integer getUserSkillScore(
             @org.apache.ibatis.annotations.Param("userId") Long userId,
             @org.apache.ibatis.annotations.Param("skillType") String skillType);
+
+    /**
+     * 获取用户今日完成课时数
+     *
+     * @param userId 用户ID
+     * @return 今日完成课时数
+     */
+    public int getTodayCompletedLessons(Long userId);
 }

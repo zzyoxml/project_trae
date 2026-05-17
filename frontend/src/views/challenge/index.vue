@@ -111,10 +111,6 @@
               <span class="value">{{ myRank.score }}</span>
             </div>
             <div class="detail-item">
-              <span class="label">本周排名</span>
-              <span class="value">{{ myRank.weeklyRank || '-' }}</span>
-            </div>
-            <div class="detail-item">
               <span class="label">连续学习</span>
               <span class="value">{{ myRank.streakDays || 0 }} 天</span>
             </div>

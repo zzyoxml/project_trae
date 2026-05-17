@@ -8,7 +8,7 @@
       </div>
 
       <div class="login-header">
-        <h1>🍰 LinguaLearn</h1>
+        <h1>🍵 LinguaLearn</h1>
         <p>✨ 多语种在线教育平台</p>
       </div>
 
@@ -54,7 +54,7 @@
             @click="handleLogin"
             class="login-button"
           >
-            🍰 登 录
+            🍵 登 录
           </el-button>
         </el-form-item>
       </el-form>
@@ -126,7 +126,7 @@ const handleForgot = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #FFF8F0 0%, #FDF5F6 50%, #E6E6FA 100%);
+  background: linear-gradient(135deg, #E8FFF2 0%, #F0FFF5 50%, #E8F5E8 100%);
   position: relative;
   overflow: hidden;
 }
@@ -135,13 +135,13 @@ const handleForgot = () => {
   background: rgba(255, 255, 255, 0.95);
   padding: 48px;
   border-radius: 32px;
-  box-shadow: 0 20px 60px rgba(255, 182, 193, 0.3);
+  box-shadow: 0 20px 60px rgba(152, 216, 200, 0.3);
   width: 420px;
   max-width: 90%;
   position: relative;
   z-index: 1;
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 182, 193, 0.2);
+  border: 2px solid rgba(152, 216, 200, 0.2);
 }
 
 .login-decoration {
@@ -161,7 +161,7 @@ const handleForgot = () => {
     &.circle-1 {
       width: 200px;
       height: 200px;
-      background: #FFB6C1;
+      background: #98D8C8;
       top: -100px;
       right: -100px;
       animation: float 6s ease-in-out infinite;
@@ -170,7 +170,7 @@ const handleForgot = () => {
     &.circle-2 {
       width: 150px;
       height: 150px;
-      background: #E6E6FA;
+      background: #ADD8E6;
       bottom: -75px;
       left: -75px;
       animation: float 8s ease-in-out infinite reverse;
@@ -179,7 +179,7 @@ const handleForgot = () => {
     &.circle-3 {
       width: 100px;
       height: 100px;
-      background: #98D8C8;
+      background: #B5E5D3;
       top: 50%;
       right: -50px;
       animation: float 7s ease-in-out infinite;
@@ -199,7 +199,7 @@ const handleForgot = () => {
 
   h1 {
     font-size: 36px;
-    background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 50%, #E6E6FA 100%);
+    background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -208,7 +208,7 @@ const handleForgot = () => {
   }
 
   p {
-    color: #909090;
+    color: #4A7A6A;
     font-size: 14px;
     margin: 0;
   }
@@ -225,30 +225,30 @@ const handleForgot = () => {
     .el-input__wrapper {
       padding: 12px 16px;
       border-radius: 16px;
-      box-shadow: 0 0 0 2px rgba(255, 182, 193, 0.2);
+      box-shadow: 0 0 0 2px rgba(152, 216, 200, 0.2);
       transition: all 0.3s ease;
       background: white;
 
       &:hover {
-        box-shadow: 0 0 0 2px rgba(255, 182, 193, 0.4);
+        box-shadow: 0 0 0 2px rgba(152, 216, 200, 0.4);
       }
 
       &.is-focus {
-        box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.5);
+        box-shadow: 0 0 0 3px rgba(152, 216, 200, 0.5);
       }
     }
 
     .el-input__inner {
       font-size: 15px;
-      color: #5D5D5D;
+      color: #2D5A4A;
 
       &::placeholder {
-        color: #b0b0b0;
+        color: #6A9A8A;
       }
     }
 
     .el-input__prefix {
-      color: #FF69B4;
+      color: #98D8C8;
       font-size: 18px;
     }
   }
@@ -263,36 +263,36 @@ const handleForgot = () => {
       .el-checkbox__input {
         .el-checkbox__inner {
           border-radius: 6px;
-          border-color: #FFB6C1;
+          border-color: #98D8C8;
 
           &::after {
-            border-color: #FF69B4;
+            border-color: #6BA899;
           }
         }
 
         &.is-checked {
           .el-checkbox__inner {
-            background-color: #FF69B4;
-            border-color: #FF69B4;
+            background-color: #98D8C8;
+            border-color: #98D8C8;
           }
         }
       }
 
       .el-checkbox__label {
-        color: #909090;
+        color: #4A7A6A;
         font-size: 14px;
       }
     }
 
     a {
-      color: #FF69B4;
+      color: #6BA899;
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s ease;
 
       &:hover {
-        color: #FFB6C1;
+        color: #98D8C8;
         text-decoration: underline;
       }
     }
@@ -304,15 +304,15 @@ const handleForgot = () => {
     font-size: 16px;
     font-weight: 600;
     border-radius: 16px;
-    background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+    background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%);
     border: none;
-    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+    box-shadow: 0 6px 20px rgba(152, 216, 200, 0.4);
     transition: all 0.3s ease;
     color: white;
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(255, 105, 180, 0.5);
+      box-shadow: 0 10px 30px rgba(152, 216, 200, 0.5);
     }
 
     &:active {
@@ -320,7 +320,7 @@ const handleForgot = () => {
     }
 
     &.is-loading {
-      background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+      background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%);
     }
   }
 }
@@ -328,19 +328,19 @@ const handleForgot = () => {
 .login-footer {
   text-align: center;
   margin-top: 32px;
-  color: #909090;
+  color: #4A7A6A;
   font-size: 14px;
   position: relative;
 
   a {
-    color: #FF69B4;
+    color: #6BA899;
     text-decoration: none;
     margin-left: 8px;
     font-weight: 600;
     transition: all 0.3s ease;
 
     &:hover {
-      color: #FFB6C1;
+      color: #98D8C8;
       text-decoration: underline;
     }
   }

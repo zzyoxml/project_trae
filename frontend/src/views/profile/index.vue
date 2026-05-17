@@ -279,7 +279,7 @@ onMounted(() => {
 
 const loadProfile = () => {
   Object.assign(formData, {
-    username: userStore.username || '123',
+    username: userStore.username || '',
     nickname: userStore.nickname || '学习者',
     email: userStore.email || '',
     phone: userStore.phone || '',

@@ -3,7 +3,7 @@
     <!-- 轮播图区域 -->
     <section class="hero-section">
       <div class="hero-content">
-        <h1>🍰 开始您的语言学习之旅</h1>
+        <h1>🍵 开始您的语言学习之旅</h1>
         <p>支持英语、日语、汉语等多语种学习，沉浸式语言学习体验</p>
         <div class="hero-buttons">
           <el-button type="primary" size="large" @click="$router.push('/course')">
@@ -208,16 +208,16 @@ const truncateText = (text, max) => {
   padding: 20px;
 
   // ========================================
-  // 轮播图区域 - 马卡龙渐变
+  // 轮播图区域 - 薄荷绿渐变
   // ========================================
   .hero-section {
-    background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 50%, #98D8C8 100%);
+    background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 50%, #B5E5D3 100%);
     color: white;
     padding: 60px 20px;
     text-align: center;
     border-radius: 28px;
     margin-bottom: 40px;
-    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.3);
+    box-shadow: 0 8px 32px rgba(152, 216, 200, 0.3);
     position: relative;
     overflow: hidden;
 
@@ -241,7 +241,7 @@ const truncateText = (text, max) => {
       font-size: 48px;
       margin-bottom: 16px;
       position: relative;
-      text-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+      text-shadow: 0 2px 8px rgba(152, 216, 200, 0.3);
     }
 
     p {
@@ -266,7 +266,7 @@ const truncateText = (text, max) => {
         
         &:first-child {
           background: white;
-          color: #FF69B4;
+          color: #6BA899;
           border: none;
           box-shadow: 0 4px 16px rgba(255, 255, 255, 0.3);
           
@@ -303,24 +303,24 @@ const truncateText = (text, max) => {
     h2 {
       font-size: 28px;
       margin: 0;
-      background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%);
+      background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .el-button {
-      color: #FF69B4;
+      color: #6BA899;
       font-weight: 500;
       
       &:hover {
-        color: #FFB6C1;
+        color: #98D8C8;
       }
     }
   }
 
   // ========================================
-  // 特色功能 - 马卡龙卡片
+  // 特色功能 - 薄荷绿卡片
   // ========================================
   .features-section {
     margin-bottom: 40px;
@@ -329,7 +329,7 @@ const truncateText = (text, max) => {
       font-size: 28px;
       margin-bottom: 24px;
       text-align: center;
-      background: linear-gradient(135deg, #FF69B4 0%, #98D8C8 100%);
+      background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -345,7 +345,7 @@ const truncateText = (text, max) => {
         padding: 32px;
         border-radius: 24px;
         text-align: center;
-        box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
+        box-shadow: 0 4px 16px rgba(152, 216, 200, 0.2);
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
@@ -357,12 +357,12 @@ const truncateText = (text, max) => {
           left: 0;
           right: 0;
           height: 4px;
-          background: linear-gradient(90deg, #FFB6C1, #E6E6FA, #98D8C8);
+          background: linear-gradient(90deg, #98D8C8, #ADD8E6, #B5E5D3);
         }
 
         &:hover {
           transform: translateY(-8px);
-          box-shadow: 0 12px 32px rgba(255, 182, 193, 0.3);
+          box-shadow: 0 12px 32px rgba(152, 216, 200, 0.3);
         }
 
         .feature-icon {
@@ -379,11 +379,11 @@ const truncateText = (text, max) => {
         h3 {
           font-size: 24px;
           margin-bottom: 8px;
-          color: #5D5D5D;
+          color: #2D5A4A;
         }
 
         p {
-          color: #909090;
+          color: #4A7A6A;
           font-size: 14px;
           line-height: 1.6;
         }
@@ -392,7 +392,7 @@ const truncateText = (text, max) => {
   }
 
   // ========================================
-  // 热门课程 - 马卡龙课程卡片
+  // 热门课程 - 薄荷绿课程卡片
   // ========================================
   .courses-section {
     margin-bottom: 40px;
@@ -406,13 +406,13 @@ const truncateText = (text, max) => {
         background: white;
         border-radius: 24px;
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
+        box-shadow: 0 4px 16px rgba(152, 216, 200, 0.2);
         cursor: pointer;
         transition: all 0.3s ease;
 
         &:hover {
           transform: translateY(-8px);
-          box-shadow: 0 12px 32px rgba(255, 182, 193, 0.3);
+          box-shadow: 0 12px 32px rgba(152, 216, 200, 0.3);
 
           .course-cover img {
             transform: scale(1.1);
@@ -443,13 +443,13 @@ const truncateText = (text, max) => {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 
             &.level-1 { 
-              background: linear-gradient(135deg, #98D8C8 0%, #7BC5B8 100%);
+              background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%);
             }
             &.level-2 { 
-              background: linear-gradient(135deg, #FFB347 0%, #FFA500 100%);
+              background: linear-gradient(135deg, #FFE4B5 0%, #FFD700 100%);
             }
             &.level-3 { 
-              background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%);
+              background: linear-gradient(135deg, #98D8C8 0%, #4169E1 100%);
             }
           }
         }
@@ -460,11 +460,11 @@ const truncateText = (text, max) => {
           h3 {
             font-size: 18px;
             margin-bottom: 8px;
-            color: #5D5D5D;
+            color: #2D5A4A;
           }
 
           .course-desc {
-            color: #909090;
+            color: #4A7A6A;
             font-size: 14px;
             margin-bottom: 12px;
             overflow: hidden;
@@ -475,7 +475,7 @@ const truncateText = (text, max) => {
           .course-meta {
             display: flex;
             gap: 16px;
-            color: #909090;
+            color: #4A7A6A;
             font-size: 14px;
 
             span {
@@ -495,7 +495,7 @@ const truncateText = (text, max) => {
   }
 
   // ========================================
-  // 社区动态 - 马卡龙帖子卡片
+  // 社区动态 - 薄荷绿帖子卡片
   // ========================================
   .community-section {
     margin-bottom: 40px;
@@ -509,13 +509,13 @@ const truncateText = (text, max) => {
         background: white;
         padding: 24px;
         border-radius: 24px;
-        box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
+        box-shadow: 0 4px 16px rgba(152, 216, 200, 0.2);
         cursor: pointer;
         transition: all 0.3s ease;
 
         &:hover {
           transform: translateY(-5px);
-          box-shadow: 0 12px 32px rgba(255, 182, 193, 0.3);
+          box-shadow: 0 12px 32px rgba(152, 216, 200, 0.3);
         }
 
         .post-header {
@@ -528,14 +528,14 @@ const truncateText = (text, max) => {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
+            background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             font-size: 20px;
-            box-shadow: 0 4px 12px rgba(255, 182, 193, 0.3);
+            box-shadow: 0 4px 12px rgba(152, 216, 200, 0.3);
           }
 
           .user-info {
@@ -544,11 +544,11 @@ const truncateText = (text, max) => {
             .user-name {
               font-weight: 600;
               font-size: 14px;
-              color: #5D5D5D;
+              color: #2D5A4A;
             }
 
             .post-time {
-              color: #909090;
+              color: #4A7A6A;
               font-size: 12px;
             }
           }
@@ -558,7 +558,7 @@ const truncateText = (text, max) => {
           font-size: 16px;
           margin-bottom: 8px;
           font-weight: 600;
-          color: #5D5D5D;
+          color: #2D5A4A;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -567,7 +567,7 @@ const truncateText = (text, max) => {
         }
 
         .post-content {
-          color: #909090;
+          color: #4A7A6A;
           font-size: 14px;
           margin-bottom: 16px;
           display: -webkit-box;
@@ -584,8 +584,8 @@ const truncateText = (text, max) => {
 
           .post-tag {
             font-size: 12px;
-            color: #FF69B4;
-            background: rgba(255, 105, 180, 0.1);
+            color: #6BA899;
+            background: rgba(152, 216, 200, 0.1);
             padding: 4px 12px;
             border-radius: 16px;
             font-weight: 500;
@@ -594,7 +594,7 @@ const truncateText = (text, max) => {
           .post-stats {
             display: flex;
             gap: 16px;
-            color: #909090;
+            color: #4A7A6A;
             font-size: 14px;
 
             span {

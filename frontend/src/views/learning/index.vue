@@ -21,7 +21,7 @@
           />
           <div class="progress-info">
             <div class="progress-label">今日目标</div>
-            <div class="progress-value">30 分钟</div>
+            <div class="progress-value">5 分钟</div>
           </div>
         </div>
 
@@ -185,11 +185,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getMyCourses, getFeaturedCourses } from '@/api/course'
-import { getLearningStats, claimTaskReward } from '@/api/learning'
+import { getLearningStats, claimTaskReward, getTodayCompletedLessons } from '@/api/learning'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
@@ -207,19 +207,79 @@ const totalPoints = ref(0)
 const dailyTasks = ref([])
 const completedTasks = ref(0)
 const totalTasks = ref(0)
+const todayCompletedLessons = ref(0)
 
 const dailyProgress = computed(() => {
-  const goal = 30
+  const goal = 5
   return Math.min(100, Math.round((todayMinutes.value / goal) * 100))
 })
+
+let updateTimer = null
+let refreshCounter = 0
+let lastTodayCompleted = 0
 
 onMounted(async () => {
   await Promise.all([
     loadLearningStats(),
     loadInProgressCourses(),
-    loadRecommendedCourses()
+    loadRecommendedCourses(),
+    refreshTodayCompleted()
   ])
+  
+  updateTimer = setInterval(() => {
+    updateLearningTime()
+  }, 1000)
 })
+
+onUnmounted(() => {
+  if (updateTimer) {
+    clearInterval(updateTimer)
+  }
+})
+
+const refreshTodayCompleted = async () => {
+  try {
+    const res = await getTodayCompletedLessons()
+    const count = res && res.data !== undefined ? res.data : (res || 0)
+    lastTodayCompleted = count
+    todayCompletedLessons.value = count
+    updateTaskStatus()
+  } catch (error) {
+    console.error('刷新今日完成课时数失败:', error)
+  }
+}
+
+const updateLearningTime = () => {
+  const loginTime = parseInt(sessionStorage.getItem('loginTime') || '0')
+  if (loginTime > 0) {
+    const onlineMinutes = Math.floor((Date.now() - loginTime) / 60000)
+    if (onlineMinutes > todayMinutes.value) {
+      todayMinutes.value = onlineMinutes
+    }
+    updateTaskStatus()
+  }
+  
+  refreshCounter++
+  if (refreshCounter >= 10) {
+    refreshCounter = 0
+    refreshTodayCompleted()
+  }
+}
+
+const updateTaskStatus = () => {
+  const loginTime = parseInt(sessionStorage.getItem('loginTime') || '0')
+  const onlineMinutes = loginTime > 0 ? Math.floor((Date.now() - loginTime) / 60000) : 0
+  
+  dailyTasks.value.forEach(task => {
+    if (task.id === 1) {
+      task.completed = todayCompletedLessons.value > 0
+    } else if (task.id === 2) {
+      task.completed = onlineMinutes >= 5
+    }
+  })
+  
+  completedTasks.value = dailyTasks.value.filter(t => t.completed).length
+}
 
 const getTodayStr = () => {
   const d = new Date()
@@ -249,8 +309,11 @@ const loadLearningStats = async () => {
 
       const loginTime = parseInt(sessionStorage.getItem('loginTime') || '0')
       const onlineMinutes = loginTime > 0 ? Math.floor((Date.now() - loginTime) / 60000) : 0
+      const todayRecords = data.today_records || 0
+      todayCompletedLessons.value = todayRecords
+      
       const tasks = [
-        { id: 1, icon: '📚', name: '完成1节课', reward: 5, completed: (data.today_records || 0) > 0, claimed: isTaskClaimed(1) },
+        { id: 1, icon: '📚', name: '完成1节课', reward: 5, completed: todayRecords > 0, claimed: isTaskClaimed(1) },
         { id: 2, icon: '⏱️', name: '学习5分钟', reward: 15, completed: onlineMinutes >= 5, claimed: isTaskClaimed(2) }
       ]
       dailyTasks.value = tasks
@@ -260,11 +323,11 @@ const loadLearningStats = async () => {
   } catch (error) {
     console.error('加载学习统计失败:', error)
     const tasks = [
-      { id: 1, icon: '📚', name: '完成1节课', reward: 5, completed: false, claimed: isTaskClaimed(1) },
+      { id: 1, icon: '📚', name: '完成1节课', reward: 5, completed: todayCompletedLessons.value > 0, claimed: isTaskClaimed(1) },
       { id: 2, icon: '⏱️', name: '学习5分钟', reward: 15, completed: false, claimed: isTaskClaimed(2) }
     ]
     dailyTasks.value = tasks
-    completedTasks.value = 0
+    completedTasks.value = tasks.filter(t => t.completed).length
     totalTasks.value = 2
   }
 }

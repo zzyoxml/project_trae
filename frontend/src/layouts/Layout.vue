@@ -4,7 +4,7 @@
     <header class="header">
       <div class="header-content">
         <div class="logo" @click="$router.push('/')">
-          <h1>🍰 LinguaLearn</h1>
+          <h1>🍵 LinguaLearn</h1>
           <span class="logo-text" v-if="!isMobile">多语种学习平台</span>
         </div>
 
@@ -80,7 +80,7 @@
     </main>
 
     <footer class="footer">
-      <p>🍰 2026 LinguaLearn - 多语种在线教育平台</p>
+      <p>🍵 2026 LinguaLearn - 多语种在线教育平台</p>
     </footer>
     <div class="safe-area-bottom"></div>
   </div>
@@ -136,68 +136,68 @@ const handleUserCommand = (command) => {
   flex-direction: column;
   
   &.dark-mode {
-    background-color: #2a2a2a;
-    color: #e0e0e0;
+    background-color: #1a2a2a;
+    color: #d0e0d8;
     
     .header {
       background-color: rgba(255, 255, 255, 0.95);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       
       .logo h1, .logo-text {
-        color: #FF69B4;
+        color: #98D8C8;
       }
       
       .nav .nav-item {
-        color: #606266;
+        color: #2D5A4A;
         
         &:hover {
-          color: #FF69B4;
-          background-color: rgba(255, 182, 193, 0.1);
+          color: #98D8C8;
+          background-color: rgba(152, 216, 200, 0.1);
         }
         
         &.router-link-active {
-          color: #FF69B4;
-          background-color: rgba(255, 182, 193, 0.1);
+          color: #98D8C8;
+          background-color: rgba(152, 216, 200, 0.1);
         }
       }
       
       .user-area .user-info {
         &:hover {
-          background-color: rgba(255, 182, 193, 0.1);
+          background-color: rgba(152, 216, 200, 0.1);
         }
       }
     }
     
     .main-content {
-      background-color: #2a2a2a;
+      background-color: #1a2a2a;
     }
     
     .footer {
-      background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
-      color: #5D5D5D;
+      background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
+      color: #2D5A4A;
     }
     
     .safe-area-top, .safe-area-bottom {
-      background-color: #2a2a2a;
+      background-color: #1a2a2a;
     }
   }
 }
 
 .safe-area-top {
   height: env(safe-area-inset-top);
-  background-color: #FFF8F0;
+  background-color: #F0FFF5;
   flex-shrink: 0;
 }
 
 .safe-area-bottom {
   height: env(safe-area-inset-bottom);
-  background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
+  background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
   flex-shrink: 0;
 }
 
 .header {
   background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 4px 16px rgba(255, 182, 193, 0.2);
+  box-shadow: 0 4px 16px rgba(152, 216, 200, 0.2);
   position: sticky;
   top: env(safe-area-inset-top);
   z-index: 100;
@@ -221,7 +221,7 @@ const handleUserCommand = (command) => {
     
     h1 {
       font-size: 20px;
-      background: linear-gradient(135deg, #FF69B4 0%, #FFB6C1 100%);
+      background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -230,8 +230,8 @@ const handleUserCommand = (command) => {
     
     .logo-text {
       font-size: 12px;
-      color: #909090;
-      background: linear-gradient(135deg, #98D8C8 0%, #E6E6FA 100%);
+      color: #98D8C8;
+      background: linear-gradient(135deg, #ADD8E6 0%, #98D8C8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -247,7 +247,7 @@ const handleUserCommand = (command) => {
       align-items: center;
       gap: 4px;
       text-decoration: none;
-      color: #606266;
+      color: #2D5A4A;
       padding: 8px 16px;
       border-radius: 20px;
       font-size: 14px;
@@ -255,15 +255,15 @@ const handleUserCommand = (command) => {
       transition: all 0.3s ease;
 
       &:hover {
-        color: #FF69B4;
-        background: rgba(255, 182, 193, 0.15);
+        color: #6BA899;
+        background: rgba(152, 216, 200, 0.15);
         transform: translateY(-2px);
       }
 
       &.router-link-active {
-        color: #FF69B4;
-        background: rgba(255, 182, 193, 0.2);
-        box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
+        color: #6BA899;
+        background: rgba(152, 216, 200, 0.2);
+        box-shadow: 0 4px 12px rgba(152, 216, 200, 0.2);
       }
     }
   }
@@ -274,13 +274,13 @@ const handleUserCommand = (command) => {
     gap: 8px;
 
     .theme-btn {
-      background: rgba(255, 182, 193, 0.2) !important;
-      color: #FF69B4 !important;
+      background: rgba(152, 216, 200, 0.2) !important;
+      color: #6BA899 !important;
       border: none !important;
       padding: 4px;
       
       &:hover {
-        background: rgba(255, 182, 193, 0.3) !important;
+        background: rgba(152, 216, 200, 0.3) !important;
         transform: rotate(15deg);
       }
     }
@@ -295,38 +295,38 @@ const handleUserCommand = (command) => {
       transition: all 0.3s ease;
 
       &:hover {
-        background: rgba(255, 182, 193, 0.15);
+        background: rgba(152, 216, 200, 0.15);
       }
 
       .username {
-        color: #606266;
+        color: #2D5A4A;
         font-size: 14px;
         font-weight: 500;
       }
     }
     
     .login-btn {
-      background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%) !important;
-      box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+      background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%) !important;
+      box-shadow: 0 4px 12px rgba(152, 216, 200, 0.3);
       border: none !important;
       color: white !important;
       font-weight: 500;
       
       &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(255, 105, 180, 0.4);
+        box-shadow: 0 6px 16px rgba(152, 216, 200, 0.4);
       }
     }
     
     .register-btn {
       background: white !important;
-      color: #FF69B4 !important;
-      border: 2px solid #FFB6C1 !important;
+      color: #6BA899 !important;
+      border: 2px solid #98D8C8 !important;
       font-weight: 500;
       
       &:hover {
-        background: rgba(255, 182, 193, 0.1) !important;
-        border-color: #FF69B4 !important;
+        background: rgba(152, 216, 200, 0.1) !important;
+        border-color: #6BA899 !important;
         transform: translateY(-2px);
       }
     }
@@ -339,18 +339,18 @@ const handleUserCommand = (command) => {
   width: 100%;
   margin: 0 auto;
   padding: 16px;
-  background: #FFF8F0;
+  background: #F0FFF5;
 }
 
 .footer {
-  background: linear-gradient(135deg, #FFB6C1 0%, #E6E6FA 100%);
-  color: #5D5D5D;
+  background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
+  color: #2D5A4A;
   text-align: center;
   padding: 16px;
   margin-top: auto;
   font-size: 12px;
   font-weight: 500;
-  box-shadow: 0 -4px 16px rgba(255, 182, 193, 0.2);
+  box-shadow: 0 -4px 16px rgba(152, 216, 200, 0.2);
 }
 
 @media (max-width: 768px) {

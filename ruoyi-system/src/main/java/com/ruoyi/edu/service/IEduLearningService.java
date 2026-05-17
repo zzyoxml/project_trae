@@ -156,4 +156,12 @@ public interface IEduLearningService {
      * @return 用户学习详情
      */
     public Map<String, Object> getUserLearningDetail(Long userId);
+
+    /**
+     * 获取用户今日完成课时数
+     *
+     * @param userId 用户ID
+     * @return 今日完成课时数
+     */
+    public int getTodayCompletedLessons(Long userId);
 }

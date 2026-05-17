@@ -262,4 +262,11 @@ public class EduLearningController extends BaseController {
         }
         return success("领取成功");
     }
+
+    @GetMapping("/today-completed")
+    public AjaxResult getTodayCompletedLessons() {
+        Long userId = SecurityUtils.getUserId();
+        int count = eduLearningService.getTodayCompletedLessons(userId);
+        return success(count);
+    }
 }
