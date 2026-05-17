@@ -57,8 +57,20 @@
 
     <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="头像" align="center" prop="avatar" width="80">
+        <template slot-scope="scope">
+          <el-avatar :size="40" :src="getAvatarUrl(scope.row)">
+            {{ scope.row.nickName ? scope.row.nickName.charAt(0).toUpperCase() : 'U' }}
+          </el-avatar>
+        </template>
+      </el-table-column>
       <el-table-column label="用户ID" align="center" prop="userId" width="80" />
       <el-table-column label="用户名" align="center" prop="username" width="120" />
+      <el-table-column label="密码" align="center" prop="password" width="100">
+        <template slot-scope="scope">
+          <span>******</span>
+        </template>
+      </el-table-column>
       <el-table-column label="昵称" align="center" prop="nickName" width="120" />
       <el-table-column label="邮箱" align="center" prop="email" width="160" />
       <el-table-column label="手机号" align="center" prop="phonenumber" width="120" />
@@ -137,6 +149,18 @@
     <!-- 新增/修改对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="头像">
+          <el-upload
+            class="avatar-uploader"
+            action="#"
+            :show-file-list="false"
+            :http-request="handleAvatarUpload"
+            :disabled="avatarUploading"
+          >
+            <img v-if="form.avatar" :src="form.avatar" class="avatar-img" />
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          </el-upload>
+        </el-form-item>
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户名" prop="username">
@@ -210,6 +234,11 @@
 
     <!-- 详情对话框 -->
     <el-dialog title="学员详情" :visible.sync="detailOpen" width="700px" append-to-body>
+      <div v-if="currentUser" style="text-align: center; margin-bottom: 20px;">
+        <el-avatar :size="100" :src="getAvatarUrl(currentUser)">
+          {{ currentUser.nickName ? currentUser.nickName.charAt(0).toUpperCase() : 'U' }}
+        </el-avatar>
+      </div>
       <el-descriptions :column="2" border v-if="currentUser">
         <el-descriptions-item label="用户ID">{{ currentUser.userId }}</el-descriptions-item>
         <el-descriptions-item label="用户名">{{ currentUser.username }}</el-descriptions-item>
@@ -243,6 +272,7 @@
 
 <script>
 import { listUser, getUser, addUser, updateUser, delUser, changeUserStatus } from '@/api/edu/user'
+import { uploadAvatar } from '@/api/system/user'
 
 export default {
   name: 'EduUser',
@@ -259,6 +289,7 @@ export default {
       open: false,
       detailOpen: false,
       showPassword: false,
+      avatarUploading: false,
       currentUser: null,
       queryParams: {
         pageNum: 1,
@@ -420,6 +451,45 @@ export default {
     getLanguageLabel(language) {
       const labels = { 'en': '英语', 'ja': '日语', 'zh': '汉语' }
       return labels[language] || language || '-'
+    },
+    getAvatarUrl(row) {
+      const avatar = row.avatar || row.avatarUrl
+      if (!avatar) return ''
+      // 如果已经是完整URL则直接返回
+      if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+        return avatar
+      }
+      // 拼接基础URL
+      return process.env.VUE_APP_BASE_API + avatar
+    },
+    handleAvatarUpload(options) {
+      const file = options.file
+      const isImage = file.type.startsWith('image/')
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isImage) {
+        this.$modal.msgError('只能上传图片文件')
+        return false
+      }
+      if (!isLt2M) {
+        this.$modal.msgError('图片大小不能超过 2MB')
+        return false
+      }
+
+      this.avatarUploading = true
+      const formData = new FormData()
+      formData.append('avatarfile', file)
+
+      uploadAvatar(formData).then(response => {
+        this.form.avatar = response.imgUrl
+        this.avatarUploading = false
+        this.$modal.msgSuccess('头像上传成功')
+      }).catch(() => {
+        this.avatarUploading = false
+        this.$modal.msgError('头像上传失败')
+      })
+
+      return false
     }
   }
 }
@@ -428,5 +498,29 @@ export default {
 <style scoped>
 .mb8 {
   margin-bottom: 8px;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 120px;
+  height: 120px;
+  line-height: 120px;
+  text-align: center;
+}
+.avatar-img {
+  width: 120px;
+  height: 120px;
+  display: block;
+  object-fit: cover;
 }
 </style>

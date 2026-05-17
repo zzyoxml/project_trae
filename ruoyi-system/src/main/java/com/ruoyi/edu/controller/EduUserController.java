@@ -5,12 +5,15 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.edu.domain.EduAppUser;
 import com.ruoyi.edu.domain.EduUserProfile;
-import com.ruoyi.edu.service.IEduUserService;
+import com.ruoyi.edu.service.IEduAppUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.utils.file.FileUploadUtils;
+import com.ruoyi.common.utils.file.MimeTypeUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,10 +29,7 @@ import java.util.Map;
 public class EduUserController extends BaseController {
 
     @Autowired
-    private IEduUserService eduUserService;
-
-    @Autowired
-    private SysUserMapper sysUserMapper;
+    private IEduAppUserService eduAppUserService;
 
     /**
      * 用户注册
@@ -43,7 +43,7 @@ public class EduUserController extends BaseController {
         String nativeLanguage = params.get("nativeLanguage");
         String learningLanguages = params.get("learningLanguages");
 
-        Long userId = eduUserService.registerUser(username, password, email, nativeLanguage, learningLanguages);
+        Long userId = eduAppUserService.registerUser(username, password, email, nativeLanguage, learningLanguages);
         return success().put("userId", userId);
     }
 
@@ -56,7 +56,7 @@ public class EduUserController extends BaseController {
         String username = params.get("username");
         String password = params.get("password");
 
-        String result = eduUserService.login(username, password);
+        String result = eduAppUserService.login(username, password);
         return success(result);
     }
 
@@ -70,8 +70,31 @@ public class EduUserController extends BaseController {
         if (userId == null) {
             return success(new HashMap<String, Object>());
         }
-        EduUserProfile profile = eduUserService.getUserFullInfo(userId);
-        return success(profile);
+        EduAppUser user = eduAppUserService.selectEduAppUserById(userId);
+        EduUserProfile profile = eduAppUserService.selectEduUserProfileByUserId(userId);
+        
+        Map<String, Object> result = new HashMap<>();
+        if (user != null) {
+            result.put("userId", user.getUserId());
+            result.put("username", user.getUsername());
+            result.put("nickName", user.getNickName());
+            result.put("email", user.getEmail());
+            result.put("phonenumber", user.getPhonenumber());
+            result.put("avatar", user.getAvatar());
+        }
+        if (profile != null) {
+            result.put("nativeLanguage", profile.getNativeLanguage());
+            result.put("learningLanguages", profile.getLearningLanguages());
+            result.put("totalStudyTime", profile.getTotalStudyTime());
+            result.put("currentStreak", profile.getCurrentStreak());
+            result.put("longestStreak", profile.getLongestStreak());
+            result.put("totalPoints", profile.getTotalPoints());
+            result.put("level", profile.getLevel());
+            result.put("experiencePoints", profile.getExperiencePoints());
+            result.put("bio", profile.getBio());
+            result.put("avatarUrl", profile.getAvatarUrl());
+        }
+        return success(result);
     }
 
     /**
@@ -79,21 +102,31 @@ public class EduUserController extends BaseController {
      */
     @GetMapping("/profile/{userId}")
     public AjaxResult getUserProfile(@PathVariable Long userId) {
-        EduUserProfile profile = eduUserService.selectEduUserProfileByUserId(userId);
-        SysUser sysUser = sysUserMapper.selectUserById(userId);
+        EduAppUser user = eduAppUserService.selectEduAppUserById(userId);
+        EduUserProfile profile = eduAppUserService.selectEduUserProfileByUserId(userId);
         
         Map<String, Object> result = new HashMap<>();
-        if (profile != null) {
-            result.putAll(profileToMap(profile));
+        if (user != null) {
+            result.put("userId", user.getUserId());
+            result.put("username", user.getUsername());
+            result.put("nickName", user.getNickName());
+            result.put("email", user.getEmail());
+            result.put("phonenumber", user.getPhonenumber());
+            result.put("status", user.getStatus());
+            result.put("createTime", user.getCreateTime());
+            result.put("avatar", user.getAvatar());
         }
-        if (sysUser != null) {
-            result.put("userId", sysUser.getUserId());
-            result.put("username", sysUser.getUserName());
-            result.put("password", "******"); // 安全起见，这里不返回明文密码
-            result.put("email", sysUser.getEmail());
-            result.put("phonenumber", sysUser.getPhonenumber());
-            result.put("status", sysUser.getStatus());
-            result.put("createTime", sysUser.getCreateTime());
+        if (profile != null) {
+            result.put("nativeLanguage", profile.getNativeLanguage());
+            result.put("learningLanguages", profile.getLearningLanguages());
+            result.put("totalStudyTime", profile.getTotalStudyTime());
+            result.put("currentStreak", profile.getCurrentStreak());
+            result.put("longestStreak", profile.getLongestStreak());
+            result.put("totalPoints", profile.getTotalPoints());
+            result.put("level", profile.getLevel());
+            result.put("experiencePoints", profile.getExperiencePoints());
+            result.put("bio", profile.getBio());
+            result.put("avatarUrl", profile.getAvatarUrl());
         }
         return success(result);
     }
@@ -105,42 +138,46 @@ public class EduUserController extends BaseController {
     public AjaxResult updateProfile(@RequestBody Map<String, Object> params) {
         Long userId = Long.parseLong(params.get("userId").toString());
         
-        // 更新系统用户信息
-        SysUser sysUser = sysUserMapper.selectUserById(userId);
-        if (sysUser != null) {
+        // 更新应用用户信息
+        EduAppUser user = eduAppUserService.selectEduAppUserById(userId);
+        if (user != null) {
             if (params.containsKey("nickName")) {
-                sysUser.setNickName(params.get("nickName").toString());
+                user.setNickName(params.get("nickName").toString());
             }
             if (params.containsKey("email")) {
-                sysUser.setEmail(params.get("email").toString());
+                user.setEmail(params.get("email").toString());
             }
             if (params.containsKey("phonenumber")) {
-                sysUser.setPhonenumber(params.get("phonenumber").toString());
+                user.setPhonenumber(params.get("phonenumber").toString());
             }
             if (params.containsKey("status")) {
-                sysUser.setStatus(params.get("status").toString());
+                user.setStatus(params.get("status").toString());
+            }
+            if (params.containsKey("avatar")) {
+                user.setAvatar(params.get("avatar").toString());
             }
             if (params.containsKey("password") && params.get("password") != null && !params.get("password").toString().isEmpty()) {
-                sysUser.setPassword(SecurityUtils.encryptPassword(params.get("password").toString()));
+                user.setPassword(SecurityUtils.encryptPassword(params.get("password").toString()));
             }
-            sysUserMapper.updateUser(sysUser);
+            eduAppUserService.updateEduAppUser(user);
         }
         
         // 更新教育用户扩展信息
-        if (params.containsKey("nativeLanguage") || params.containsKey("learningLanguages")) {
-            EduUserProfile profile = eduUserService.selectEduUserProfileByUserId(userId);
-            if (profile == null) {
-                profile = new EduUserProfile();
-                profile.setUserId(userId);
-            }
-            if (params.containsKey("nativeLanguage")) {
-                profile.setNativeLanguage(params.get("nativeLanguage").toString());
-            }
-            if (params.containsKey("learningLanguages")) {
-                profile.setLearningLanguages(params.get("learningLanguages").toString());
-            }
-            eduUserService.updateEduUserProfile(profile);
+        EduUserProfile profile = eduAppUserService.selectEduUserProfileByUserId(userId);
+        if (profile == null) {
+            profile = new EduUserProfile();
+            profile.setUserId(userId);
         }
+        if (params.containsKey("nativeLanguage")) {
+            profile.setNativeLanguage(params.get("nativeLanguage").toString());
+        }
+        if (params.containsKey("learningLanguages")) {
+            profile.setLearningLanguages(params.get("learningLanguages").toString());
+        }
+        if (params.containsKey("avatar")) {
+            profile.setAvatarUrl(params.get("avatar").toString());
+        }
+        eduAppUserService.updateEduUserProfile(profile);
         
         return success();
     }
@@ -153,7 +190,7 @@ public class EduUserController extends BaseController {
                             @RequestParam(required = false) String email,
                             @RequestParam(required = false) String learningLanguage) {
         startPage();
-        List<Map<String, Object>> userList = eduUserService.selectUserListWithDetails(username, email, learningLanguage);
+        List<Map<String, Object>> userList = eduAppUserService.selectUserListWithDetails(username, email, learningLanguage);
         return getDataTable(userList);
     }
 
@@ -162,7 +199,8 @@ public class EduUserController extends BaseController {
      */
     @PostMapping("/delete/{userId}")
     public AjaxResult deleteUser(@PathVariable Long userId) {
-        int result = eduUserService.deleteUser(userId);
+        int result = eduAppUserService.deleteEduAppUserById(userId);
+        eduAppUserService.deleteEduUserProfileByUserId(userId);
         return toAjax(result);
     }
 
@@ -174,10 +212,8 @@ public class EduUserController extends BaseController {
         Long userId = Long.parseLong(params.get("userId"));
         String status = params.get("status");
         
-        SysUser sysUser = sysUserMapper.selectUserById(userId);
-        if (sysUser != null) {
-            sysUser.setStatus(status);
-            sysUserMapper.updateUser(sysUser);
+        int result = eduAppUserService.updateUserStatus(userId, status);
+        if (result > 0) {
             return success();
         }
         return error("用户不存在");
@@ -190,7 +226,7 @@ public class EduUserController extends BaseController {
     public AjaxResult updateStudyTime(@RequestBody Map<String, Object> params) {
         Long userId = SecurityUtils.getUserId();
         Integer duration = Integer.parseInt(params.get("duration").toString());
-        eduUserService.updateStudyTime(userId, duration);
+        eduAppUserService.updateStudyTime(userId, duration);
         return success();
     }
 
@@ -200,7 +236,7 @@ public class EduUserController extends BaseController {
     @PostMapping("/streak")
     public AjaxResult updateStreak() {
         Long userId = SecurityUtils.getUserId();
-        eduUserService.updateStreak(userId);
+        eduAppUserService.updateStreak(userId);
         return success();
     }
 
@@ -212,8 +248,45 @@ public class EduUserController extends BaseController {
         Long userId = SecurityUtils.getUserId();
         Integer points = params.get("points");
         Integer experience = params.get("experience");
-        eduUserService.rewardUser(userId, points, experience);
+        eduAppUserService.rewardUser(userId, points, experience);
         return success();
+    }
+
+    /**
+     * 头像上传
+     */
+    @PostMapping("/avatar")
+    public AjaxResult avatar(@RequestParam("avatarfile") MultipartFile file) throws Exception
+    {
+        if (!file.isEmpty())
+        {
+            Long userId = SecurityUtils.getUserId();
+            String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
+            
+            // 更新 edu_app_user 表
+            EduAppUser user = eduAppUserService.selectEduAppUserById(userId);
+            if (user != null) {
+                user.setAvatar(avatar);
+                eduAppUserService.updateEduAppUser(user);
+            }
+            
+            // 更新 edu_user_profile 表
+            EduUserProfile profile = eduAppUserService.selectEduUserProfileByUserId(userId);
+            if (profile == null) {
+                profile = new EduUserProfile();
+                profile.setUserId(userId);
+                profile.setAvatarUrl(avatar);
+                eduAppUserService.insertEduUserProfile(profile);
+            } else {
+                profile.setAvatarUrl(avatar);
+                eduAppUserService.updateEduUserProfile(profile);
+            }
+            
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("imgUrl", avatar);
+            return ajax;
+        }
+        return error("上传图片异常，请联系管理员");
     }
 
     /**
@@ -222,22 +295,7 @@ public class EduUserController extends BaseController {
     @GetMapping("/stats")
     public AjaxResult getLearningStats() {
         Long userId = SecurityUtils.getUserId();
-        Map<String, Object> stats = eduUserService.getLearningStats(userId);
+        Map<String, Object> stats = eduAppUserService.getLearningStats(userId);
         return success(stats);
-    }
-
-    private Map<String, Object> profileToMap(EduUserProfile profile) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("userId", profile.getUserId());
-        map.put("nativeLanguage", profile.getNativeLanguage());
-        map.put("learningLanguages", profile.getLearningLanguages());
-        map.put("totalStudyTime", profile.getTotalStudyTime());
-        map.put("currentStreak", profile.getCurrentStreak());
-        map.put("longestStreak", profile.getLongestStreak());
-        map.put("totalPoints", profile.getTotalPoints());
-        map.put("level", profile.getLevel());
-        map.put("experiencePoints", profile.getExperiencePoints());
-        map.put("bio", profile.getBio());
-        return map;
     }
 }

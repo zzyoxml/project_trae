@@ -100,9 +100,9 @@
         <el-table-column label="用户信息" min-width="220">
           <template #default="{ row }">
             <div class="user-info-cell">
-              <div class="user-avatar">
+              <el-avatar :size="40" :src="row.avatar || row.avatarUrl">
                 {{ row.nickName ? row.nickName.charAt(0).toUpperCase() : 'U' }}
-              </div>
+              </el-avatar>
               <div class="user-details">
                 <div class="user-name">{{ row.nickName || row.username }}</div>
                 <div class="user-email">{{ row.email }}</div>
@@ -200,6 +200,11 @@
 
     <el-dialog v-model="detailDialogVisible" title="用户详情" width="600px">
       <div v-if="currentUser" class="user-detail-content">
+        <div class="detail-avatar-section">
+          <el-avatar :size="100" :src="currentUser.avatar || currentUser.avatarUrl">
+            {{ currentUser.nickName ? currentUser.nickName.charAt(0).toUpperCase() : 'U' }}
+          </el-avatar>
+        </div>
         <el-descriptions :column="2" border>
           <el-descriptions-item label="用户ID">{{ currentUser.userId }}</el-descriptions-item>
           <el-descriptions-item label="用户名">{{ currentUser.username }}</el-descriptions-item>
@@ -234,6 +239,18 @@
 
     <el-dialog v-model="userFormDialogVisible" :title="isEditMode ? '编辑用户' : '新增用户'" width="700px">
       <el-form ref="userFormRef" :model="userForm" :rules="userFormRules" label-width="100px">
+        <el-form-item label="头像">
+          <el-upload
+            class="avatar-uploader"
+            action="#"
+            :show-file-list="false"
+            :http-request="handleAdminAvatarUpload"
+            :disabled="adminUploading"
+          >
+            <img v-if="userForm.avatar" :src="userForm.avatar" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+        </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="userForm.username" placeholder="请输入用户名" />
         </el-form-item>
@@ -291,7 +308,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useThemeStore } from '@/stores/theme'
-import { getAllUsers, deleteUserById, updateUserStatus, addUser, editUser, getUserDetail } from '@/api/user'
+import { getAllUsers, deleteUserById, updateUserStatus, addUser, editUser, getUserDetail, uploadAvatar } from '@/api/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const themeStore = useThemeStore()
@@ -305,6 +322,7 @@ const isEditMode = ref(false)
 const formSubmitting = ref(false)
 const showPasswordInput = ref(false)
 const userFormRef = ref(null)
+const adminUploading = ref(false)
 
 const searchForm = reactive({
   username: '',
@@ -332,6 +350,7 @@ const userForm = reactive({
   nickName: '',
   email: '',
   phonenumber: '',
+  avatar: '',
   nativeLanguage: 'zh',
   learningLanguages: [],
   status: '0'
@@ -464,6 +483,7 @@ const openEditDialog = async (user) => {
       nickName: res.nickName || '',
       email: res.email || '',
       phonenumber: res.phonenumber || '',
+      avatar: res.avatar || res.avatarUrl || '',
       nativeLanguage: res.nativeLanguage || 'zh',
       learningLanguages: res.learningLanguages ? res.learningLanguages.split(',') : [],
       status: res.status || '0'
@@ -476,6 +496,7 @@ const openEditDialog = async (user) => {
       nickName: user.nickName || '',
       email: user.email || '',
       phonenumber: user.phonenumber || '',
+      avatar: user.avatar || user.avatarUrl || '',
       nativeLanguage: user.nativeLanguage || 'zh',
       learningLanguages: user.learningLanguages ? user.learningLanguages.split(',') : [],
       status: user.status || '0'
@@ -491,10 +512,46 @@ const resetForm = () => {
   userForm.nickName = ''
   userForm.email = ''
   userForm.phonenumber = ''
+  userForm.avatar = ''
   userForm.nativeLanguage = 'zh'
   userForm.learningLanguages = []
   userForm.status = '0'
   showPasswordInput.value = false
+}
+
+const handleAdminAvatarUpload = async (options) => {
+  const file = options.file
+  const isImage = file.type.startsWith('image/')
+  const isLt2M = file.size / 1024 / 1024 < 2
+
+  if (!isImage) {
+    ElMessage.error('只能上传图片文件')
+    return false
+  }
+  if (!isLt2M) {
+    ElMessage.error('图片大小不能超过 2MB')
+    return false
+  }
+
+  try {
+    adminUploading.value = true
+    const uploadFormData = new FormData()
+    uploadFormData.append('avatarfile', file)
+    
+    const res = await uploadAvatar(uploadFormData)
+    const imgUrl = res.imgUrl
+    
+    userForm.avatar = imgUrl
+    
+    ElMessage.success('头像上传成功')
+  } catch (error) {
+    console.error('头像上传失败:', error)
+    ElMessage.error('头像上传失败')
+  } finally {
+    adminUploading.value = false
+  }
+  
+  return false
 }
 
 const submitUserForm = async () => {
@@ -505,17 +562,25 @@ const submitUserForm = async () => {
       formSubmitting.value = true
       try {
         const submitData = {
-          ...userForm,
-          learningLanguages: userForm.learningLanguages.join(',')
+          userId: userForm.userId,
+          username: userForm.username,
+          nickName: userForm.nickName,
+          email: userForm.email,
+          phonenumber: userForm.phonenumber,
+          avatar: userForm.avatar,
+          nativeLanguage: userForm.nativeLanguage,
+          learningLanguages: userForm.learningLanguages.join(','),
+          status: userForm.status
         }
         
         if (isEditMode.value) {
-          if (!submitData.password) {
-            delete submitData.password
+          if (userForm.password) {
+            submitData.password = userForm.password
           }
           await editUser(submitData)
           ElMessage.success('编辑成功')
         } else {
+          submitData.password = userForm.password
           await addUser(submitData)
           ElMessage.success('新增成功')
         }
@@ -764,6 +829,43 @@ const formatTime = (time) => {
 
   .user-detail-content {
     padding: 10px 0;
+
+    .detail-avatar-section {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+  }
+
+  .avatar-uploader {
+    :deep(.el-upload) {
+      border: 1px dashed #d9d9d9;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+
+      &:hover {
+        border-color: #409eff;
+      }
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      display: block;
+      border-radius: 50%;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      line-height: 100px;
+    }
   }
 }
 
@@ -815,6 +917,20 @@ const formatTime = (time) => {
 
     .streak-badge {
       color: #f56c6c;
+    }
+  }
+
+  .avatar-uploader {
+    :deep(.el-upload) {
+      border-color: #3a4a4a;
+
+      &:hover {
+        border-color: #98D8C8;
+      }
+    }
+
+    .avatar-uploader-icon {
+      color: #6a8a7a;
     }
   }
 }

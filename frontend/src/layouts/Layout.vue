@@ -44,7 +44,9 @@
           <template v-if="userStore.isLoggedIn">
             <el-dropdown @command="handleUserCommand">
               <span class="user-info">
-                <el-avatar :size="isMobile ? 28 : 32">{{ userStore.nickname?.charAt(0) || 'U' }}</el-avatar>
+                <el-avatar :size="isMobile ? 28 : 32" :src="userStore.avatar">
+                  {{ userStore.nickname?.charAt(0) || 'U' }}
+                </el-avatar>
                 <span class="username" v-if="!isMobile">{{ userStore.nickname || '用户' }}</span>
               </span>
               <template #dropdown>

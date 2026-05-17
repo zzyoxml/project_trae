@@ -2,7 +2,7 @@
  * 用户相关 API 接口
  */
 
-import { get, post, put } from '@/utils/request'
+import { get, post, put, upload } from '@/utils/request'
 
 export function login(data) {
   return post('/login', data)
@@ -22,6 +22,10 @@ export function logout() {
 
 export function updateUserInfo(userInfo) {
   return put('/user/profile', userInfo)
+}
+
+export function uploadAvatar(formData) {
+  return upload('/system/user/profile/avatar', formData)
 }
 
 export function getLearningStats() {

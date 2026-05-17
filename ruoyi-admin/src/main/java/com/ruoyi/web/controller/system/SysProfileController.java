@@ -20,6 +20,8 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.MimeTypeUtils;
+import com.ruoyi.edu.domain.EduUserProfile;
+import com.ruoyi.edu.service.IEduUserService;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.service.ISysUserService;
 
@@ -37,6 +39,9 @@ public class SysProfileController extends BaseController
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private IEduUserService eduUserService;
 
     /**
      * 个人信息
@@ -128,6 +133,23 @@ public class SysProfileController extends BaseController
             String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
             if (userService.updateUserAvatar(loginUser.getUsername(), avatar))
             {
+                // 同时更新 edu_user_profile 表中的头像
+                Long userId = loginUser.getUser().getUserId();
+                EduUserProfile profile = eduUserService.selectEduUserProfileByUserId(userId);
+                if (profile != null)
+                {
+                    profile.setAvatarUrl(avatar);
+                    eduUserService.updateEduUserProfile(profile);
+                }
+                else
+                {
+                    // 如果 edu_user_profile 表中没有记录，创建一条新记录
+                    profile = new EduUserProfile();
+                    profile.setUserId(userId);
+                    profile.setAvatarUrl(avatar);
+                    eduUserService.insertEduUserProfile(profile);
+                }
+                
                 AjaxResult ajax = AjaxResult.success();
                 ajax.put("imgUrl", avatar);
                 // 更新缓存用户头像

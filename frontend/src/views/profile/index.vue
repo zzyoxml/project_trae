@@ -80,7 +80,8 @@
               class="avatar-uploader"
               action="#"
               :show-file-list="false"
-              :before-upload="beforeAvatarUpload"
+              :http-request="handleAvatarUpload"
+              :disabled="uploading"
             >
               <img v-if="formData.avatar" :src="formData.avatar" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
@@ -234,6 +235,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
+import { uploadAvatar } from '@/api/user'
 
 const userStore = useUserStore()
 const themeStore = useThemeStore()
@@ -241,6 +243,7 @@ const themeStore = useThemeStore()
 const loading = ref(false)
 const isEditing = ref(false)
 const formRef = ref(null)
+const uploading = ref(false)
 
 const formData = reactive({
   username: '',
@@ -330,7 +333,8 @@ const saveProfile = async () => {
   }
 }
 
-const beforeAvatarUpload = (file) => {
+const handleAvatarUpload = async (options) => {
+  const file = options.file
   const isImage = file.type.startsWith('image/')
   const isLt2M = file.size / 1024 / 1024 < 2
 
@@ -342,11 +346,25 @@ const beforeAvatarUpload = (file) => {
     ElMessage.error('图片大小不能超过 2MB')
     return false
   }
-  
-  const reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.onload = (e) => {
-    formData.avatar = e.target.result
+
+  try {
+    uploading.value = true
+    const uploadFormData = new FormData()
+    uploadFormData.append('avatarfile', file)
+    
+    const res = await uploadAvatar(uploadFormData)
+    const imgUrl = res.imgUrl
+    
+    // 更新本地状态
+    formData.avatar = imgUrl
+    userStore.avatar = imgUrl
+    
+    ElMessage.success('头像上传成功')
+  } catch (error) {
+    console.error('头像上传失败:', error)
+    ElMessage.error('头像上传失败')
+  } finally {
+    uploading.value = false
   }
   
   return false

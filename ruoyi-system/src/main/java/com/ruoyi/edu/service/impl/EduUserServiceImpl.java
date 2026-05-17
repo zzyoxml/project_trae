@@ -288,6 +288,7 @@ public class EduUserServiceImpl implements IEduUserService {
                 userMap.put("level", profile.getLevel());
                 userMap.put("experiencePoints", profile.getExperiencePoints());
                 userMap.put("bio", profile.getBio());
+                userMap.put("avatarUrl", profile.getAvatarUrl());
             } else {
                 userMap.put("nativeLanguage", "zh");
                 userMap.put("learningLanguages", "en");
@@ -298,6 +299,9 @@ public class EduUserServiceImpl implements IEduUserService {
                 userMap.put("level", 1);
                 userMap.put("experiencePoints", 0);
             }
+            
+            // 添加系统用户头像
+            userMap.put("avatar", sysUser.getAvatar());
             
             // 如果指定了学习语言筛选
             if (StringUtils.isNotEmpty(learningLanguage) && profile != null) {
