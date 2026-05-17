@@ -1,5 +1,5 @@
 <template>
-  <div class="achievement-page">
+  <div class="achievement-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>🏆 成就中心</h1>
 
     <!-- 成就概览 -->
@@ -98,7 +98,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useThemeStore } from '@/stores/theme'
 import { getAchievementList, getBadgeList } from '@/api/achievement'
+
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const activeCategory = ref('all')
@@ -302,6 +305,54 @@ const getMockBadges = () => [
         .badge-name {
           font-size: 14px;
           color: #606266;
+        }
+      }
+    }
+  }
+  }
+
+  .achievement-page.dark-mode {
+  .achievement-categories {
+    .achievements-grid {
+      .achievement-card {
+        &.completed {
+          border-color: #6BA899;
+        }
+
+        .achievement-body {
+          h3 {
+            color: #d0e0d8;
+          }
+
+          .achievement-desc {
+            color: #6a8a7a;
+          }
+        }
+
+        .achievement-progress {
+          .progress-text {
+            color: #6a8a7a;
+          }
+        }
+      }
+    }
+  }
+
+  .badges-section {
+    .badges-grid {
+      .badge-item {
+        background: #1a2a2a;
+
+        &:hover {
+          background: #253535;
+        }
+
+        &.earned {
+          background: linear-gradient(135deg, #1e2e2e 0%, #253535 100%);
+        }
+
+        .badge-name {
+          color: #8aa89a;
         }
       }
     }

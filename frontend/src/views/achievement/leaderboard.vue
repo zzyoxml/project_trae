@@ -1,5 +1,5 @@
 <template>
-  <div class="leaderboard-page">
+  <div class="leaderboard-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>📊 排行榜</h1>
 
     <!-- 排行榜类型 -->
@@ -69,8 +69,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { getLeaderboard } from '@/api/achievement'
+import { ref, computed, onMounted } from 'vue'
+import { useThemeStore } from '@/stores/theme'
+import { getLeaderboard, getMyRank } from '@/api/achievement'
+
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const activeType = ref('total')
@@ -184,6 +187,41 @@ const getMockLeaderboard = () => [
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+  }
+}
+
+.leaderboard-page.dark-mode {
+  .top-three {
+    .rank-card {
+      background: #1e2e2e;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+      &.first {
+        border-color: #b8960f;
+      }
+
+      &.second {
+        border-color: #8a8a8a;
+      }
+
+      &.third {
+        border-color: #9a6020;
+      }
+
+      h3 {
+        color: #d0e0d8;
+      }
+
+      p {
+        color: #6a8a7a;
+      }
+    }
+  }
+
+  .leaderboard-list {
+    .rank-number {
+      color: #8aa89a;
     }
   }
 }

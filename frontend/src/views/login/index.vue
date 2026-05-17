@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page">
+  <div class="login-page" :class="{ 'dark-mode': themeStore.isDark }">
     <div class="login-container">
       <div class="login-decoration">
         <div class="decoration-circle circle-1"></div>
@@ -71,11 +71,13 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loginFormRef = ref()
 const loading = ref(false)
@@ -394,6 +396,87 @@ const handleForgot = () => {
   .login-footer {
     margin-top: 24px;
     font-size: 13px;
+  }
+}
+
+// 暗黑模式
+.login-page.dark-mode {
+  background: linear-gradient(135deg, #0f1a1a 0%, #1a2a2a 50%, #0f1a1a 100%);
+
+  .login-container {
+    background: rgba(30, 46, 46, 0.95);
+    border: 2px solid rgba(152, 216, 200, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .login-header {
+    h1 {
+      background: linear-gradient(135deg, #98D8C8 0%, #B5E5D3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p {
+      color: #8aa89a;
+    }
+  }
+
+  .login-form {
+    :deep(.el-input) {
+      .el-input__wrapper {
+        background: #2a3a3a;
+        box-shadow: 0 0 0 2px rgba(152, 216, 200, 0.15);
+
+        &:hover {
+          box-shadow: 0 0 0 2px rgba(152, 216, 200, 0.3);
+        }
+
+        &.is-focus {
+          box-shadow: 0 0 0 3px rgba(152, 216, 200, 0.4);
+        }
+      }
+
+      .el-input__inner {
+        color: #d0e0d8;
+
+        &::placeholder {
+          color: #5a7a6a;
+        }
+      }
+
+      .el-input__prefix {
+        color: #98D8C8;
+      }
+    }
+
+    .form-options {
+      :deep(.el-checkbox) {
+        .el-checkbox__label {
+          color: #8aa89a;
+        }
+      }
+
+      a {
+        color: #98D8C8;
+
+        &:hover {
+          color: #B5E5D3;
+        }
+      }
+    }
+  }
+
+  .login-footer {
+    color: #8aa89a;
+
+    a {
+      color: #98D8C8;
+
+      &:hover {
+        color: #B5E5D3;
+      }
+    }
   }
 }
 </style>

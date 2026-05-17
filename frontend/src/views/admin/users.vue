@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-users-page">
+  <div class="admin-users-page" :class="{ 'dark-mode': themeStore.isDark }">
     <div class="page-header">
       <h1>👥 用户管理</h1>
       <div class="header-actions">
@@ -290,8 +290,11 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useThemeStore } from '@/stores/theme'
 import { getAllUsers, deleteUserById, updateUserStatus, addUser, editUser, getUserDetail } from '@/api/user'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const users = ref([])
@@ -761,6 +764,58 @@ const formatTime = (time) => {
 
   .user-detail-content {
     padding: 10px 0;
+  }
+}
+
+.admin-users-page.dark-mode {
+  .filter-section {
+    background: #1e2e2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .stats-cards {
+    .stat-card {
+      background: #1e2e2e;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+      .stat-content {
+        .stat-value {
+          color: #98D8C8;
+        }
+
+        .stat-label {
+          color: #6a8a7a;
+        }
+      }
+    }
+  }
+
+  .users-table {
+    background: #1e2e2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    .user-info-cell {
+      .user-details {
+        .user-name {
+          color: #d0e0d8;
+        }
+
+        .user-email,
+        .user-phone {
+          color: #6a8a7a;
+        }
+      }
+    }
+
+    .password-cell {
+      .password-text {
+        color: #8aa89a;
+      }
+    }
+
+    .streak-badge {
+      color: #f56c6c;
+    }
   }
 }
 </style>

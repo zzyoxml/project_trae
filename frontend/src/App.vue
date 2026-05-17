@@ -37,4 +37,9 @@ onMounted(async () => {
   color: $text-color;
   font-family: $font-family;
 }
+
+html.dark #app {
+  background-color: #1a2a2a;
+  color: #d0e0d8;
+}
 </style>

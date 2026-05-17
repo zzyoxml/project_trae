@@ -1,5 +1,5 @@
 <template>
-  <div class="home-page">
+  <div class="home-page" :class="{ 'dark-mode': themeStore.isDark }">
     <!-- 轮播图区域 -->
     <section class="hero-section">
       <div class="hero-content">
@@ -118,12 +118,14 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { getFeaturedCourses } from '@/api/course'
 import { getHotPosts } from '@/api/community'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const coursesLoading = ref(false)
 const postsLoading = ref(false)
@@ -686,6 +688,147 @@ const truncateText = (text, max) => {
 
           .course-info, .post-card {
             padding: 16px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// 暗黑模式
+// ========================================
+.home-page.dark-mode {
+  .hero-section {
+    background: linear-gradient(135deg, #1e3a2a 0%, #1a2a3a 50%, #1e3a2a 100%);
+
+    h1 {
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-buttons {
+      .el-button {
+        &:first-child {
+          background: #2a3a3a;
+          color: #98D8C8;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        &:last-child {
+          background: rgba(152, 216, 200, 0.15);
+          color: #98D8C8;
+          border-color: rgba(152, 216, 200, 0.3);
+        }
+      }
+    }
+  }
+
+  .section-header {
+    h2 {
+      background: linear-gradient(135deg, #98D8C8 0%, #B5E5D3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .features-section {
+    h2 {
+      background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .features-grid {
+      .feature-card {
+        background: #1e2e2e;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+        &::before {
+          background: linear-gradient(90deg, #98D8C8, #ADD8E6, #B5E5D3);
+        }
+
+        &:hover {
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        h3 {
+          color: #d0e0d8;
+        }
+
+        p {
+          color: #8aa89a;
+        }
+      }
+    }
+  }
+
+  .courses-section {
+    .courses-grid {
+      .course-card {
+        background: #1e2e2e;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .course-info {
+          h3 {
+            color: #d0e0d8;
+          }
+
+          .course-desc {
+            color: #8aa89a;
+          }
+
+          .course-meta {
+            color: #8aa89a;
+          }
+        }
+      }
+    }
+  }
+
+  .community-section {
+    .community-grid {
+      .post-card {
+        background: #1e2e2e;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+        &:hover {
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .post-header {
+          .user-info {
+            .user-name {
+              color: #d0e0d8;
+            }
+
+            .post-time {
+              color: #6a8a7a;
+            }
+          }
+        }
+
+        .post-title {
+          color: #d0e0d8;
+        }
+
+        .post-content {
+          color: #8aa89a;
+        }
+
+        .post-footer {
+          .post-tag {
+            color: #98D8C8;
+            background: rgba(152, 216, 200, 0.15);
+          }
+
+          .post-stats {
+            color: #6a8a7a;
           }
         }
       }

@@ -1,5 +1,5 @@
 <template>
-  <div class="lesson-page">
+  <div class="lesson-page" :class="{ 'dark-mode': themeStore.isDark }">
     <el-page-header @back="$router.back()" content="课时学习" />
 
     <div class="lesson-content" v-loading="loading">
@@ -110,12 +110,14 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { getLessonDetail, completeLesson as completeLessonApi } from '@/api/learning'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const lesson = ref({})
@@ -383,5 +385,66 @@ const scoreMessage = computed(() => {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+.lesson-page.dark-mode {
+  .lesson-content {
+    .lesson-header {
+      .lesson-info {
+        color: #6a8a7a;
+      }
+    }
+
+    .lesson-main {
+      .vocabulary-list {
+        .word-card {
+          background: #1a2a2a;
+
+          &:hover {
+            background: #253535;
+          }
+
+          .word-translation {
+            color: #98D8C8;
+          }
+
+          .word-example {
+            color: #8aa89a;
+          }
+        }
+      }
+
+      .example-list {
+        .example-card {
+          background: #1a2a2a;
+          border-left-color: #98D8C8;
+
+          .example-sentence {
+            color: #d0e0d8;
+          }
+
+          .example-translation {
+            color: #6a8a7a;
+            border-left-color: #2a3a3a;
+          }
+        }
+      }
+
+      .speaking-content {
+        .prompt-text {
+          background: #1a2a2a;
+          color: #d0e0d8;
+        }
+
+        .score-display {
+          background: #1a2a2a;
+
+          h3 {
+            color: #98D8C8;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

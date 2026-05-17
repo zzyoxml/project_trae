@@ -1,5 +1,5 @@
 <template>
-  <div class="post-detail-page">
+  <div class="post-detail-page" :class="{ 'dark-mode': themeStore.isDark }">
     <el-page-header @back="$router.back()" content="帖子详情" />
 
     <div class="post-content" v-loading="loading">
@@ -80,10 +80,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useThemeStore } from '@/stores/theme'
 import { getPostDetail, getPostComments, addComment, likePost, unlikePost } from '@/api/community'
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const post = ref(null)
@@ -304,6 +306,66 @@ const getTypeTagType = (type) => {
               margin: 0;
               color: #606266;
               line-height: 1.6;
+            }
+          }
+        }
+      }
+    }
+  }
+  }
+
+  .post-detail-page.dark-mode {
+  .post-content {
+    .post-header {
+      .user-info {
+        .user-details {
+          .username {
+            color: #d0e0d8;
+          }
+
+          .post-time {
+            color: #6a8a7a;
+          }
+        }
+      }
+    }
+
+    .post-body {
+      h1 {
+        color: #d0e0d8;
+      }
+
+      .post-text {
+        color: #8aa89a;
+      }
+    }
+
+    .comments-section {
+      .comment-input {
+        border-bottom-color: #2a3a3a;
+      }
+
+      .comments-list {
+        .comment-item {
+          border-bottom-color: #2a3a3a;
+
+          .comment-header {
+            .user-info {
+              .user-details {
+                .username {
+                  color: #d0e0d8;
+                }
+
+                .comment-time {
+                  color: #6a8a7a;
+                }
+              }
+            }
+          }
+
+          .comment-body {
+            p {
+              color: #8aa89a;
             }
           }
         }

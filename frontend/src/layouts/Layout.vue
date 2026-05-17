@@ -140,15 +140,24 @@ const handleUserCommand = (command) => {
     color: #d0e0d8;
     
     .header {
-      background-color: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      background-color: rgba(26, 42, 42, 0.95);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
       
-      .logo h1, .logo-text {
+      .logo h1 {
         color: #98D8C8;
+        background: none;
+        -webkit-text-fill-color: #98D8C8;
+      }
+      
+      .logo-text {
+        color: #98D8C8;
+        background: none;
+        -webkit-text-fill-color: #98D8C8;
       }
       
       .nav .nav-item {
-        color: #2D5A4A;
+        color: #b0c0b8;
         
         &:hover {
           color: #98D8C8;
@@ -157,13 +166,40 @@ const handleUserCommand = (command) => {
         
         &.router-link-active {
           color: #98D8C8;
-          background-color: rgba(152, 216, 200, 0.1);
+          background-color: rgba(152, 216, 200, 0.15);
         }
       }
       
-      .user-area .user-info {
-        &:hover {
-          background-color: rgba(152, 216, 200, 0.1);
+      .user-area {
+        .theme-btn {
+          background: rgba(152, 216, 200, 0.15) !important;
+          color: #98D8C8 !important;
+        }
+        
+        .user-info {
+          &:hover {
+            background-color: rgba(152, 216, 200, 0.1);
+          }
+          
+          .username {
+            color: #d0e0d8;
+          }
+        }
+        
+        .login-btn {
+          background: linear-gradient(135deg, #98D8C8 0%, #6BA899 100%) !important;
+          color: white !important;
+        }
+        
+        .register-btn {
+          background: #2a3a3a !important;
+          color: #98D8C8 !important;
+          border: 2px solid #3a4a4a !important;
+          
+          &:hover {
+            background: #354545 !important;
+            border-color: #98D8C8 !important;
+          }
         }
       }
     }
@@ -173,12 +209,17 @@ const handleUserCommand = (command) => {
     }
     
     .footer {
-      background: linear-gradient(135deg, #98D8C8 0%, #ADD8E6 100%);
-      color: #2D5A4A;
+      background: linear-gradient(135deg, #1e2e2e 0%, #253535 100%);
+      color: #98D8C8;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.3);
     }
     
-    .safe-area-top, .safe-area-bottom {
+    .safe-area-top {
       background-color: #1a2a2a;
+    }
+    
+    .safe-area-bottom {
+      background: linear-gradient(135deg, #1e2e2e 0%, #253535 100%);
     }
   }
 }

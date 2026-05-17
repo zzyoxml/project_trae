@@ -1,5 +1,5 @@
 <template>
-  <div class="learning-page">
+  <div class="learning-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>📖 学习中心</h1>
 
     <!-- 学习进度概览 -->
@@ -188,12 +188,14 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { getMyCourses, getFeaturedCourses } from '@/api/course'
 import { getLearningStats, claimTaskReward, getTodayCompletedLessons } from '@/api/learning'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const inProgressCourses = ref([])
@@ -648,6 +650,102 @@ const handleImageError = (e) => {
           .task-reward {
             font-size: 12px;
             color: #e6a23c;
+          }
+        }
+      }
+    }
+  }
+}
+
+.learning-page.dark-mode {
+  .progress-card {
+    .progress-overview {
+      .stats-list {
+        .stat-item {
+          background: #1a2a2a;
+
+          .stat-content {
+            .stat-value {
+              color: #d0e0d8;
+            }
+
+            .stat-label {
+              color: #6a8a7a;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .continue-card {
+    .continue-list {
+      .continue-item {
+        border-bottom-color: #2a3a3a;
+
+        .course-info {
+          .course-name {
+            color: #d0e0d8;
+          }
+
+          .course-progress {
+            .progress-text {
+              color: #98D8C8;
+            }
+          }
+
+          .course-meta {
+            color: #6a8a7a;
+          }
+        }
+      }
+    }
+  }
+
+  .recommend-card {
+    .recommend-list {
+      .recommend-item {
+        background: #1a2a2a;
+
+        &:hover {
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .course-info {
+          .course-name {
+            color: #d0e0d8;
+          }
+
+          .course-desc {
+            color: #6a8a7a;
+          }
+
+          .course-meta {
+            color: #6a8a7a;
+          }
+        }
+      }
+    }
+  }
+
+  .tasks-card {
+    .task-list {
+      .task-item {
+        border-bottom-color: #2a3a3a;
+
+        .task-icon {
+          background: #1a2a2a;
+        }
+
+        &.completed {
+          .task-icon {
+            background: #6BA899;
+          }
+        }
+
+        .task-info {
+          .task-name {
+            color: #d0e0d8;
           }
         }
       }

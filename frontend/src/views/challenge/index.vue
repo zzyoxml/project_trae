@@ -1,5 +1,5 @@
 <template>
-  <div class="challenge-page">
+  <div class="challenge-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>🏆 闯关天梯</h1>
 
     <!-- 挑战模式选择 -->
@@ -126,8 +126,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useThemeStore } from '@/stores/theme'
 import { getLeaderboard, getMyRank } from '@/api/achievement'
 
+const themeStore = useThemeStore()
 const loading = ref(false)
 const currentMode = ref('total')
 const leaderboard = ref([])
@@ -405,6 +407,117 @@ const getLevelType = (level) => {
             .value {
               font-weight: bold;
               color: #303133;
+            }
+          }
+        }
+      }
+    }
+  }
+  }
+
+  .challenge-page.dark-mode {
+  .challenge-content {
+    .leaderboard-card {
+      .leaderboard {
+        .top-three {
+          .top-item {
+            background: #1a2a2a;
+
+            &.rank-1 {
+              background: linear-gradient(135deg, #2a3a2a 0%, #1e3a2a 100%);
+            }
+
+            &.rank-2 {
+              background: linear-gradient(135deg, #2a2a2a 0%, #252525 100%);
+            }
+
+            &.rank-3 {
+              background: linear-gradient(135deg, #3a2a1a 0%, #352515 100%);
+            }
+
+            .user-info {
+              .username {
+                color: #d0e0d8;
+              }
+            }
+
+            .score {
+              .score-value {
+                color: #98D8C8;
+              }
+
+              .score-label {
+                color: #6a8a7a;
+              }
+            }
+          }
+        }
+
+        .rank-list {
+          .rank-item {
+            &:hover {
+              background: #1e2e2e;
+            }
+
+            &.is-me {
+              background: rgba(152, 216, 200, 0.1);
+              border-color: #98D8C8;
+            }
+
+            .rank-number {
+              .rank {
+                color: #6a8a7a;
+              }
+            }
+
+            .user-info {
+              .username {
+                color: #d0e0d8;
+              }
+
+              .meta {
+                color: #6a8a7a;
+              }
+            }
+
+            .stats {
+              .stat {
+                .value {
+                  color: #d0e0d8;
+                }
+
+                .label {
+                  color: #6a8a7a;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .my-rank-card {
+      .my-rank-info {
+        .rank-display {
+          .rank-number {
+            color: #98D8C8;
+          }
+
+          .rank-suffix {
+            color: #6a8a7a;
+          }
+        }
+
+        .rank-details {
+          .detail-item {
+            border-bottom-color: #2a3a3a;
+
+            .label {
+              color: #6a8a7a;
+            }
+
+            .value {
+              color: #d0e0d8;
             }
           }
         }

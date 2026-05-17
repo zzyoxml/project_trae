@@ -1,5 +1,5 @@
 <template>
-  <div class="course-detail">
+  <div class="course-detail" :class="{ 'dark-mode': themeStore.isDark }">
     <el-page-header @back="$router.back()" content="课程详情" />
 
     <div class="course-content" v-loading="loading">
@@ -156,12 +156,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { getCourseDetail, enrollCourse, cancelEnroll } from '@/api/course'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const course = ref({})
@@ -679,6 +681,81 @@ const handleImageError = (e) => {
 
             .stat-item {
               font-size: 11px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.course-detail.dark-mode {
+  .course-content {
+    .course-header {
+      background: #1e2e2e;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+      .course-info {
+        .course-desc {
+          color: #8aa89a;
+        }
+
+        .course-stats {
+          .stat-item {
+            color: #6a8a7a;
+          }
+        }
+      }
+    }
+
+    .course-body {
+      .course-main {
+        .intro-card {
+          p {
+            color: #8aa89a;
+          }
+        }
+
+        .units-card {
+          .lessons {
+            .lesson-item {
+              background: #1a2a2a;
+
+              &:hover {
+                background: #253535;
+              }
+
+              .lesson-info {
+                .lesson-name {
+                  color: #d0e0d8;
+                }
+
+                .lesson-duration {
+                  color: #6a8a7a;
+                }
+              }
+
+              &.lesson-completed {
+                background: rgba(152, 216, 200, 0.08);
+              }
+            }
+          }
+        }
+      }
+
+      .course-sidebar {
+        .enroll-card {
+          .info-list {
+            .info-item {
+              border-bottom-color: #2a3a3a;
+
+              .label {
+                color: #6a8a7a;
+              }
+
+              .value {
+                color: #d0e0d8;
+              }
             }
           }
         }

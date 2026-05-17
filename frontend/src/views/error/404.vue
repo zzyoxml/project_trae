@@ -1,5 +1,5 @@
 <template>
-  <div class="error-page">
+  <div class="error-page" :class="{ 'dark-mode': themeStore.isDark }">
     <div class="error-content">
       <h1>404</h1>
       <h2>页面不存在</h2>
@@ -11,8 +11,10 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { useThemeStore } from '@/stores/theme'
 
 const router = useRouter()
+const themeStore = useThemeStore()
 
 const goHome = () => {
   router.push('/')
@@ -46,6 +48,24 @@ const goHome = () => {
       font-size: 18px;
       margin-bottom: 32px;
       opacity: 0.9;
+    }
+  }
+
+  &.dark-mode {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+
+    .error-content {
+      h1 {
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      h2 {
+        color: #d0e0d8;
+      }
+
+      p {
+        color: #8aa89a;
+      }
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="community-page">
+  <div class="community-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>👥 学习社区</h1>
 
     <!-- 发布帖子 -->
@@ -88,14 +88,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { getPostList, createPost as createPostApi, likePost, unlikePost } from '@/api/community'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const filterType = ref('')
@@ -293,6 +295,52 @@ const getTypeTagType = (type) => {
       display: flex;
       justify-content: center;
       margin-top: 24px;
+    }
+  }
+}
+
+.community-page.dark-mode {
+  .posts-section {
+    .posts-list {
+      .post-card {
+        &:hover {
+          background: rgba(152, 216, 200, 0.05);
+        }
+
+        .post-header {
+          .user-info {
+            .user-details {
+              .username {
+                color: #d0e0d8;
+              }
+
+              .post-time {
+                color: #6a8a7a;
+              }
+            }
+          }
+        }
+
+        .post-content {
+          h3 {
+            color: #d0e0d8;
+          }
+
+          p {
+            color: #8aa89a;
+          }
+        }
+
+        .post-footer {
+          .post-stats {
+            color: #6a8a7a;
+
+            span:hover {
+              color: #98D8C8;
+            }
+          }
+        }
+      }
     }
   }
 }

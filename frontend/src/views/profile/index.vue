@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-page">
+  <div class="profile-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>👤 个人中心</h1>
 
     <div class="profile-content" v-loading="loading">
@@ -232,9 +232,11 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const isEditing = ref(false)
@@ -526,6 +528,82 @@ const getLanguageName = (code) => {
               font-size: 12px;
               color: #909399;
             }
+          }
+        }
+      }
+    }
+  }
+}
+
+.profile-page.dark-mode {
+  .profile-card {
+    .info-grid {
+      .info-item {
+        label {
+          color: #6a8a7a;
+        }
+
+        span {
+          color: #d0e0d8;
+        }
+      }
+    }
+
+    .profile-form {
+      .avatar-uploader {
+        :deep(.el-upload) {
+          border-color: #3a4a4a;
+
+          &:hover {
+            border-color: #98D8C8;
+          }
+        }
+
+        .avatar-uploader-icon {
+          color: #6a8a7a;
+        }
+      }
+
+      .unit-text {
+        color: #6a8a7a;
+      }
+    }
+  }
+
+  .stats-card {
+    .stats-grid {
+      .stat-item {
+        background: linear-gradient(135deg, #1a2a2a 0%, #1e2e2e 100%);
+
+        .stat-content {
+          .stat-value {
+            color: #d0e0d8;
+          }
+
+          .stat-label {
+            color: #6a8a7a;
+          }
+        }
+      }
+    }
+  }
+
+  .recent-card {
+    .recent-list {
+      .recent-item {
+        border-bottom-color: #2a3a3a;
+
+        &:hover {
+          background: #1e2e2e;
+        }
+
+        .recent-content {
+          .recent-title {
+            color: #d0e0d8;
+          }
+
+          .recent-time {
+            color: #6a8a7a;
           }
         }
       }

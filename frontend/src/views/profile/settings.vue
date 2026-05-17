@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-page">
+  <div class="settings-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>⚙️ 设置</h1>
 
     <el-card class="settings-card">
@@ -77,11 +77,13 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const formRef = ref()
 const passwordFormRef = ref()
@@ -184,6 +186,14 @@ const handleChangePassword = async () => {
     .goal-unit {
       margin-left: 8px;
       color: #909399;
+    }
+  }
+}
+
+.settings-page.dark-mode {
+  .settings-card {
+    .goal-unit {
+      color: #6a8a7a;
     }
   }
 }

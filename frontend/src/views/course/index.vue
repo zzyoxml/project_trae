@@ -1,5 +1,5 @@
 <template>
-  <div class="course-page">
+  <div class="course-page" :class="{ 'dark-mode': themeStore.isDark }">
     <h1>📚 课程中心</h1>
 
     <!-- 筛选器 -->
@@ -82,9 +82,11 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCourseList } from '@/api/course'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const themeStore = useThemeStore()
 
 const loading = ref(false)
 const courses = ref([])
@@ -448,6 +450,33 @@ const handleImageError = (e) => {
             gap: 6px;
             font-size: 10px;
           }
+        }
+      }
+    }
+  }
+}
+
+.course-page.dark-mode {
+  .course-list {
+    .course-card {
+      background: #1e2e2e;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+      &:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+
+      .course-info {
+        h3 {
+          color: #d0e0d8;
+        }
+
+        .course-desc {
+          color: #6a8a7a;
+        }
+
+        .course-meta {
+          color: #6a8a7a;
         }
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="register-page">
+  <div class="register-page" :class="{ 'dark-mode': themeStore.isDark }">
     <div class="register-container">
       <div class="register-header">
         <h1>🎓 加入 LinguaLearn</h1>
@@ -96,9 +96,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '@/api/user'
+import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+const themeStore = useThemeStore()
 
 const registerFormRef = ref()
 const loading = ref(false)
@@ -216,6 +218,34 @@ const handleRegister = async () => {
 
     &:hover {
       text-decoration: underline;
+    }
+  }
+}
+
+.register-page.dark-mode {
+  background: linear-gradient(135deg, #0f1a1a 0%, #1a2a2a 100%);
+
+  .register-container {
+    background: rgba(30, 46, 46, 0.95);
+    border: 1px solid rgba(152, 216, 200, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .register-header {
+    h1 {
+      color: #98D8C8;
+    }
+
+    p {
+      color: #8aa89a;
+    }
+  }
+
+  .register-footer {
+    color: #8aa89a;
+
+    a {
+      color: #98D8C8;
     }
   }
 }
