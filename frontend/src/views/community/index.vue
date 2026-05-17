@@ -41,9 +41,9 @@
         >
           <div class="post-header">
             <div class="user-info">
-              <el-avatar :size="40">{{ post.username?.charAt(0) }}</el-avatar>
+              <el-avatar :size="40" :src="post.userAvatar || undefined">{{ (post.userName || post.username || '?').charAt(0) }}</el-avatar>
               <div class="user-details">
-                <span class="username">{{ post.username }}</span>
+                <span class="username">{{ post.userName || post.username || '未知用户' }}</span>
                 <span class="post-time">{{ post.createTime }}</span>
               </div>
             </div>

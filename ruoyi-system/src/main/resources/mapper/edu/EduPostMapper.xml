@@ -27,47 +27,49 @@
     </resultMap>
 
     <sql id="selectEduPostVo">
-        select post_id, user_id, post_type, language, title, content, images, tags, view_count,
-               like_count, comment_count, is_pinned, is_featured, is_deleted, status,
-               create_by, create_time, update_by, update_time
-        from edu_post
+        select p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, p.view_count,
+               p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, p.status,
+               p.create_by, p.create_time, p.update_by, p.update_time,
+               COALESCE(au.nick_name, su.nick_name) as userName,
+               COALESCE(au.avatar, su.avatar) as userAvatar
+        from edu_post p
+        left join edu_app_user au on p.user_id = au.user_id
+        left join sys_user su on p.user_id = su.user_id
     </sql>
 
     <select id="selectEduPostById" parameterType="Long" resultMap="EduPostResult">
         <include refid="selectEduPostVo"/>
-        <where>
-            is_deleted = 0
-            and post_id = #{postId}
-        </where>
+        where p.is_deleted = 0
+        and p.post_id = #{postId}
     </select>
 
     <select id="selectEduPostList" parameterType="com.ruoyi.edu.domain.EduPost" resultMap="EduPostResult">
         <include refid="selectEduPostVo"/>
-        <where>
-            is_deleted = 0
-            <if test="title != null and title != ''">
-                AND title like concat('%', #{title}, '%')
-            </if>
-            <if test="postType != null and postType != ''">
-                AND post_type = #{postType}
-            </if>
-            <if test="language != null and language != ''">
-                AND language = #{language}
-            </if>
-            <if test="status != null and status != ''">
-                AND status = #{status}
-            </if>
-        </where>
-        order by create_time desc
+        where p.is_deleted = 0
+        <if test="title != null and title != ''">
+            AND p.title like concat('%', #{title}, '%')
+        </if>
+        <if test="postType != null and postType != ''">
+            AND p.post_type = #{postType}
+        </if>
+        <if test="language != null and language != ''">
+            AND p.language = #{language}
+        </if>
+        <if test="status != null and status != ''">
+            AND p.status = #{status}
+        </if>
+        order by p.create_time desc
     </select>
 
     <select id="selectEduPostByLanguage" resultMap="EduPostResult">
         select p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, p.view_count,
                p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, p.status,
                p.create_by, p.create_time, p.update_by, p.update_time,
-               u.nick_name as userName, u.avatar as userAvatar
+               COALESCE(au.nick_name, su.nick_name) as userName,
+               COALESCE(au.avatar, su.avatar) as userAvatar
         from edu_post p
-        left join sys_user u on p.user_id = u.user_id
+        left join edu_app_user au on p.user_id = au.user_id
+        left join sys_user su on p.user_id = su.user_id
         where (p.language = #{language} or p.language = 'all') and p.is_deleted = 0
         order by p.like_count desc, p.view_count desc
         limit #{limit}
@@ -77,22 +79,25 @@
         select p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, p.view_count,
                p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, p.status,
                p.create_by, p.create_time, p.update_by, p.update_time,
-               u.nick_name as userName, u.avatar as userAvatar
+               COALESCE(au.nick_name, su.nick_name) as userName,
+               COALESCE(au.avatar, su.avatar) as userAvatar
         from edu_post p
-        left join sys_user u on p.user_id = u.user_id
+        left join edu_app_user au on p.user_id = au.user_id
+        left join sys_user su on p.user_id = su.user_id
         where p.user_id = #{userId} and p.is_deleted = 0
         order by p.create_time desc
     </select>
 
     <select id="selectHotPosts" parameterType="Integer" resultMap="EduPostResult">
-        select 
-            p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags, 
-            p.view_count, p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted, 
+        select
+            p.post_id, p.user_id, p.post_type, p.language, p.title, p.content, p.images, p.tags,
+            p.view_count, p.like_count, p.comment_count, p.is_pinned, p.is_featured, p.is_deleted,
             p.status, p.create_by, p.create_time, p.update_by, p.update_time,
-            u.nick_name as userName,
-            u.avatar as userAvatar
+            COALESCE(au.nick_name, su.nick_name) as userName,
+            COALESCE(au.avatar, su.avatar) as userAvatar
         from edu_post p
-        left join sys_user u on p.user_id = u.user_id
+        left join edu_app_user au on p.user_id = au.user_id
+        left join sys_user su on p.user_id = su.user_id
         where p.status = 'published' and p.is_deleted = 0
         order by p.create_time desc
         limit #{limit}

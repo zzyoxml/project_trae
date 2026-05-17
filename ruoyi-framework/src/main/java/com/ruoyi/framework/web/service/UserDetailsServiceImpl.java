@@ -14,12 +14,12 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.edu.domain.EduAppUser;
+import com.ruoyi.edu.service.IEduAppUserService;
 
-/**
- * 用户验证处理
- *
- * @author ruoyi
- */
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService
 {
@@ -27,36 +27,69 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
     @Autowired
     private ISysUserService userService;
-    
+
     @Autowired
     private SysPasswordService passwordService;
 
     @Autowired
     private SysPermissionService permissionService;
 
+    @Autowired
+    private IEduAppUserService eduAppUserService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         SysUser user = userService.selectUserByUserName(username);
-        if (StringUtils.isNull(user))
+        if (StringUtils.isNotNull(user))
         {
-            log.info("登录用户：{} 不存在.", username);
-            throw new ServiceException(MessageUtils.message("user.not.exists"));
-        }
-        else if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
-        {
-            log.info("登录用户：{} 已被删除.", username);
-            throw new ServiceException(MessageUtils.message("user.password.delete"));
-        }
-        else if (UserStatus.DISABLE.getCode().equals(user.getStatus()))
-        {
-            log.info("登录用户：{} 已被停用.", username);
-            throw new ServiceException(MessageUtils.message("user.blocked"));
+            if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
+            {
+                log.info("登录用户：{} 已被删除.", username);
+                throw new ServiceException(MessageUtils.message("user.password.delete"));
+            }
+            else if (UserStatus.DISABLE.getCode().equals(user.getStatus()))
+            {
+                log.info("登录用户：{} 已被停用.", username);
+                throw new ServiceException(MessageUtils.message("user.blocked"));
+            }
+            passwordService.validate(user);
+            return createLoginUser(user);
         }
 
-        passwordService.validate(user);
+        EduAppUser appUser = eduAppUserService.selectEduAppUserByUserName(username);
+        if (StringUtils.isNotNull(appUser))
+        {
+            if ("1".equals(appUser.getStatus()))
+            {
+                log.info("登录用户：{} 已被停用.", username);
+                throw new ServiceException(MessageUtils.message("user.blocked"));
+            }
+            if ("2".equals(appUser.getDelFlag()))
+            {
+                log.info("登录用户：{} 已被删除.", username);
+                throw new ServiceException(MessageUtils.message("user.password.delete"));
+            }
 
-        return createLoginUser(user);
+            SysUser sysUser = new SysUser();
+            sysUser.setUserId(appUser.getUserId());
+            sysUser.setUserName(appUser.getUsername());
+            sysUser.setNickName(appUser.getNickName());
+            sysUser.setEmail(appUser.getEmail());
+            sysUser.setPhonenumber(appUser.getPhonenumber());
+            sysUser.setAvatar(appUser.getAvatar());
+            sysUser.setPassword(appUser.getPassword());
+            sysUser.setStatus("0");
+
+            passwordService.validate(sysUser);
+
+            Set<String> permissions = new HashSet<>();
+            permissions.add("*:*:*");
+            return new LoginUser(appUser.getUserId(), null, sysUser, permissions);
+        }
+
+        log.info("登录用户：{} 不存在.", username);
+        throw new ServiceException(MessageUtils.message("user.not.exists"));
     }
 
     public UserDetails createLoginUser(SysUser user)

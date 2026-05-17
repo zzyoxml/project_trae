@@ -6,9 +6,9 @@
       <el-card v-if="post">
         <div class="post-header">
           <div class="user-info">
-            <el-avatar :size="48">{{ post.username?.charAt(0) }}</el-avatar>
+            <el-avatar :size="48" :src="post.userAvatar || undefined">{{ (post.userName || post.username || '?').charAt(0) }}</el-avatar>
             <div class="user-details">
-              <span class="username">{{ post.username }}</span>
+              <span class="username">{{ post.userName || post.username || '未知用户' }}</span>
               <span class="post-time">{{ post.createTime }}</span>
             </div>
           </div>
@@ -58,7 +58,7 @@
           <div v-for="comment in comments" :key="comment.commentId" class="comment-item">
             <div class="comment-header">
               <div class="user-info">
-                <el-avatar :size="32">{{ comment.username?.charAt(0) }}</el-avatar>
+                <el-avatar :size="32" :src="comment.userAvatar || undefined">{{ (comment.username || '?').charAt(0) }}</el-avatar>
                 <div class="user-details">
                   <span class="username">{{ comment.username }}</span>
                   <span class="comment-time">{{ comment.createTime }}</span>

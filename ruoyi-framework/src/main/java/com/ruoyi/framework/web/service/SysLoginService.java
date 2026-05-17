@@ -28,6 +28,8 @@ import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.edu.domain.EduAppUser;
+import com.ruoyi.edu.service.IEduAppUserService;
 
 /**
  * 登录校验方法
@@ -51,6 +53,9 @@ public class SysLoginService
 
     @Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private IEduAppUserService eduAppUserService;
 
     /**
      * 登录验证
@@ -176,6 +181,17 @@ public class SysLoginService
         sysUser.setUserId(userId);
         sysUser.setLoginIp(IpUtils.getIpAddr());
         sysUser.setLoginDate(DateUtils.getNowDate());
-        userService.updateUserProfile(sysUser);
+        try
+        {
+            userService.updateUserProfile(sysUser);
+        }
+        catch (Exception e)
+        {
+            EduAppUser appUser = new EduAppUser();
+            appUser.setUserId(userId);
+            appUser.setUpdateBy("");
+            appUser.setUpdateTime(DateUtils.getNowDate());
+            eduAppUserService.updateEduAppUser(appUser);
+        }
     }
 }

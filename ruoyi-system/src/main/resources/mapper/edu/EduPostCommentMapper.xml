@@ -23,9 +23,11 @@
     <sql id="selectEduPostCommentVo">
         select c.comment_id, c.post_id, c.user_id, c.parent_comment_id, c.content, c.like_count,
                c.is_deleted, c.create_by, c.create_time, c.update_by, c.update_time,
-               u.user_name as username, u.avatar as user_avatar
+               COALESCE(au.nick_name, su.nick_name) as username,
+               COALESCE(au.avatar, su.avatar) as user_avatar
         from edu_post_comment c
-        left join sys_user u on c.user_id = u.user_id
+        left join edu_app_user au on c.user_id = au.user_id
+        left join sys_user su on c.user_id = su.user_id
         where c.is_deleted = 0
     </sql>
 

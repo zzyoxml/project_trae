@@ -20,7 +20,9 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.MimeTypeUtils;
+import com.ruoyi.edu.domain.EduAppUser;
 import com.ruoyi.edu.domain.EduUserProfile;
+import com.ruoyi.edu.service.IEduAppUserService;
 import com.ruoyi.edu.service.IEduUserService;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.service.ISysUserService;
@@ -42,6 +44,9 @@ public class SysProfileController extends BaseController
 
     @Autowired
     private IEduUserService eduUserService;
+
+    @Autowired
+    private IEduAppUserService eduAppUserService;
 
     /**
      * 个人信息
@@ -79,9 +84,19 @@ public class SysProfileController extends BaseController
         user.setPassword(null);
         user.setAvatar(null);
         user.setDeptId(null);
-        if (userService.updateUserProfile(user) > 0)
+        int sysResult = userService.updateUserProfile(user);
+        EduAppUser appUser = eduAppUserService.selectEduAppUserById(sysUser.getUserId());
+        if (appUser != null)
         {
-            // 更新缓存用户信息
+            EduAppUser updateAppUser = new EduAppUser();
+            updateAppUser.setUserId(sysUser.getUserId());
+            updateAppUser.setNickName(user.getNickName());
+            updateAppUser.setEmail(user.getEmail());
+            updateAppUser.setPhonenumber(user.getPhonenumber());
+            eduAppUserService.updateEduAppUser(updateAppUser);
+        }
+        if (sysResult > 0 || appUser != null)
+        {
             sysUser.setNickName(user.getNickName());
             sysUser.setPhonenumber(user.getPhonenumber());
             sysUser.setEmail(user.getEmail());
@@ -110,10 +125,19 @@ public class SysProfileController extends BaseController
         {
             return error("新密码不能与旧密码相同");
         }
-        if (userService.resetUserPwd(userName, SecurityUtils.encryptPassword(newPassword)) > 0)
+        String encryptedPassword = SecurityUtils.encryptPassword(newPassword);
+        int sysResult = userService.resetUserPwd(userName, encryptedPassword);
+        EduAppUser appUser = eduAppUserService.selectEduAppUserById(loginUser.getUserId());
+        if (appUser != null)
         {
-            // 更新缓存用户密码
-            loginUser.getUser().setPassword(SecurityUtils.encryptPassword(newPassword));
+            EduAppUser updateAppUser = new EduAppUser();
+            updateAppUser.setUserId(loginUser.getUserId());
+            updateAppUser.setPassword(encryptedPassword);
+            eduAppUserService.updateEduAppUser(updateAppUser);
+        }
+        if (sysResult > 0 || appUser != null)
+        {
+            loginUser.getUser().setPassword(encryptedPassword);
             tokenService.setLoginUser(loginUser);
             return success();
         }
@@ -131,28 +155,33 @@ public class SysProfileController extends BaseController
         {
             LoginUser loginUser = getLoginUser();
             String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
-            if (userService.updateUserAvatar(loginUser.getUsername(), avatar))
+            Long userId = loginUser.getUser().getUserId();
+            boolean sysUserUpdated = userService.updateUserAvatar(loginUser.getUsername(), avatar);
+            EduAppUser appUser = eduAppUserService.selectEduAppUserById(userId);
+            if (appUser != null)
             {
-                // 同时更新 edu_user_profile 表中的头像
-                Long userId = loginUser.getUser().getUserId();
-                EduUserProfile profile = eduUserService.selectEduUserProfileByUserId(userId);
-                if (profile != null)
-                {
-                    profile.setAvatarUrl(avatar);
-                    eduUserService.updateEduUserProfile(profile);
-                }
-                else
-                {
-                    // 如果 edu_user_profile 表中没有记录，创建一条新记录
-                    profile = new EduUserProfile();
-                    profile.setUserId(userId);
-                    profile.setAvatarUrl(avatar);
-                    eduUserService.insertEduUserProfile(profile);
-                }
-                
+                EduAppUser updateAppUser = new EduAppUser();
+                updateAppUser.setUserId(userId);
+                updateAppUser.setAvatar(avatar);
+                eduAppUserService.updateEduAppUser(updateAppUser);
+            }
+            EduUserProfile profile = eduUserService.selectEduUserProfileByUserId(userId);
+            if (profile != null)
+            {
+                profile.setAvatarUrl(avatar);
+                eduUserService.updateEduUserProfile(profile);
+            }
+            else
+            {
+                profile = new EduUserProfile();
+                profile.setUserId(userId);
+                profile.setAvatarUrl(avatar);
+                eduUserService.insertEduUserProfile(profile);
+            }
+            if (sysUserUpdated || appUser != null)
+            {
                 AjaxResult ajax = AjaxResult.success();
                 ajax.put("imgUrl", avatar);
-                // 更新缓存用户头像
                 loginUser.getUser().setAvatar(avatar);
                 tokenService.setLoginUser(loginUser);
                 return ajax;
