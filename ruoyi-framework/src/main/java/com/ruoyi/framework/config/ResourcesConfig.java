@@ -30,8 +30,12 @@ public class ResourcesConfig implements WebMvcConfigurer
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
         /** 本地文件上传路径 */
+        String profilePath = RuoYiConfig.getProfile();
+        if (!profilePath.endsWith("/")) {
+            profilePath = profilePath + "/";
+        }
         registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**")
-                .addResourceLocations("file:" + RuoYiConfig.getProfile() + "/");
+                .addResourceLocations("file:" + profilePath);
 
         /** swagger配置 */
         registry.addResourceHandler("/swagger-ui/**")
@@ -45,7 +49,9 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Override
     public void addInterceptors(InterceptorRegistry registry)
     {
-        registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(repeatSubmitInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/profile/**", "/avatar/**", "/upload/**");
     }
 
     /**

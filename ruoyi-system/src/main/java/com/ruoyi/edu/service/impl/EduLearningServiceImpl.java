@@ -553,7 +553,7 @@ public class EduLearningServiceImpl implements IEduLearningService {
             sysUsers = sysUsers.stream()
                     .filter(u -> u.getUserName().toLowerCase().contains(userName.toLowerCase()) ||
                                 (u.getNickName() != null && u.getNickName().toLowerCase().contains(userName.toLowerCase())))
-                    .toList();
+                    .collect(java.util.stream.Collectors.toList());
         }
         
         // 获取用户学习数据
@@ -576,7 +576,7 @@ public class EduLearningServiceImpl implements IEduLearningService {
                             }
                             return false;
                         })
-                        .toList();
+                        .collect(java.util.stream.Collectors.toList());
                 
                 if (progresses.isEmpty()) {
                     continue;

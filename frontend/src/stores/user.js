@@ -8,6 +8,7 @@
 import { defineStore } from 'pinia'
 import { login, register, getUserInfo, logout } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getAvatarUrl } from '@/utils/file'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -113,7 +114,7 @@ export const useUserStore = defineStore('user', {
       this.userId = user.userId || user.id
       this.username = user.userName || user.username
       this.nickname = user.nickName || user.nickname
-      this.avatar = user.avatar || user.avatarUrl
+      this.avatar = getAvatarUrl(user.avatar || user.avatarUrl)
       this.email = user.email || ''
       this.phone = user.phonenumber || user.phone || ''
       this.nativeLanguage = user.nativeLanguage || 'zh'

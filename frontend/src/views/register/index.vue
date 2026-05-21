@@ -95,7 +95,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { register } from '@/api/user'
+import { addUser } from '@/api/user'
 import { useThemeStore } from '@/stores/theme'
 import { ElMessage } from 'element-plus'
 
@@ -153,7 +153,7 @@ const handleRegister = async () => {
     if (valid) {
       loading.value = true
       try {
-        await register(registerForm.value)
+        await addUser(registerForm.value)
         ElMessage.success('注册成功，请登录')
         router.push('/login')
       } catch (error) {

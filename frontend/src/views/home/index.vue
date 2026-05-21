@@ -57,7 +57,7 @@
           @click="goToCourse(course.courseId)"
         >
           <div class="course-cover">
-            <img :src="course.coverImage || '/default-course.jpg'" :alt="course.courseName" />
+            <img :src="getCoverImageUrl(course.coverImage) || '/default-course.jpg'" :alt="course.courseName" />
             <span class="course-level" :class="'level-' + course.level">{{ getLevelText(course.level) }}</span>
           </div>
           <div class="course-info">
@@ -121,6 +121,7 @@ import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 import { getFeaturedCourses } from '@/api/course'
 import { getHotPosts } from '@/api/community'
+import { getCoverImageUrl } from '@/utils/file'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()

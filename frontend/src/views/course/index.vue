@@ -45,7 +45,7 @@
         @click="goToDetail(course.courseId)"
       >
         <div class="course-cover">
-          <img :src="course.coverImage || '/default-course.jpg'" :alt="course.courseName" @error="handleImageError">
+          <img :src="getCoverImageUrl(course.coverImage) || '/default-course.jpg'" :alt="course.courseName" @error="handleImageError">
           <span class="course-level" :class="'level-' + course.level">{{ getLevelText(course.level) }}</span>
           <span class="course-language">{{ getLanguageText(course.language) }}</span>
         </div>
@@ -83,6 +83,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCourseList } from '@/api/course'
 import { useThemeStore } from '@/stores/theme'
+import { getCoverImageUrl } from '@/utils/file'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()

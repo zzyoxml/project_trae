@@ -77,7 +77,7 @@
           class="continue-item"
         >
           <div class="course-cover">
-            <img :src="course.coverImage" :alt="course.courseName" @error="handleImageError">
+            <img :src="getCoverImageUrl(course.coverImage)" :alt="course.courseName" @error="handleImageError">
           </div>
           <div class="course-info">
             <div class="course-name">{{ course.courseName }}</div>
@@ -121,7 +121,7 @@
           @click="goToCourse(course.courseId)"
         >
           <div class="course-cover">
-            <img :src="course.coverImage" :alt="course.courseName" @error="handleImageError">
+            <img :src="getCoverImageUrl(course.coverImage)" :alt="course.courseName" @error="handleImageError">
             <span class="course-language">{{ getLanguageText(course.language) }}</span>
           </div>
           <div class="course-info">
@@ -191,6 +191,7 @@ import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 import { getMyCourses, getFeaturedCourses } from '@/api/course'
 import { getLearningStats, claimTaskReward, getTodayCompletedLessons } from '@/api/learning'
+import { getCoverImageUrl } from '@/utils/file'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()

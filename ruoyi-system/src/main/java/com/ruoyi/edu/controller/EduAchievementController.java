@@ -165,10 +165,10 @@ public class EduAchievementController extends BaseController {
             List<EduBadge> badges = userBadges.stream()
                     .map(ub -> badgeMapper.selectEduBadgeById(ub.getBadgeId()))
                     .filter(b -> b != null)
-                    .toList();
+                    .collect(java.util.stream.Collectors.toList());
             return success(badges);
         }
-        return success(List.of());
+        return success(new java.util.ArrayList<>());
     }
 
     @Anonymous
@@ -180,9 +180,9 @@ public class EduAchievementController extends BaseController {
                     .filter(ub -> ub.getIsDisplayed() != null && ub.getIsDisplayed())
                     .map(ub -> badgeMapper.selectEduBadgeById(ub.getBadgeId()))
                     .filter(b -> b != null)
-                    .toList();
+                    .collect(java.util.stream.Collectors.toList());
             return success(badges);
         }
-        return success(List.of());
+        return success(new java.util.ArrayList<>());
     }
 }

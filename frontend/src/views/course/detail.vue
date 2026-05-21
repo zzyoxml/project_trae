@@ -5,7 +5,7 @@
     <div class="course-content" v-loading="loading">
       <div class="course-header" v-if="course.courseName">
         <div class="course-cover">
-          <img :src="course.coverImage || '/default-course.jpg'" :alt="course.courseName" @error="handleImageError">
+          <img :src="getCoverImageUrl(course.coverImage) || '/default-course.jpg'" :alt="course.courseName" @error="handleImageError">
           <div class="course-badges">
             <el-tag :type="getLevelType(course.level)">{{ getLevelText(course.level) }}</el-tag>
             <el-tag type="info">{{ getLanguageText(course.language) }}</el-tag>
@@ -158,6 +158,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 import { getCourseDetail, enrollCourse, cancelEnroll } from '@/api/course'
+import { getCoverImageUrl } from '@/utils/file'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
