@@ -174,7 +174,8 @@ const speakWithTTS = (text, language) => {
   }
   const voice = voiceMap[language] || voiceMap['en']
   
-  const url = `http://36.248.181.23:22335/tts?t=${encodeURIComponent(text)}&v=${voice}&r=0&p=0&s=&api_key=`
+  // 通过同域Nginx代理访问TTS服务，解决HTTPS页面Mixed Content问题
+  const url = `/tts?t=${encodeURIComponent(text)}&v=${voice}&r=0&p=0&s=&api_key=`
   const audio = new Audio(url)
   
   audio.addEventListener('canplay', () => {
