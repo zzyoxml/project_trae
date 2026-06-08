@@ -24,15 +24,18 @@ export function recognizeSpeech(formData) {
 }
 
 /**
- * 发音评分
- * @param {Object} data - 评分参数 { audio, referenceText, language }
- * @returns {Promise}
+ * 发音评分（前端录音 + 参考文本）
+ * @param {FormData} formData - 包含 audio 文件和 target 文本
+ * @returns {Promise<{score:number, feedback:string, target:string, audioSize:number}>}
  */
-export function evaluatePronunciation(data) {
+export function evaluatePronunciation(formData) {
   return request({
     url: '/edu/speech/evaluate',
     method: 'post',
-    data
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }
 
