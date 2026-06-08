@@ -101,8 +101,10 @@ public class SysLoginService
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         recordLoginInfo(loginUser.getUserId());
-        // 生成token
-        return tokenService.createToken(loginUser);
+        // 生成token（含单点登录：踢除该用户其他已登录的令牌）
+        String token = tokenService.createToken(loginUser);
+        tokenService.kickOldTokens(loginUser);
+        return token;
     }
 
     /**

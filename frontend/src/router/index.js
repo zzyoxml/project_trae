@@ -7,6 +7,7 @@
 
 import { createRouter, createWebHistory } from 'vue-router'
 import { getToken } from '@/utils/auth'
+import { getUserInfo } from '@/api/user'
 
 // 路由懒加载
 const routes = [
@@ -128,23 +129,43 @@ const router = createRouter({
   }
 })
 
+// 单点登录验证：避免每次切路由都打后端，5秒内只验证一次
+let lastTokenVerifyTime = 0
+const TOKEN_VERIFY_INTERVAL = 5 * 1000
+
 // 路由前置守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title ? `${to.meta.title} - LinguaLearn` : 'LinguaLearn'
-  
+
   // 检查是否需要登录
   const token = getToken()
-  
+
   if (to.meta.requiresAuth && !token) {
     // 需要登录但未登录，跳转到登录页
     next({
       path: '/login',
       query: { redirect: to.fullPath }
     })
-  } else {
-    next()
+    return
   }
+
+  // 单点登录兜底验证：已登录用户每次切路由都调 getInfo 验证 token 是否被踢
+  // （request.js 拦截器会在 401 时弹框+清 localStorage+跳登录页）
+  if (token && to.path !== '/login') {
+    const now = Date.now()
+    if (now - lastTokenVerifyTime > TOKEN_VERIFY_INTERVAL) {
+      lastTokenVerifyTime = now
+      try {
+        await getUserInfo()
+      } catch (e) {
+        // 401 等错误已在 request.js 拦截器统一处理（清登录态+跳登录）
+        return next(false)
+      }
+    }
+  }
+
+  next()
 })
 
 // 路由后置守卫

@@ -2,10 +2,15 @@ package com.ruoyi.framework.web.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.Constants;
@@ -29,6 +34,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class TokenService
 {
+    private static final Logger log = LoggerFactory.getLogger(TokenService.class);
+
     // 令牌自定义标识
     @Value("${token.header}")
     private String header;
@@ -50,6 +57,15 @@ public class TokenService
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
+    /**
+     * 专门用于ZSet的String序列化Template，避免token被FastJson包成带引号的JSON
+     */
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     /**
      * 获取用户身份信息
      *
@@ -68,7 +84,17 @@ public class TokenService
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
                 String userKey = getTokenKey(uuid);
                 LoginUser user = redisCache.getCacheObject(userKey);
-                return user;
+                if (StringUtils.isNotNull(user))
+                {
+                    // 验证令牌是否仍属于该用户的在线令牌集合（防多端登录）
+                    if (!isUserTokenValid(user))
+                    {
+                        // 令牌已被踢除，删除Redis缓存并视为未登录
+                        redisCache.deleteObject(userKey);
+                        return null;
+                    }
+                    return user;
+                }
             }
             catch (Exception e)
             {
@@ -222,5 +248,126 @@ public class TokenService
     private String getTokenKey(String uuid)
     {
         return CacheConstants.LOGIN_TOKEN_KEY + uuid;
+    }
+
+    /**
+     * 获取用户名的唯一标识（用于Redis key）
+     * 从token中解析出用户名
+     */
+    private String getUserKey(String username)
+    {
+        return CacheConstants.ONLINE_USER_TOKENS + username;
+    }
+
+    /**
+     * 用户登录时，踢除该用户其他已登录的令牌
+     *
+     * @param loginUser 登录用户信息
+     */
+    public void kickOldTokens(LoginUser loginUser)
+    {
+        System.out.println("==== [单点登录-DEBUG] kickOldTokens 入口 ====");
+        if (loginUser == null || loginUser.getUser() == null
+                || StringUtils.isEmpty(loginUser.getUser().getUserName())
+                || StringUtils.isEmpty(loginUser.getToken()))
+        {
+            System.out.println("==== [单点登录-DEBUG] 参数校验失败, 直接返回 ====");
+            return;
+        }
+        String username = loginUser.getUser().getUserName();
+        String newToken = loginUser.getToken();
+        String userZSetKey = CacheConstants.ONLINE_USER_TOKENS + username;
+        System.out.println("==== [单点登录] 用户 " + username + " 登录, ZSetKey=" + userZSetKey + ", newToken=" + newToken + " ====");
+
+        try
+        {
+            // 1) 查该用户当前 ZSet 中所有旧 token（使用StringRedisTemplate，避免FastJson包引号）
+            Set<String> oldTokens = stringRedisTemplate.opsForZSet().range(userZSetKey, 0, -1);
+            System.out.println("==== [单点登录] ZSet 当前成员数: " + (oldTokens == null ? 0 : oldTokens.size()) + " ====");
+
+            if (oldTokens != null)
+            {
+                for (String oldToken : oldTokens)
+                {
+                    if (oldToken == null || newToken.equals(oldToken))
+                    {
+                        // 跳过当前 token
+                        continue;
+                    }
+                    // 删旧 session
+                    redisCache.deleteObject(CacheConstants.LOGIN_TOKEN_KEY + oldToken);
+                    // 从 ZSet 删旧成员
+                    stringRedisTemplate.opsForZSet().remove(userZSetKey, oldToken);
+                    System.out.println("==== [单点登录] 踢除旧 token: " + oldToken + " ====");
+                }
+            }
+
+            // 2) 写入新 token
+            double score = System.currentTimeMillis();
+            stringRedisTemplate.opsForZSet().add(userZSetKey, newToken, score);
+            System.out.println("==== [单点登录] 写入新 token 到 ZSet, score=" + score + " ====");
+
+            // 3) 验证写入（这次读取应该能拿到分数）
+            Double verifyScore = stringRedisTemplate.opsForZSet().score(userZSetKey, newToken);
+            System.out.println("==== [单点登录-VERIFY] ZSet 中新 token 分数: " + verifyScore + " ====");
+        }
+        catch (Exception e)
+        {
+            System.out.println("==== [单点登录] kickOldTokens 异常: " + e.getMessage() + " ====");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 验证当前令牌是否仍属于用户的在线令牌集合
+     *
+     * @param loginUser 登录用户信息
+     * @return 是否有效
+     */
+    private boolean isUserTokenValid(LoginUser loginUser)
+    {
+        if (loginUser == null || loginUser.getUser() == null
+                || StringUtils.isEmpty(loginUser.getUser().getUserName())
+                || StringUtils.isEmpty(loginUser.getToken()))
+        {
+            return false;
+        }
+        String userZSetKey = CacheConstants.ONLINE_USER_TOKENS + loginUser.getUser().getUserName();
+        try
+        {
+            Double score = stringRedisTemplate.opsForZSet().score(userZSetKey, loginUser.getToken());
+            return score != null;
+        }
+        catch (Exception e)
+        {
+            System.out.println("==== [单点登录] isUserTokenValid 异常: " + e.getMessage() + " ====");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 登出时，清理用户的在线令牌记录
+     *
+     * @param loginUser 登录用户信息
+     */
+    public void logoutUser(LoginUser loginUser)
+    {
+        if (loginUser == null || loginUser.getUser() == null
+                || StringUtils.isEmpty(loginUser.getUser().getUserName())
+                || StringUtils.isEmpty(loginUser.getToken()))
+        {
+            return;
+        }
+        String userZSetKey = CacheConstants.ONLINE_USER_TOKENS + loginUser.getUser().getUserName();
+        try
+        {
+            stringRedisTemplate.opsForZSet().remove(userZSetKey, loginUser.getToken());
+        }
+        catch (Exception e)
+        {
+            System.out.println("==== [单点登录] logoutUser 异常: " + e.getMessage() + " ====");
+            e.printStackTrace();
+        }
     }
 }

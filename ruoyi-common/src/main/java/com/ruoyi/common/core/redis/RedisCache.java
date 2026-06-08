@@ -265,4 +265,53 @@ public class RedisCache
     {
         return redisTemplate.keys(pattern);
     }
+
+    /**
+     * 往ZSet中存入数据（按分数排序）
+     *
+     * @param key   Redis键
+     * @param value 值
+     * @param score 分数
+     */
+    public void setCacheZSet(final String key, final String value, final double score)
+    {
+        redisTemplate.opsForZSet().add(key, value, score);
+    }
+
+    /**
+     * 获取ZSet中成员的分数
+     *
+     * @param key   Redis键
+     * @param value 成员
+     * @return 分数，不存在返回null
+     */
+    public Double getZSetScore(final String key, final String value)
+    {
+        return redisTemplate.opsForZSet().score(key, value);
+    }
+
+    /**
+     * 删除ZSet中的成员
+     *
+     * @param key   Redis键
+     * @param value 成员
+     * @return 删除成功的数量
+     */
+    public long zSetRemove(final String key, final String value)
+    {
+        return redisTemplate.opsForZSet().remove(key, value);
+    }
+
+    /**
+     * 按分数区间删除ZSet中的成员
+     *
+     * @param key    Redis键
+     * @param min    最小分数（包含）
+     * @param max    最大分数（包含）
+     * @return 删除成功的数量
+     */
+    public long zSetRemoveRangeByScore(final String key, final double min, final double max)
+    {
+        return redisTemplate.opsForZSet().removeRangeByScore(key, min, max);
+    }
 }

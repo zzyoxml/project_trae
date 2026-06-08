@@ -51,7 +51,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const res = response.data
-    
+
     // 根据业务状态码判断请求是否成功
     if (res.code === 200) {
       // 如果有 data 字段且不为空，返回 data；否则返回整个 res
@@ -60,6 +60,15 @@ service.interceptors.response.use(
       }
       // 兼容没有 data 字段的响应（如 getInfo 返回 {code: 200, user: {...}}）
       return res
+    } else if (res.code === 401) {
+      // 业务 401：token 被踢下线 / 过期 / 认证失败
+      ElMessage.error('登录状态已过期，请重新登录')
+      localStorage.clear()
+      // 用 SPA 路由跳转，避免 window.location.href 触发整页请求被 vite proxy 拦到后端
+      if (router.currentRoute.value.path !== '/login') {
+        router.replace('/login')
+      }
+      return Promise.reject(new Error(res.msg || '认证失败'))
     } else {
       // 处理业务错误
       ElMessage.error(res.msg || '请求失败')
@@ -73,16 +82,13 @@ service.interceptors.response.use(
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          // Token过期或无效
-          ElMessageBox.confirm('登录状态已过期，请重新登录', '提示', {
-            confirmButtonText: '重新登录',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            // 清除Token并跳转到登录页
-            localStorage.clear()
-            router.push('/login')
-          })
+          // Token过期或被踢下线：直接清登录态 + 跳登录页（不弹确认框，避免用户没点导致停留在死页面）
+          ElMessage.error('登录状态已过期，请重新登录')
+          localStorage.clear()
+          // 用 SPA 路由跳转，避免 window.location.href 触发整页请求被 vite proxy 拦到后端
+          if (router.currentRoute.value.path !== '/login') {
+            router.replace('/login')
+          }
           break
           
         case 403:

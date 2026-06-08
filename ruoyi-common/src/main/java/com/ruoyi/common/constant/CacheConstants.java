@@ -41,4 +41,9 @@ public class CacheConstants
      * 登录账户密码错误次数 redis key
      */
     public static final String PWD_ERR_CNT_KEY = "pwd_err_cnt:";
+
+    /**
+     * 在线用户登录令牌记录 key（按用户名分组的已登录令牌集合）
+     */
+    public static final String ONLINE_USER_TOKENS = "online_user_tokens:";
 }
